@@ -466,6 +466,14 @@
             justify-content: space-between;
             font-size: 1.2rem;
             font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .cart-savings {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1rem;
+            color: var(--success);
             margin-bottom: 20px;
         }
         
@@ -708,6 +716,10 @@
                 <span>Total:</span>
                 <span id="cartTotal">₹0.00</span>
             </div>
+            <div class="cart-savings">
+                <span>You Save:</span>
+                <span id="cartSavings">₹0.00</span>
+            </div>
             <button class="place-order-btn" id="placeOrderBtn">
                 <i class="fab fa-whatsapp"></i>
                 Place Order via WhatsApp
@@ -732,6 +744,7 @@
         const cartPanel = document.getElementById('cartPanel');
         const cartItems = document.getElementById('cartItems');
         const cartTotal = document.getElementById('cartTotal');
+        const cartSavings = document.getElementById('cartSavings');
         const closeCart = document.getElementById('closeCart');
         const placeOrderBtn = document.getElementById('placeOrderBtn');
         const noticeIcon = document.getElementById('noticeIcon');
@@ -946,6 +959,7 @@
                     id: productId,
                     name: product.name,
                     price: product.drp,
+                    mrp: product.mrp,
                     quantity: 1,
                     imageUrl: product.imageUrl
                 });
@@ -986,14 +1000,18 @@
                     </div>
                 `;
                 cartTotal.textContent = '₹0.00';
+                cartSavings.textContent = '₹0.00';
                 return;
             }
             
             let total = 0;
+            let savings = 0;
             
             cart.forEach(item => {
                 const itemTotal = item.price * item.quantity;
+                const itemSavings = (item.mrp - item.price) * item.quantity;
                 total += itemTotal;
+                savings += itemSavings;
                 
                 const cartItem = document.createElement('div');
                 cartItem.className = 'cart-item';
@@ -1021,6 +1039,7 @@
             });
             
             cartTotal.textContent = `₹${total.toFixed(2)}`;
+            cartSavings.textContent = `₹${savings.toFixed(2)}`;
             
             // Add event listeners to cart item buttons
             document.querySelectorAll('.minus').forEach(btn => {
@@ -1073,17 +1092,34 @@
             }
             
             // Format order message
-            let message = "New Order from JASROTIA ENTERPRISE:\n\n";
-            let total = 0;
+            let message = "🚚 *NEW ORDER - JASROTIA ENTERPRISE* 🚚\n\n";
+            message += "📋 *Order Details:*\n\n";
             
-            cart.forEach(item => {
+            let total = 0;
+            let savings = 0;
+            
+            cart.forEach((item, index) => {
                 const itemTotal = item.price * item.quantity;
+                const itemSavings = (item.mrp - item.price) * item.quantity;
                 total += itemTotal;
-                message += `- ${item.name} (Qty: ${item.quantity}) - ₹${item.price.toFixed(2)} x ${item.quantity} = ₹${itemTotal.toFixed(2)}\n`;
+                savings += itemSavings;
+                
+                message += `*${index + 1}. ${item.name}*\n`;
+                message += `   - Qty: ${item.quantity}\n`;
+                message += `   - Price: ₹${item.price.toFixed(2)}\n`;
+                message += `   - Total: ₹${itemTotal.toFixed(2)}\n\n`;
             });
             
-            message += `\n*Total: ₹${total.toFixed(2)}*`;
-            message += `\n\nPlease deliver to the following address:\n[Your Address Here]`;
+            message += "----------------------------\n";
+            message += `*Total Price: ₹${total.toFixed(2)}*\n`;
+            message += `*You Save: ₹${savings.toFixed(2)}*\n\n`;
+            message += "📦 *Delivery Information:*\n";
+            message += "Please deliver to:\n";
+            message += "[Your Full Address Here]\n\n";
+            message += "📞 *Contact Details:*\n";
+            message += "Name: [Your Name]\n";
+            message += "Phone: [Your Phone Number]\n\n";
+            message += "Thank you! 🙏";
             
             // Encode message for URL
             const encodedMessage = encodeURIComponent(message);
@@ -1095,8 +1131,6 @@
             cart = [];
             updateCart();
             closeCartPanel();
-            
-            alert('Your order has been placed! Check WhatsApp for confirmation.');
         }
         
         // Show cart panel
