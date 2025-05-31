@@ -782,7 +782,7 @@
             fetch(CSV_URL)
                 .then(response => response.text())
                 .then(csvData => {
-                    // Parse CSV data with the improved method
+                    // Parse CSV data with robust method that handles base64 images
                     const parsedData = parseCSV(csvData);
                     
                     // Process the data with standardized availability
@@ -792,13 +792,22 @@
                             row.Availability.trim().toUpperCase() === 'IN STOCK' ? 'IN STOCK' : 'OUT OF STOCK' 
                             : 'OUT OF STOCK';
                         
+                        // Process base64 image URLs
+                        let imageUrl = row.urls || '';
+                        if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('data:image')) {
+                            // If it's a base64 string but missing the prefix
+                            if (imageUrl.startsWith('/9j/') || imageUrl.startsWith('iVBORw0KGgo')) {
+                                imageUrl = `data:image/jpeg;base64,${imageUrl}`;
+                            }
+                        }
+                        
                         return {
                             id: row.Products,
                             name: row.Products,
                             brand: row.Brand,
                             type: row.Type,
                             availability: availability,
-                            imageUrl: row.urls,
+                            imageUrl: imageUrl,
                             drp: parseFloat(row.DRP) || 0,
                             mrp: parseFloat(row.MRP) || 0,
                             margin: parseFloat(row.Margin) || 0
@@ -825,7 +834,7 @@
                 });
         }
         
-        // Improved CSV parser
+        // Robust CSV parser that handles base64 images with commas
         function parseCSV(csv) {
             const lines = csv.split('\n').filter(line => line.trim() !== '');
             if (lines.length < 2) return [];
@@ -834,13 +843,44 @@
             const result = [];
             
             for (let i = 1; i < lines.length; i++) {
-                const values = lines[i].split(',');
-                if (values.length !== headers.length) continue;
+                let tokens = [];
+                let currentToken = '';
+                let inQuotes = false;
                 
+                // Parse line character by character to handle commas within quotes
+                for (let j = 0; j < lines[i].length; j++) {
+                    const char = lines[i][j];
+                    
+                    if (char === '"' && (j === 0 || lines[i][j-1] !== '\\')) {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        tokens.push(currentToken);
+                        currentToken = '';
+                    } else {
+                        currentToken += char;
+                    }
+                }
+                tokens.push(currentToken);
+                
+                // Handle cases where we have more tokens than headers (due to base64 commas)
+                if (tokens.length > headers.length) {
+                    const lastField = tokens.slice(headers.length - 1).join('');
+                    tokens = tokens.slice(0, headers.length - 1);
+                    tokens.push(lastField);
+                }
+                
+                // Create object for this row
                 const obj = {};
-                headers.forEach((header, index) => {
-                    obj[header] = values[index] ? values[index].trim() : '';
-                });
+                for (let j = 0; j < headers.length; j++) {
+                    let value = tokens[j] || '';
+                    
+                    // Remove surrounding quotes if present
+                    if (value.startsWith('"') && value.endsWith('"')) {
+                        value = value.substring(1, value.length - 1);
+                    }
+                    
+                    obj[headers[j]] = value.trim();
+                }
                 result.push(obj);
             }
             return result;
@@ -907,12 +947,21 @@
                     productCard.innerHTML += `<div class="out-of-stock">OUT OF STOCK</div>`;
                 }
                 
+                // Handle image display - use base64 if available
+                let imageContent = '<div class="placeholder"><i class="fas fa-box"></i></div>';
+                if (product.imageUrl) {
+                    if (product.imageUrl.startsWith('data:image')) {
+                        // Base64 image
+                        imageContent = `<img src="${product.imageUrl}" alt="${product.name}" onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\\'placeholder\\'><i class=\\'fas fa-box\\'></i></div>'">`;
+                    } else if (product.imageUrl.startsWith('http')) {
+                        // Regular URL
+                        imageContent = `<img src="${product.imageUrl}" alt="${product.name}" onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\\'placeholder\\'><i class=\\'fas fa-box\\'></i></div>'">`;
+                    }
+                }
+                
                 productCard.innerHTML += `
                     <div class="product-image">
-                        ${product.imageUrl 
-                            ? `<img src="${product.imageUrl}" alt="${product.name}" onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\\'placeholder\\'><i class=\\'fas fa-box\\'></i></div>'">` 
-                            : '<div class="placeholder"><i class="fas fa-box"></i></div>'
-                        }
+                        ${imageContent}
                     </div>
                     <div class="product-info">
                         <div class="product-name">${product.name}</div>
@@ -1013,14 +1062,21 @@
                 total += itemTotal;
                 savings += itemSavings;
                 
+                // Handle image display in cart
+                let imageContent = '<i class="fas fa-box"></i>';
+                if (item.imageUrl) {
+                    if (item.imageUrl.startsWith('data:image')) {
+                        imageContent = `<img src="${item.imageUrl}" alt="${item.name}" onerror="this.onerror=null; this.parentNode.innerHTML='<i class=\\'fas fa-box\\'></i>'">`;
+                    } else if (item.imageUrl.startsWith('http')) {
+                        imageContent = `<img src="${item.imageUrl}" alt="${item.name}" onerror="this.onerror=null; this.parentNode.innerHTML='<i class=\\'fas fa-box\\'></i>'">`;
+                    }
+                }
+                
                 const cartItem = document.createElement('div');
                 cartItem.className = 'cart-item';
                 cartItem.innerHTML = `
                     <div class="cart-item-image">
-                        ${item.imageUrl 
-                            ? `<img src="${item.imageUrl}" alt="${item.name}" onerror="this.onerror=null; this.parentNode.innerHTML='<i class=\\'fas fa-box\\'></i>'">` 
-                            : '<i class="fas fa-box"></i>'
-                        }
+                        ${imageContent}
                     </div>
                     <div class="cart-item-details">
                         <div class="cart-item-name">${item.name}</div>
