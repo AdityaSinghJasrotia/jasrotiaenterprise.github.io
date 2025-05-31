@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amul Products - Order System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0071e3;
+            --secondary: #f5f5f7;
+            --text: #1d1d1f;
+            --border: #d2d2d7;
+            --success: #34c759;
+            --warning: #ff9500;
+            --danger: #ff3b30;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+        
+        body {
+            background-color: #fafafa;
+            color: var(--text);
+            line-height: 1.5;
+            padding-bottom: 70px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: white;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .logo span {
+            color: var(--danger);
+        }
+        
+        .cart-icon {
+            position: relative;
+            font-size: 1.4rem;
+            cursor: pointer;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--danger);
+            color: white;
+            font-size: 0.7rem;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Filter Section */
+        .filters {
+            background: white;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .filter-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .filter-title i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .filter-btn {
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* Product Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            padding: 0 15px;
+            margin-top: 10px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.2s ease;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .product-image {
+            height: 120px;
+            background: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: #ccc;
+        }
+        
+        .product-info {
+            padding: 12px;
+        }
+        
+        .product-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            height: 40px;
+            overflow: hidden;
+        }
+        
+        .product-price {
+            font-weight: 600;
+            color: var(--success);
+            margin-bottom: 5px;
+        }
+        
+        .product-brand {
+            font-size: 0.8rem;
+            color: #86868b;
+            margin-bottom: 10px;
+        }
+        
+        .add-to-cart {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .add-to-cart:hover {
+            background: #0062c4;
+        }
+        
+        /* Notice Panel */
+        .notice-icon {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--warning);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 90;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .notice-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: white;
+            z-index: 100;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: height 0.4s ease;
+        }
+        
+        .notice-panel.active {
+            height: 70vh;
+        }
+        
+        .notice-header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .close-notice {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #86868b;
+            cursor: pointer;
+        }
+        
+        .notice-content {
+            padding: 20px;
+            height: calc(70vh - 70px);
+            overflow-y: auto;
+        }
+        
+        .notice-title {
+            margin-bottom: 15px;
+        }
+        
+        .notice-item {
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        /* Cart Panel */
+        .cart-panel {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 200;
+            transition: right 0.4s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .cart-panel.active {
+            right: 0;
+        }
+        
+        .cart-header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .close-cart {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #86868b;
+            cursor: pointer;
+        }
+        
+        .cart-items {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .cart-item {
+            display: flex;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .cart-item-image {
+            width: 70px;
+            height: 70px;
+            background: var(--secondary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: #ccc;
+            font-size: 1.5rem;
+        }
+        
+        .cart-item-details {
+            flex: 1;
+        }
+        
+        .cart-item-name {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .cart-item-price {
+            color: var(--success);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            background: var(--secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        
+        .quantity-display {
+            width: 40px;
+            text-align: center;
+        }
+        
+        .remove-item {
+            margin-left: 15px;
+            color: var(--danger);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .cart-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .place-order-btn {
+            width: 100%;
+            background: var(--success);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .place-order-btn:hover {
+            background: #2dac4d;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 150;
+            display: none;
+        }
+        
+        .overlay.active {
+            display: block;
+        }
+        
+        /* Loading state */
+        .loading {
+            text-align: center;
+            padding: 30px;
+            color: #86868b;
+        }
+        
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #86868b;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #d2d2d7;
+        }
+        
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+            
+            .cart-panel {
+                width: 380px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">Amul<span>Mart</span></div>
+        <div class="cart-icon" id="cartIcon">
+            <i class="fas fa-shopping-cart"></i>
+            <div class="cart-count">0</div>
+        </div>
+    </header>
+    
+    <!-- Filters Section -->
+    <section class="filters">
+        <div class="filter-title">
+            <i class="fas fa-filter"></i>
+            <h2>Filter Products</h2>
+        </div>
+        
+        <h3>Brand</h3>
+        <div class="filter-group" id="brandFilters">
+            <button class="filter-btn active" data-brand="all">All Brands</button>
+            <button class="filter-btn" data-brand="AMUL">AMUL</button>
+            <button class="filter-btn" data-brand="OTHER">OTHER</button>
+        </div>
+        
+        <h3>Product Type</h3>
+        <div class="filter-group" id="typeFilters">
+            <button class="filter-btn active" data-type="all">All Types</button>
+            <!-- Product types will be added dynamically -->
+        </div>
+    </section>
+    
+    <!-- Products Grid -->
+    <section class="products-grid" id="productsGrid">
+        <!-- Products will be added dynamically -->
+    </section>
+    
+    <!-- Notice Icon -->
+    <div class="notice-icon" id="noticeIcon">
+        <i class="fas fa-info"></i>
+    </div>
+    
+    <!-- Notice Panel -->
+    <div class="notice-panel" id="noticePanel">
+        <div class="notice-header">
+            <h2>Important Notice</h2>
+            <button class="close-notice" id="closeNotice">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="notice-content">
+            <h3 class="notice-title">Ordering Information</h3>
+            <div class="notice-item">
+                <p><strong>Order Processing:</strong> Orders placed before 3 PM will be delivered the same day. Orders after 3 PM will be delivered the next day.</p>
+            </div>
+            <div class="notice-item">
+                <p><strong>Delivery Areas:</strong> We currently deliver within a 10km radius. Minimum order value is ₹200.</p>
+            </div>
+            <div class="notice-item">
+                <p><strong>Payment Options:</strong> We accept Cash on Delivery (COD), UPI, and Credit/Debit Cards.</p>
+            </div>
+            <div class="notice-item">
+                <p><strong>Returns Policy:</strong> We accept returns within 24 hours for damaged or incorrect items.</p>
+            </div>
+            <div class="notice-item">
+                <p><strong>Contact Support:</strong> Call +91 9596658921 for order assistance or WhatsApp us for quick response.</p>
+            </div>
+            <div class="notice-item">
+                <p><strong>Holiday Schedule:</strong> No deliveries on Sundays and public holidays.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Cart Panel -->
+    <div class="cart-panel" id="cartPanel">
+        <div class="cart-header">
+            <h2>Your Cart</h2>
+            <button class="close-cart" id="closeCart">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <!-- Cart items will be added dynamically -->
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotal">₹0.00</span>
+            </div>
+            <button class="place-order-btn" id="placeOrderBtn">
+                Place Order via WhatsApp
+            </button>
+        </div>
+    </div>
+    
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+    
+    <script>
+        // Sample data structure
+        const sampleData = [
+            {
+                Products: "Amul Gold Milk",
+                Brand: "AMUL",
+                Type: "MILK",
+                Availability: "In Stock",
+                DRP: "55",
+                MRP: "60",
+                Margin: "5",
+                url: ""
+            },
+            {
+                Products: "Amul Butter",
+                Brand: "AMUL",
+                Type: "BUTTER",
+                Availability: "In Stock",
+                DRP: "45",
+                MRP: "50",
+                Margin: "5",
+                url: ""
+            },
+            {
+                Products: "Amul Ghee",
+                Brand: "AMUL",
+                Type: "GHEE",
+                Availability: "In Stock",
+                DRP: "495",
+                MRP: "520",
+                Margin: "25",
+                url: ""
+            },
+            {
+                Products: "Amul Cheese",
+                Brand: "AMUL",
+                Type: "CHEESE",
+                Availability: "In Stock",
+                DRP: "95",
+                MRP: "110",
+                Margin: "15",
+                url: ""
+            },
+            {
+                Products: "Amul Dahi",
+                Brand: "AMUL",
+                Type: "DAHI (CURD)",
+                Availability: "In Stock",
+                DRP: "35",
+                MRP: "40",
+                Margin: "5",
+                url: ""
+            },
+            {
+                Products: "Amul Paneer",
+                Brand: "AMUL",
+                Type: "PANEER",
+                Availability: "In Stock",
+                DRP: "85",
+                MRP: "95",
+                Margin: "10",
+                url: ""
+            },
+            {
+                Products: "Amul Kool",
+                Brand: "AMUL",
+                Type: "BEVERAGES",
+                Availability: "In Stock",
+                DRP: "25",
+                MRP: "30",
+                Margin: "5",
+                url: ""
+            },
+            {
+                Products: "Amul Ice Cream",
+                Brand: "AMUL",
+                Type: "CUPS",
+                Availability: "In Stock",
+                DRP: "75",
+                MRP: "80",
+                Margin: "5",
+                url: ""
+            }
+        ];
+
+        // DOM Elements
+        const productsGrid = document.getElementById('productsGrid');
+        const brandFilters = document.getElementById('brandFilters');
+        const typeFilters = document.getElementById('typeFilters');
+        const cartIcon = document.getElementById('cartIcon');
+        const cartCount = document.querySelector('.cart-count');
+        const cartPanel = document.getElementById('cartPanel');
+        const cartItems = document.getElementById('cartItems');
+        const cartTotal = document.getElementById('cartTotal');
+        const closeCart = document.getElementById('closeCart');
+        const placeOrderBtn = document.getElementById('placeOrderBtn');
+        const noticeIcon = document.getElementById('noticeIcon');
+        const noticePanel = document.getElementById('noticePanel');
+        const closeNotice = document.getElementById('closeNotice');
+        const overlay = document.getElementById('overlay');
+        
+        // Global variables
+        let products = [];
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        let selectedBrand = 'all';
+        let selectedType = 'all';
+        const productTypes = [
+            "MILK", "BUTTER", "GHEE", "CHEESE", "DAHI (CURD)", 
+            "PANEER", "BEVERAGES", "BREAD SPREADS", "FROZEN SNACKS", 
+            "BAKERY PRODUCTS", "MITHAI (INDIAN SWEETS)", "ORGANIC PRODUCTS", 
+            "PROTEIN PRODUCTS", "CATTLE FEED", "OTHER", "BRICKS", "CUPS", 
+            "CONES", "KULFIES", "GALLONS", "TUBS", "ICE CANDIES", "AMUL FRESH"
+        ];
+        
+        // Initialize the app
+        function init() {
+            loadProducts();
+            renderTypeFilters();
+            updateCartCount();
+            setupEventListeners();
+        }
+        
+        // Load products from Google Sheets
+        function loadProducts() {
+            // Show loading state
+            productsGrid.innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading products...</p>
+                </div>
+            `;
+            
+            // In a real implementation, we would fetch from:
+            // https://docs.google.com/spreadsheets/d/e/2PACX-1vS79-CSoFSxvvA5fYbrxWILnJSW7ivUFyol6IY9PMCBAFD17NfWouHtbkOX4CMl6LRkCk_v-IKpLP8x/pub?gid=78026795&single=true&output=csv
+            
+            // For this demo, we'll use sample data
+            setTimeout(() => {
+                products = sampleData;
+                renderProducts();
+            }, 1000);
+        }
+        
+        // Render product type filters
+        function renderTypeFilters() {
+            productTypes.forEach(type => {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.dataset.type = type;
+                btn.textContent = type;
+                typeFilters.appendChild(btn);
+            });
+        }
+        
+        // Render products based on filters
+        function renderProducts() {
+            productsGrid.innerHTML = '';
+            
+            if (products.length === 0) {
+                productsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-box-open"></i>
+                        <h3>No Products Found</h3>
+                        <p>Try adjusting your filters</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const filteredProducts = products.filter(product => {
+                const brandMatch = selectedBrand === 'all' || product.Brand === selectedBrand;
+                const typeMatch = selectedType === 'all' || product.Type === selectedType;
+                return brandMatch && typeMatch;
+            });
+            
+            if (filteredProducts.length === 0) {
+                productsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-search"></i>
+                        <h3>No Matching Products</h3>
+                        <p>Try different filters</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            filteredProducts.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <div class="product-image">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">${product.Products}</div>
+                        <div class="product-price">₹${product.MRP}</div>
+                        <div class="product-brand">${product.Brand} • ${product.Type}</div>
+                        <button class="add-to-cart" data-id="${product.Products}">
+                            Add to Cart
+                        </button>
+                    </div>
+                `;
+                productsGrid.appendChild(productCard);
+            });
+            
+            // Add event listeners to Add to Cart buttons
+            document.querySelectorAll('.add-to-cart').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const productId = e.target.dataset.id;
+                    addToCart(productId);
+                });
+            });
+        }
+        
+        // Add product to cart
+        function addToCart(productId) {
+            const product = products.find(p => p.Products === productId);
+            if (!product) return;
+            
+            const existingItem = cart.find(item => item.id === productId);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: productId,
+                    name: product.Products,
+                    price: parseFloat(product.MRP),
+                    quantity: 1
+                });
+            }
+            
+            updateCart();
+            showCartPanel();
+        }
+        
+        // Update cart UI and storage
+        function updateCart() {
+            // Save to localStorage
+            localStorage.setItem('cart', JSON.stringify(cart));
+            
+            // Update cart count
+            updateCartCount();
+            
+            // Update cart items display
+            renderCartItems();
+        }
+        
+        // Update cart count badge
+        function updateCartCount() {
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+        }
+        
+        // Render cart items
+        function renderCartItems() {
+            cartItems.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3>Your Cart is Empty</h3>
+                        <p>Add some products to your cart</p>
+                    </div>
+                `;
+                cartTotal.textContent = '₹0.00';
+                return;
+            }
+            
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <div class="cart-item-image">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <div class="cart-item-details">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-price">₹${item.price.toFixed(2)}</div>
+                        <div class="cart-item-actions">
+                            <button class="quantity-btn minus" data-id="${item.id}">-</button>
+                            <div class="quantity-display">${item.quantity}</div>
+                            <button class="quantity-btn plus" data-id="${item.id}">+</button>
+                            <button class="remove-item" data-id="${item.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                cartItems.appendChild(cartItem);
+            });
+            
+            cartTotal.textContent = `₹${total.toFixed(2)}`;
+            
+            // Add event listeners to cart item buttons
+            document.querySelectorAll('.minus').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const productId = e.target.dataset.id;
+                    updateCartItemQuantity(productId, -1);
+                });
+            });
+            
+            document.querySelectorAll('.plus').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const productId = e.target.dataset.id;
+                    updateCartItemQuantity(productId, 1);
+                });
+            });
+            
+            document.querySelectorAll('.remove-item').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const productId = e.target.closest('.remove-item').dataset.id;
+                    removeCartItem(productId);
+                });
+            });
+        }
+        
+        // Update cart item quantity
+        function updateCartItemQuantity(productId, change) {
+            const item = cart.find(item => item.id === productId);
+            if (!item) return;
+            
+            item.quantity += change;
+            
+            if (item.quantity < 1) {
+                removeCartItem(productId);
+            } else {
+                updateCart();
+            }
+        }
+        
+        // Remove item from cart
+        function removeCartItem(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCart();
+        }
+        
+        // Place order via WhatsApp
+        function placeOrder() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            
+            // Format order message
+            let message = "New Order:\n\n";
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                message += `${item.name} - ${item.quantity} x ₹${item.price} = ₹${itemTotal.toFixed(2)}\n`;
+            });
+            
+            message += `\nTotal: ₹${total.toFixed(2)}`;
+            
+            // Encode message for URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Open WhatsApp with the order
+            window.open(`https://wa.me/919596658921?text=${encodedMessage}`, '_blank');
+            
+            // Clear cart after order
+            cart = [];
+            updateCart();
+            closeCartPanel();
+            
+            alert('Your order has been placed! Check WhatsApp for confirmation.');
+        }
+        
+        // Show cart panel
+        function showCartPanel() {
+            cartPanel.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Close cart panel
+        function closeCartPanel() {
+            cartPanel.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Toggle notice panel
+        function toggleNoticePanel() {
+            noticePanel.classList.toggle('active');
+            overlay.classList.toggle('active');
+            document.body.style.overflow = noticePanel.classList.contains('active') ? 'hidden' : '';
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Brand filter buttons
+            brandFilters.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    brandFilters.querySelector('.active').classList.remove('active');
+                    btn.classList.add('active');
+                    selectedBrand = btn.dataset.brand;
+                    renderProducts();
+                });
+            });
+            
+            // Type filter buttons
+            typeFilters.addEventListener('click', (e) => {
+                if (e.target.classList.contains('filter-btn')) {
+                    typeFilters.querySelector('.active').classList.remove('active');
+                    e.target.classList.add('active');
+                    selectedType = e.target.dataset.type;
+                    renderProducts();
+                }
+            });
+            
+            // Cart interactions
+            cartIcon.addEventListener('click', showCartPanel);
+            closeCart.addEventListener('click', closeCartPanel);
+            placeOrderBtn.addEventListener('click', placeOrder);
+            
+            // Notice panel interactions
+            noticeIcon.addEventListener('click', toggleNoticePanel);
+            closeNotice.addEventListener('click', toggleNoticePanel);
+            
+            // Overlay click
+            overlay.addEventListener('click', () => {
+                closeCartPanel();
+                if (noticePanel.classList.contains('active')) {
+                    toggleNoticePanel();
+                }
+            });
+        }
+        
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
