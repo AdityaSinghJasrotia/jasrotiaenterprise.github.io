@@ -14,6 +14,7 @@
             --success: #28a745;
             --warning: #ff9500;
             --danger: #dc3545;
+            --info: #17a2b8;
             --card-radius: 14px;
             --shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
@@ -79,7 +80,7 @@
             justify-content: center;
         }
         
-        /* Filter Section */
+        /* Filters Section */
         .filters {
             background: white;
             padding: 15px;
@@ -261,14 +262,219 @@
             background: #0056b3;
         }
         
-        /* Notice Panel */
-        .notice-icon {
+        /* Notice Panel - Improved with Tiles */
+        .info-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: white;
+            z-index: 180; /* Increased to be above overlay */
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: height 0.4s ease;
+        }
+        
+        .info-panel.active {
+            height: 80vh;
+        }
+        
+        .info-header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            background: var(--primary);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+        
+        .close-info {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .info-content {
+            padding: 20px;
+            height: calc(80vh - 70px); /* Account for header height */
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
+        }
+        
+        .info-tile {
+            background: white;
+            border-radius: var(--card-radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            transition: transform 0.2s ease;
+            border: 1px solid var(--border);
+        }
+        
+        .info-tile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .tile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .tile-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-right: 15px;
+        }
+        
+        .tile-title {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .tile-content p {
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            color: #555;
+        }
+        
+        .highlight {
+            background: #e8f5e9;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 500;
+            color: var(--success);
+        }
+        
+        /* Floating Buttons */
+        .fab-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 95;
+        }
+        
+        .fab-buttons {
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+        
+        .fab-buttons.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .fab-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            text-decoration: none;
+        }
+        
+        .fab-button:hover {
+            transform: translateY(-3px);
+        }
+        
+        .fab-button::after {
+            content: attr(title);
+            position: absolute;
+            right: 60px;
+            white-space: nowrap;
+            background: var(--text);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        .fab-button:hover::after {
+            opacity: 1;
+        }
+        
+        .fab-button.fresh {
+            background: var(--success);
+        }
+        
+        .fab-button.call {
+            background: var(--primary);
+        }
+        
+        .fab-main {
+            width: 60px;
+            height: 60px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .fab-main:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+            animation: none;
+        }
+        
+        .info-fab {
             position: fixed;
             bottom: 20px;
             left: 20px;
-            width: 50px;
-            height: 50px;
-            background: var(--warning);
+            width: 60px;
+            height: 60px;
+            background: var(--info);
             color: white;
             border-radius: 50%;
             display: flex;
@@ -276,67 +482,21 @@
             justify-content: center;
             font-size: 1.5rem;
             cursor: pointer;
-            z-index: 90;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            transition: transform 0.3s ease;
+            z-index: 95;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            animation: pulse 2s infinite;
         }
         
-        .notice-icon:hover {
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(23, 162, 184, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(23, 162, 184, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(23, 162, 184, 0); }
+        }
+        
+        .info-fab:hover {
             transform: scale(1.1);
-        }
-        
-        .notice-panel {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 0;
-            background: white;
-            z-index: 100;
-            border-radius: 20px 20px 0 0;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
-            overflow: hidden;
-            transition: height 0.4s ease;
-        }
-        
-        .notice-panel.active {
-            height: 70vh;
-        }
-        
-        .notice-header {
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .close-notice {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: #86868b;
-            cursor: pointer;
-        }
-        
-        .notice-content {
-            padding: 20px;
-            height: calc(70vh - 70px);
-            overflow-y: auto;
-        }
-        
-        .notice-title {
-            margin-bottom: 15px;
-            color: var(--primary);
-        }
-        
-        .notice-item {
-            padding: 15px 0;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .notice-item:last-child {
-            border-bottom: none;
+            animation: none;
         }
         
         /* Cart Panel */
@@ -509,7 +669,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.5);
-            z-index: 150;
+            z-index: 90; /* Reduced to be below panels */
             display: none;
         }
         
@@ -593,6 +753,16 @@
             .cart-panel {
                 width: 380px;
             }
+            
+            .info-content {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .info-content {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -657,42 +827,127 @@
         </div>
     </section>
     
-    <!-- Notice Icon -->
-    <div class="notice-icon" id="noticeIcon">
+    <!-- Information FAB -->
+    <div class="info-fab" id="infoFab">
         <i class="fas fa-info"></i>
     </div>
     
-    <!-- Notice Panel -->
-    <div class="notice-panel" id="noticePanel">
-        <div class="notice-header">
-            <h2>Important Notice</h2>
-            <button class="close-notice" id="closeNotice">
+    <!-- Information Panel -->
+    <div class="info-panel" id="infoPanel">
+        <div class="info-header">
+            <h2>Important Information</h2>
+            <button class="close-info" id="closeInfo">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div class="notice-content">
-            <h3 class="notice-title">Ordering Information</h3>
-            <div class="notice-item">
-                <p><strong>Order Processing:</strong> Orders placed before 3 PM will be delivered the same day. Orders after 3 PM will be delivered the next day.</p>
+        <div class="info-content">
+            <div class="info-tile">
+                <div class="tile-header">
+                    <div class="tile-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3 class="tile-title">Order Processing</h3>
+                </div>
+                <div class="tile-content">
+                    <p>Orders placed before 3 PM will be delivered the same day. Orders after 3 PM will be delivered the next day.</p>
+                    <div class="highlight">
+                        <i class="fas fa-clock"></i> Cut-off time: 3:00 PM daily
+                    </div>
+                </div>
             </div>
-            <div class="notice-item">
-                <p><strong>Delivery Areas:</strong> We currently deliver within a 10km radius. Minimum order value is ₹200.</p>
+            
+            <div class="info-tile">
+                <div class="tile-header">
+                    <div class="tile-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3 class="tile-title">Delivery Areas</h3>
+                </div>
+                <div class="tile-content">
+                    <p>We currently deliver within a 10km radius of our store location.</p>
+                    <p>Minimum order value is <strong>₹200</strong> for delivery.</p>
+                    <p>Free delivery for orders above <strong>₹500</strong>.</p>
+                </div>
             </div>
-            <div class="notice-item">
-                <p><strong>Payment Options:</strong> We accept Cash on Delivery (COD), UPI, and Credit/Debit Cards.</p>
+            
+            <div class="info-tile">
+                <div class="tile-header">
+                    <div class="tile-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <h3 class="tile-title">Payment Options</h3>
+                </div>
+                <div class="tile-content">
+                    <p>We offer multiple payment methods for your convenience:</p>
+                    <ul>
+                        <li>Cash on Delivery (COD)</li>
+                        <li>UPI (PhonePe, Google Pay, Paytm)</li>
+                        <li>Credit/Debit Cards</li>
+                    </ul>
+                    <div class="highlight">
+                        <i class="fas fa-shield-alt"></i> All payments are secure
+                    </div>
+                </div>
             </div>
-            <div class="notice-item">
-                <p><strong>Returns Policy:</strong> We accept returns within 24 hours for damaged or incorrect items.</p>
+            
+            <div class="info-tile">
+                <div class="tile-header">
+                    <div class="tile-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h3 class="tile-title">Returns Policy</h3>
+                </div>
+                <div class="tile-content">
+                    <p>We accept returns within 24 hours for damaged or incorrect items.</p>
+                    <p>Fresh products cannot be returned unless damaged or spoiled.</p>
+                    <p>Please contact our support team for return requests.</p>
+                </div>
             </div>
-            <div class="notice-item">
-                <p><strong>Contact Support:</strong> Call +91 9596658921 for order assistance or WhatsApp us for quick response.</p>
+            
+            <div class="info-tile">
+                <div class="tile-header">
+                    <div class="tile-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3 class="tile-title">Contact Support</h3>
+                </div>
+                <div class="tile-content">
+                    <p>Call <strong>+91 9596658921</strong> for order assistance</p>
+                    <p>WhatsApp us for quick response and order updates</p>
+                    <div class="highlight">
+                        <i class="fas fa-clock"></i> Support hours: 8AM - 8PM daily
+                    </div>
+                </div>
             </div>
-            <div class="notice-item">
-                <p><strong>Holiday Schedule:</strong> No deliveries on Sundays and public holidays.</p>
+            
+            <div class="info-tile">
+                <div class="tile-header">
+                    <div class="tile-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3 class="tile-title">Holiday Schedule</h3>
+                </div>
+                <div class="tile-content">
+                    <p>No deliveries on Sundays and public holidays.</p>
+                    <p>Special holiday hours during festivals will be announced in advance.</p>
+                    <p>Pre-orders are accepted for holiday periods.</p>
+                </div>
             </div>
-            <div class="notice-item">
-                <p><strong>Pricing Note:</strong> DRP is the actual price you pay. MRP is the maximum retail price for reference.</p>
-            </div>
+        </div>
+    </div>
+    
+    <!-- Floating Action Buttons -->
+    <div class="fab-container">
+        <div class="fab-buttons" id="fabButtons">
+            <a href="fresh.html" class="fab-button fresh" title="AMUL Fresh">
+                <i class="fas fa-leaf"></i>
+            </a>
+            <a href="tel:+919596658921" class="fab-button call" title="Call Jasrotia">
+                <i class="fas fa-phone"></i>
+            </a>
+        </div>
+        <div class="fab-main" id="fabMain">
+            <i class="fas fa-plus"></i>
         </div>
     </div>
     
@@ -747,12 +1002,14 @@
         const cartSavings = document.getElementById('cartSavings');
         const closeCart = document.getElementById('closeCart');
         const placeOrderBtn = document.getElementById('placeOrderBtn');
-        const noticeIcon = document.getElementById('noticeIcon');
-        const noticePanel = document.getElementById('noticePanel');
-        const closeNotice = document.getElementById('closeNotice');
+        const infoFab = document.getElementById('infoFab');
+        const infoPanel = document.getElementById('infoPanel');
+        const closeInfo = document.getElementById('closeInfo');
         const overlay = document.getElementById('overlay');
         const lastUpdated = document.getElementById('lastUpdated');
         const refreshBtn = document.getElementById('refreshBtn');
+        const fabMain = document.getElementById('fabMain');
+        const fabButtons = document.getElementById('fabButtons');
         
         // Global variables
         let products = [];
@@ -1203,11 +1460,11 @@
             document.body.style.overflow = '';
         }
         
-        // Toggle notice panel
-        function toggleNoticePanel() {
-            noticePanel.classList.toggle('active');
+        // Toggle info panel
+        function toggleInfoPanel() {
+            infoPanel.classList.toggle('active');
             overlay.classList.toggle('active');
-            document.body.style.overflow = noticePanel.classList.contains('active') ? 'hidden' : '';
+            document.body.style.overflow = infoPanel.classList.contains('active') ? 'hidden' : '';
         }
         
         // Update last updated time
@@ -1253,22 +1510,71 @@
             closeCart.addEventListener('click', closeCartPanel);
             placeOrderBtn.addEventListener('click', placeOrder);
             
-            // Notice panel interactions
-            noticeIcon.addEventListener('click', toggleNoticePanel);
-            closeNotice.addEventListener('click', toggleNoticePanel);
+            // Info panel interactions
+            infoFab.addEventListener('click', toggleInfoPanel);
+            closeInfo.addEventListener('click', toggleInfoPanel);
             
-            // Overlay click
-            overlay.addEventListener('click', () => {
-                closeCartPanel();
-                if (noticePanel.classList.contains('active')) {
-                    toggleNoticePanel();
+            // FAB interactions
+            fabMain.addEventListener('click', () => {
+                fabButtons.classList.toggle('show');
+            });
+            
+            // Overlay click - only close panels if click is directly on overlay
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    closeCartPanel();
+                    if (infoPanel.classList.contains('active')) {
+                        toggleInfoPanel();
+                    }
+                    fabButtons.classList.remove('show');
                 }
+            });
+            
+            // Prevent clicks inside info panel from closing it
+            infoPanel.addEventListener('click', (e) => {
+                e.stopPropagation();
             });
             
             // Refresh button
             refreshBtn.addEventListener('click', () => {
                 loadProducts();
             });
+            
+            // Close FAB when clicking elsewhere
+            document.addEventListener('click', (e) => {
+                if (!fabMain.contains(e.target) && !fabButtons.contains(e.target)) {
+                    fabButtons.classList.remove('show');
+                }
+            });
+            
+            // Handle touch events for mobile scrolling
+            const infoContent = document.querySelector('.info-content');
+            infoContent.addEventListener('touchstart', handleTouchStart, false);        
+            infoContent.addEventListener('touchmove', handleTouchMove, false);
+        }
+        
+        // Touch handling variables
+        let touchStartY = 0;
+        
+        function handleTouchStart(e) {
+            touchStartY = e.touches[0].clientY;
+        }
+        
+        function handleTouchMove(e) {
+            const touchY = e.touches[0].clientY;
+            const content = e.currentTarget;
+            
+            // Check if we're at the top and trying to scroll up
+            if (content.scrollTop === 0 && touchY > touchStartY) {
+                // Prevent scrolling the content when at the top and pulling down
+                e.preventDefault();
+            }
+            
+            // Check if we're at the bottom and trying to scroll down
+            if (content.scrollHeight - content.scrollTop === content.clientHeight && touchY < touchStartY) {
+                // Prevent scrolling the content when at the bottom and pulling up
+                e.preventDefault();
+            }
         }
         
         // Initialize the app when DOM is loaded
