@@ -1193,10 +1193,10 @@
                     <div class="product-info">
                         <div class="product-name">${product.name}</div>
                         <div class="product-prices">
-                            <span class="product-drp">DSP: ₹${product.dsp.toFixed(2)}</span>
+                            <span class="product-drp"> ₹${product.dsp.toFixed(2)}</span>
                             <span class="product-mrp">MRP: ₹${product.mrp.toFixed(2)}</span>
                         </div>
-                        <div class="product-margin">Profit: ₹${product.margin.toFixed(2)}</div>
+                        <div class="product-margin">Margin: ₹${product.margin.toFixed(2)}</div>
                         <button class="add-to-cart" data-id="${product.id}" ${isOutOfStock ? 'disabled' : ''}>
                             <i class="fas fa-cart-plus"></i> ${isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
                         </button>
