@@ -858,7 +858,8 @@
                     <h3 class="tile-title">Order Processing</h3>
                 </div>
                 <div class="tile-content">
-                    <p>Orders placed before 3 PM will be delivered the same day. Orders after 3 PM will be delivered the next day.</p>
+                    <p>If you place orders through our application, you’ll receive items at the specified price. However, verbal orders may incur additional charges.</p>
+                    <p>Retailers will receive the goods they ordered the next day after placing their order.</p>
                     <div class="highlight">
                         <i class="fas fa-clock"></i> Cut-off time: 3:00 PM daily
                     </div>
@@ -873,9 +874,8 @@
                     <h3 class="tile-title">Delivery Areas</h3>
                 </div>
                 <div class="tile-content">
-                    <p>We currently deliver within a 10km radius of our store location.</p>
-                    <p>Minimum order value is <strong>₹200</strong> for delivery.</p>
-                    <p>Free delivery for orders above <strong>₹500</strong>.</p>
+                    <p>We currently deliver within a 10km radius of Talab Tillo Bohri.</p>
+                    <p>Minimum order value is <strong>₹5000</strong> for delivery.</p>
                 </div>
             </div>
             
@@ -891,7 +891,8 @@
                     <ul>
                         <li>Cash on Delivery (COD)</li>
                         <li>UPI (PhonePe, Google Pay, Paytm)</li>
-                        <li>Credit/Debit Cards</li>
+                        <li><h3>THE CUTE CORNER</h3> jasrotiarajni96-3@okhdfcbank</li>
+                     
                     </ul>
                     <div class="highlight">
                         <i class="fas fa-shield-alt"></i> All payments are secure
@@ -907,7 +908,7 @@
                     <h3 class="tile-title">Returns Policy</h3>
                 </div>
                 <div class="tile-content">
-                    <p>We accept returns within 24 hours for damaged or incorrect items.</p>
+                    <p>As soon as you receive your delivery, inspect the items for any damage or incorrect ones..</p>
                     <p>Fresh products cannot be returned unless damaged or spoiled.</p>
                     <p>Please contact our support team for return requests.</p>
                 </div>
@@ -1414,7 +1415,7 @@
             }
             
             // Format order message
-            let message = "🚚 *NEW ORDER - JASROTIA ENTERPRISE* 🚚\n\n";
+            let message = "🚚 *NEW ORDER TO-JASROTIA ENTERPRISE* 🚚\n\n";
             message += "📋 *Order Details:*\n\n";
             
             let total = 0;
@@ -1435,12 +1436,6 @@
             message += "----------------------------\n";
             message += `*Total Price: ₹${total.toFixed(2)}*\n`;
             message += `*You Save: ₹${savings.toFixed(2)}*\n\n`;
-            message += "📦 *Delivery Information:*\n";
-            message += "Please deliver to:\n";
-            message += "[Your Full Address Here]\n\n";
-            message += "📞 *Contact Details:*\n";
-            message += "Name: [Your Name]\n";
-            message += "Phone: [Your Phone Number]\n\n";
             message += "Thank you! 🙏";
             
             // Encode message for URL
