@@ -666,12 +666,17 @@
             justify-content: center;
         }
         
+        .place-order-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
         .place-order-btn i {
             margin-right: 10px;
             font-size: 1.2rem;
         }
         
-        .place-order-btn:hover {
+        .place-order-btn:hover:not(:disabled) {
             background: #218838;
         }
         
@@ -892,6 +897,24 @@
             font-size: 0.9rem;
             color: #666;
             margin-top: 15px;
+        }
+        
+        /* Minimum order notification */
+        .min-order-notification {
+            background: #fff8e1;
+            border-left: 4px solid var(--warning);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+        
+        .min-order-notification i {
+            color: var(--warning);
+            margin-right: 10px;
+            font-size: 1.2rem;
         }
         
         /* Responsive adjustments */
@@ -1155,6 +1178,12 @@
             </div>
         </div>
         <div class="cart-footer">
+            <div id="minOrderNotification" style="display: none;">
+                <div class="min-order-notification">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <div>Minimum order value is ₹3000. Add more items to place your order.</div>
+                </div>
+            </div>
             <div class="cart-total">
                 <span>Total:</span>
                 <span id="cartTotal">₹0.00</span>
@@ -1204,6 +1233,7 @@
         const copyUpiBtn = document.getElementById('copyUpiBtn');
         const upiId = document.getElementById('upiId');
         const copiedMessage = document.getElementById('copiedMessage');
+        const minOrderNotification = document.getElementById('minOrderNotification');
         
         // Global variables
         let products = [];
@@ -1501,6 +1531,8 @@
                 `;
                 cartTotal.textContent = '₹0.00';
                 cartSavings.textContent = '₹0.00';
+                minOrderNotification.style.display = 'none';
+                placeOrderBtn.disabled = false;
                 return;
             }
             
@@ -1547,6 +1579,15 @@
             
             cartTotal.textContent = `₹${total.toFixed(2)}`;
             cartSavings.textContent = `₹${savings.toFixed(2)}`;
+            
+            // Show min order notification if total is below 3000
+            if (total < 3000) {
+                minOrderNotification.style.display = 'block';
+                placeOrderBtn.disabled = true;
+            } else {
+                minOrderNotification.style.display = 'none';
+                placeOrderBtn.disabled = false;
+            }
             
             // Add event listeners to cart item buttons
             document.querySelectorAll('.minus').forEach(btn => {
@@ -1598,17 +1639,27 @@
                 return;
             }
             
+            // Calculate total
+            let total = 0;
+            cart.forEach(item => {
+                total += item.price * item.quantity;
+            });
+            
+            // Validate minimum order value (₹3000)
+            if (total < 3000) {
+                alert('Minimum order value is ₹3000. Please add more items to your cart.');
+                return;
+            }
+            
             // Format order message
             let message = "🚚 *NEW ORDER TO-JASROTIA ENTERPRISE* 🚚\n\n";
             message += "📋 *Order Details:*\n\n";
             
-            let total = 0;
             let savings = 0;
             
             cart.forEach((item, index) => {
                 const itemTotal = item.price * item.quantity;
                 const itemSavings = (item.mrp - item.price) * item.quantity;
-                total += itemTotal;
                 savings += itemSavings;
                 
                 message += `*${index + 1}. ${item.name}*\n`;
