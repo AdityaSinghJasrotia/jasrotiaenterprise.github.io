@@ -650,8 +650,14 @@
             margin-bottom: 20px;
         }
         
+        /* NEW: Cart buttons container */
+        .cart-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
         .place-order-btn {
-            width: 100%;
+            flex: 1;
             background: var(--success);
             color: white;
             border: none;
@@ -678,6 +684,37 @@
         
         .place-order-btn:hover:not(:disabled) {
             background: #218838;
+        }
+        
+        /* NEW: Pay Now button */
+        .pay-now-btn {
+            flex: 1;
+            background: #9c27b0;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .pay-now-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .pay-now-btn i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .pay-now-btn:hover:not(:disabled) {
+            background: #7b1fa2;
         }
         
         .overlay {
@@ -940,6 +977,11 @@
             .upi-id {
                 font-size: 0.95rem;
             }
+            
+            /* NEW: Stack buttons on small screens */
+            .cart-buttons {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -1026,7 +1068,7 @@
                     <h3 class="tile-title">Order Processing</h3>
                 </div>
                 <div class="tile-content">
-                    <p>If you place orders through our application, you’ll receive items at the specified price. However, verbal orders may incur additional charges.</p>
+                    <p>If you place orders through our application, you'll receive items at the specified price. However, verbal orders may incur additional charges.</p>
                     <p>Retailers will receive the goods they ordered the next day after placing their order.</p>
                     <div class="highlight">
                         <i class="fas fa-clock"></i> Cut-off time: 3:00 PM daily
@@ -1192,10 +1234,17 @@
                 <span>You Save:</span>
                 <span id="cartSavings">₹0.00</span>
             </div>
-            <button class="place-order-btn" id="placeOrderBtn">
-                <i class="fab fa-whatsapp"></i>
-                Place Order via WhatsApp
-            </button>
+            <!-- NEW: Cart buttons container with Pay Now button -->
+            <div class="cart-buttons">
+                <button class="place-order-btn" id="placeOrderBtn">
+                    <i class="fab fa-whatsapp"></i>
+                    Place Order
+                </button>
+                <button class="pay-now-btn" id="payNowBtn">
+                    <i class="fas fa-credit-card"></i>
+                    Pay Now
+                </button>
+            </div>
         </div>
     </div>
     
@@ -1234,6 +1283,7 @@
         const upiId = document.getElementById('upiId');
         const copiedMessage = document.getElementById('copiedMessage');
         const minOrderNotification = document.getElementById('minOrderNotification');
+        const payNowBtn = document.getElementById('payNowBtn'); // NEW: Pay Now button
         
         // Global variables
         let products = [];
@@ -1533,6 +1583,7 @@
                 cartSavings.textContent = '₹0.00';
                 minOrderNotification.style.display = 'none';
                 placeOrderBtn.disabled = false;
+                payNowBtn.disabled = false; // NEW: Disable Pay Now button too
                 return;
             }
             
@@ -1584,9 +1635,11 @@
             if (total < 5000) {
                 minOrderNotification.style.display = 'block';
                 placeOrderBtn.disabled = true;
+                payNowBtn.disabled = true; // NEW: Disable Pay Now button too
             } else {
                 minOrderNotification.style.display = 'none';
                 placeOrderBtn.disabled = false;
+                payNowBtn.disabled = false; // NEW: Enable Pay Now button
             }
             
             // Add event listeners to cart item buttons
@@ -1685,6 +1738,29 @@
             closeCartPanel();
         }
         
+        // NEW: Pay Now functionality
+        function payNow() {
+            if (cart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            
+            // Calculate total
+            let total = 0;
+            cart.forEach(item => {
+                total += item.price * item.quantity;
+            });
+            
+            // Validate minimum order value (₹5000)
+            if (total < 5000) {
+                alert('Minimum order value is ₹5000. Please add more items to your cart.');
+                return;
+            }
+            
+            // Show payment modal
+            showPaymentModal();
+        }
+        
         // Show cart panel
         function showCartPanel() {
             cartPanel.classList.add('active');
@@ -1779,6 +1855,7 @@
             cartIcon.addEventListener('click', showCartPanel);
             closeCart.addEventListener('click', closeCartPanel);
             placeOrderBtn.addEventListener('click', placeOrder);
+            payNowBtn.addEventListener('click', payNow); // NEW: Pay Now button listener
             
             // Info panel interactions
             infoFab.addEventListener('click', toggleInfoPanel);
