@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-F0JZK618J3"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-F0JZK618J3');
-</script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F0JZK618J3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+    
+      gtag('config', 'G-F0JZK618J3');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JASROTIA ENTERPRISE - Product Ordering System</title>
@@ -375,7 +375,7 @@
             color: var(--success);
         }
         
-        /* Floating Buttons */
+        /* Floating Action Buttons */
         .fab-container {
             position: fixed;
             bottom: 20px;
@@ -447,6 +447,10 @@
         
         .fab-button.call {
             background: var(--primary);
+        }
+        
+        .fab-button.payment {
+            background: #9c27b0;
         }
         
         .fab-main {
@@ -753,6 +757,143 @@
             margin-right: 5px;
         }
         
+        /* Payment Modal */
+        .payment-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .payment-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .payment-content {
+            background: white;
+            border-radius: var(--card-radius);
+            width: 90%;
+            max-width: 400px;
+            padding: 25px;
+            text-align: center;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .payment-modal.active .payment-content {
+            transform: translateY(0);
+        }
+        
+        .payment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .payment-header h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+        
+        .close-payment {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #86868b;
+            cursor: pointer;
+        }
+        
+        .qr-container {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 0 auto 20px;
+            max-width: 250px;
+            border: 1px solid var(--border);
+        }
+        
+        .qr-container img {
+            width: 100%;
+            border-radius: 8px;
+        }
+        
+        .upi-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .upi-id {
+            font-size: 1.1rem;
+            font-weight: 500;
+            word-break: break-all;
+            margin-bottom: 15px;
+            color: var(--text);
+        }
+        
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 200px;
+        }
+        
+        .copy-btn i {
+            margin-right: 8px;
+        }
+        
+        .copy-btn:hover {
+            background: #0056b3;
+        }
+        
+        .copied-message {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .copied-message.show {
+            opacity: 1;
+        }
+        
+        .payment-footer {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 15px;
+        }
+        
         /* Responsive adjustments */
         @media (min-width: 768px) {
             .products-grid {
@@ -771,6 +912,10 @@
         @media (max-width: 600px) {
             .info-content {
                 grid-template-columns: 1fr;
+            }
+            
+            .upi-id {
+                font-size: 0.95rem;
             }
         }
     </style>
@@ -955,9 +1100,42 @@
             <a href="tel:+919596658921" class="fab-button call" title="Call Jasrotia">
                 <i class="fas fa-phone"></i>
             </a>
+            <button class="fab-button payment" title="Payment Info" id="paymentFab">
+                <i class="fas fa-qrcode"></i>
+            </button>
         </div>
         <div class="fab-main" id="fabMain">
             <i class="fas fa-plus"></i>
+        </div>
+    </div>
+    
+    <!-- Payment Modal -->
+    <div class="payment-modal" id="paymentModal">
+        <div class="payment-content">
+            <div class="payment-header">
+                <h2>Payment Information</h2>
+                <button class="close-payment" id="closePayment">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="qr-container">
+                <!-- QR Code Image -->
+                <img src="qr.png" alt="UPI QR Code" style="width: 100%; border-radius: 8px;">
+            </div>
+            
+            <div class="upi-info">
+                <p>Scan QR code or send payment to:</p>
+                <div class="upi-id" id="upiId">jasrotiarajni96-3@okhdfcbank</div>
+                <button class="copy-btn" id="copyUpiBtn">
+                    <i class="fas fa-copy"></i> Copy UPI ID
+                </button>
+                <div class="copied-message" id="copiedMessage">Copied!</div>
+            </div>
+            
+            <div class="payment-footer">
+                <p>UPI Payments Only | No cash payments via QR</p>
+            </div>
         </div>
     </div>
     
@@ -1020,6 +1198,12 @@
         const refreshBtn = document.getElementById('refreshBtn');
         const fabMain = document.getElementById('fabMain');
         const fabButtons = document.getElementById('fabButtons');
+        const paymentFab = document.getElementById('paymentFab');
+        const paymentModal = document.getElementById('paymentModal');
+        const closePayment = document.getElementById('closePayment');
+        const copyUpiBtn = document.getElementById('copyUpiBtn');
+        const upiId = document.getElementById('upiId');
+        const copiedMessage = document.getElementById('copiedMessage');
         
         // Global variables
         let products = [];
@@ -1471,6 +1655,37 @@
             document.body.style.overflow = infoPanel.classList.contains('active') ? 'hidden' : '';
         }
         
+        // Show payment modal
+        function showPaymentModal() {
+            paymentModal.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            fabButtons.classList.remove('show');
+        }
+        
+        // Close payment modal
+        function closePaymentModal() {
+            paymentModal.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Copy UPI ID to clipboard
+        function copyUpiId() {
+            const textarea = document.createElement('textarea');
+            textarea.value = upiId.textContent;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            
+            // Show copied message
+            copiedMessage.classList.add('show');
+            setTimeout(() => {
+                copiedMessage.classList.remove('show');
+            }, 2000);
+        }
+        
         // Update last updated time
         function updateLastUpdated() {
             const now = new Date();
@@ -1523,10 +1738,16 @@
                 fabButtons.classList.toggle('show');
             });
             
+            // Payment interactions
+            paymentFab.addEventListener('click', showPaymentModal);
+            closePayment.addEventListener('click', closePaymentModal);
+            copyUpiBtn.addEventListener('click', copyUpiId);
+            
             // Overlay click - only close panels if click is directly on overlay
             overlay.addEventListener('click', (e) => {
                 if (e.target === overlay) {
                     closeCartPanel();
+                    closePaymentModal();
                     if (infoPanel.classList.contains('active')) {
                         toggleInfoPanel();
                     }
@@ -1536,6 +1757,11 @@
             
             // Prevent clicks inside info panel from closing it
             infoPanel.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+            
+            // Prevent clicks inside payment modal from closing it
+            paymentModal.addEventListener('click', (e) => {
                 e.stopPropagation();
             });
             
