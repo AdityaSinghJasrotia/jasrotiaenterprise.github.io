@@ -1181,7 +1181,7 @@
             <div id="minOrderNotification" style="display: none;">
                 <div class="min-order-notification">
                     <i class="fas fa-exclamation-circle"></i>
-                    <div>Minimum order value is ₹3000. Add more items to place your order.</div>
+                    <div>Minimum order value is ₹5000. Add more items to place your order.</div>
                 </div>
             </div>
             <div class="cart-total">
@@ -1580,8 +1580,8 @@
             cartTotal.textContent = `₹${total.toFixed(2)}`;
             cartSavings.textContent = `₹${savings.toFixed(2)}`;
             
-            // Show min order notification if total is below 3000
-            if (total < 3000) {
+            // Show min order notification if total is below 5000
+            if (total < 5000) {
                 minOrderNotification.style.display = 'block';
                 placeOrderBtn.disabled = true;
             } else {
@@ -1645,9 +1645,9 @@
                 total += item.price * item.quantity;
             });
             
-            // Validate minimum order value (₹3000)
-            if (total < 3000) {
-                alert('Minimum order value is ₹3000. Please add more items to your cart.');
+            // Validate minimum order value (₹5000)
+            if (total < 5000) {
+                alert('Minimum order value is ₹5000. Please add more items to your cart.');
                 return;
             }
             
