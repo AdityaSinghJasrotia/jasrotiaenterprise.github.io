@@ -12,7 +12,7 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JASROTIA ENTERPRISE - Product Ordering System</title>
+    <title>The Cute Corner - Product Ordering System</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -1264,6 +1264,102 @@
             pointer-events: none;
         }
         
+        /* Name Input Modal */
+        .name-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .name-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .name-content {
+            background: white;
+            border-radius: var(--card-radius);
+            width: 90%;
+            max-width: 400px;
+            padding: 25px;
+            text-align: center;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .name-modal.active .name-content {
+            transform: translateY(0);
+        }
+        
+        .name-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .name-header h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+        
+        .close-name {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #86868b;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .close-name:hover {
+            transform: rotate(90deg);
+        }
+        
+        .name-input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            transition: border-color 0.3s;
+        }
+        
+        .name-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+        }
+        
+        .submit-name-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            display: inline-block;
+        }
+        
+        .submit-name-btn:hover {
+            background: #0056b3;
+        }
+        
         /* Responsive adjustments */
         @media (min-width: 768px) {
             header {
@@ -1332,7 +1428,7 @@
         <div class="header-top">
             <div class="logo">
                 <i class="fas fa-store logo-icon"></i>
-                <span>JASROTIA ENTERPRISE</span>
+                <span>The Cute Corner</span>
             </div>
             <div class="cart-icon" id="cartIcon">
                 <i class="fas fa-shopping-cart"></i>
@@ -1442,7 +1538,7 @@
                 </div>
                 <div class="tile-content">
                     <p>We currently deliver within a 10km radius of Talab Tillo Bohri.</p>
-                    <p>Minimum order value is <strong>₹5000</strong> for delivery.</p>
+                    <p>Minimum order value is <strong>₹1000</strong> for delivery.</p>
                 </div>
             </div>
             
@@ -1547,7 +1643,7 @@
             </div>
             
             <div class="upi-info">
-                <p>Send payment to Jasrotia Enterprise:</p>
+                <p>Send payment to The Cute Corner:</p>
                 <div class="upi-id" id="upiId">jasrotiarajni96-3@okhdfcbank</div>
                 <button class="copy-btn" id="copyUpiBtn">
                     <i class="fas fa-copy"></i> Copy UPI ID
@@ -1558,6 +1654,25 @@
             <div class="payment-footer">
                 <p>UPI Payments | Payments via QR</p>
             </div>
+        </div>
+    </div>
+    
+    <!-- Name Input Modal -->
+    <div class="name-modal" id="nameModal">
+        <div class="name-content">
+            <div class="name-header">
+                <h2>Enter Your Name</h2>
+                <button class="close-name" id="closeName">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <p>Please provide your name for the order confirmation:</p>
+            <input type="text" class="name-input" id="nameInput" placeholder="Your Full Name" required>
+            
+            <button class="submit-name-btn" id="submitNameBtn">
+                Submit & Place Order
+            </button>
         </div>
     </div>
     
@@ -1580,7 +1695,7 @@
             <div id="minOrderNotification" style="display: none;">
                 <div class="min-order-notification">
                     <i class="fas fa-exclamation-circle"></i>
-                    <div>Minimum order value is ₹5000. Add more items to place your order.</div>
+                    <div>Minimum order value is ₹1000. Add more items to place your order.</div>
                 </div>
             </div>
             <div class="cart-total">
@@ -1646,6 +1761,10 @@
         const searchResultsInfo = document.getElementById('searchResultsInfo');
         const resultsCount = document.getElementById('resultsCount');
         const searchTerm = document.getElementById('searchTerm');
+        const nameModal = document.getElementById('nameModal');
+        const nameInput = document.getElementById('nameInput');
+        const closeName = document.getElementById('closeName');
+        const submitNameBtn = document.getElementById('submitNameBtn');
         
         // Global variables
         let products = [];
@@ -1655,6 +1774,7 @@
         let selectedAvailability = 'all';
         let productTypes = [];
         let searchQuery = '';
+        let customerName = '';
         
         // Initialize the app
         function init() {
@@ -2051,8 +2171,8 @@
             cartTotal.textContent = `₹${total.toFixed(2)}`;
             cartSavings.textContent = `₹${savings.toFixed(2)}`;
             
-            // Show min order notification if total is below 5000
-            if (total < 5000) {
+            // Show min order notification if total is below 1000
+            if (total < 1000) {
                 minOrderNotification.style.display = 'block';
                 placeOrderBtn.disabled = true;
                 payNowBtn.disabled = true;
@@ -2118,22 +2238,38 @@
                 total += item.price * item.quantity;
             });
             
-            // Validate minimum order value (₹5000)
-            if (total < 5000) {
-                alert('Minimum order value is ₹5000. Please add more items to your cart.');
+            // Validate minimum order value (₹1000)
+            if (total < 1000) {
+                alert('Minimum order value is ₹1000. Please add more items to your cart.');
                 return;
             }
             
-            // Format order message
-            let message = "🚚 *NEW ORDER TO-JASROTIA ENTERPRISE* 🚚\n\n";
-            message += "📋 *Order Details:*\n\n";
-            
+            // Show name input modal
+            nameModal.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Send WhatsApp message with customer name
+        function sendWhatsAppOrder() {
+            // Calculate total
+            let total = 0;
             let savings = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                const itemSavings = (item.mrp - item.price) * item.quantity;
+                total += itemTotal;
+                savings += itemSavings;
+            });
+            
+            // Format order message with customer name
+            let message = "🚚 *NEW ORDER TO-The Cute Corner* 🚚\n\n";
+            message += `*Customer Name:* ${customerName}\n\n`;
+            message += "📋 *Order Details:*\n\n";
             
             cart.forEach((item, index) => {
                 const itemTotal = item.price * item.quantity;
-                const itemSavings = (item.mrp - item.price) * item.quantity;
-                savings += itemSavings;
                 
                 message += `*${index + 1}. ${item.name}*\n`;
                 message += `   - Qty: ${item.quantity}\n`;
@@ -2171,9 +2307,9 @@
                 total += item.price * item.quantity;
             });
             
-            // Validate minimum order value (₹5000)
-            if (total < 5000) {
-                alert('Minimum order value is ₹5000. Please add more items to your cart.');
+            // Validate minimum order value (₹1000)
+            if (total < 1000) {
+                alert('Minimum order value is ₹1000. Please add more items to your cart.');
                 return;
             }
             
@@ -2213,6 +2349,13 @@
         // Close payment modal
         function closePaymentModal() {
             paymentModal.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Close name modal
+        function closeNameModal() {
+            nameModal.classList.remove('active');
             overlay.classList.remove('active');
             document.body.style.overflow = '';
         }
@@ -2291,11 +2434,24 @@
             closePayment.addEventListener('click', closePaymentModal);
             copyUpiBtn.addEventListener('click', copyUpiId);
             
+            // Name modal interactions
+            closeName.addEventListener('click', closeNameModal);
+            submitNameBtn.addEventListener('click', () => {
+                customerName = nameInput.value.trim();
+                if (customerName) {
+                    closeNameModal();
+                    sendWhatsAppOrder();
+                } else {
+                    alert('Please enter your name before placing the order.');
+                }
+            });
+            
             // Overlay click - only close panels if click is directly on overlay
             overlay.addEventListener('click', (e) => {
                 if (e.target === overlay) {
                     closeCartPanel();
                     closePaymentModal();
+                    closeNameModal();
                     if (infoPanel.classList.contains('active')) {
                         toggleInfoPanel();
                     }
@@ -2310,6 +2466,11 @@
             
             // Prevent clicks inside payment modal from closing it
             paymentModal.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+            
+            // Prevent clicks inside name modal from closing it
+            nameModal.addEventListener('click', (e) => {
                 e.stopPropagation();
             });
             
