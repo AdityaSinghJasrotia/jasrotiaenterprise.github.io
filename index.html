@@ -1264,8 +1264,8 @@
             pointer-events: none;
         }
         
-        /* Name Input Modal */
-        .name-modal {
+        /* Contact Details Modal */
+        .contact-modal {
             position: fixed;
             top: 0;
             left: 0;
@@ -1281,16 +1281,16 @@
             transition: all 0.3s ease;
         }
         
-        .name-modal.active {
+        .contact-modal.active {
             opacity: 1;
             visibility: visible;
         }
         
-        .name-content {
+        .contact-content {
             background: white;
             border-radius: var(--card-radius);
             width: 90%;
-            max-width: 400px;
+            max-width: 500px;
             padding: 25px;
             text-align: center;
             transform: translateY(20px);
@@ -1298,23 +1298,23 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
         
-        .name-modal.active .name-content {
+        .contact-modal.active .contact-content {
             transform: translateY(0);
         }
         
-        .name-header {
+        .contact-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
         
-        .name-header h2 {
+        .contact-header h2 {
             color: var(--primary);
             font-size: 1.5rem;
         }
         
-        .close-name {
+        .close-contact {
             background: none;
             border: none;
             font-size: 1.5rem;
@@ -1323,27 +1323,45 @@
             transition: transform 0.3s ease;
         }
         
-        .close-name:hover {
+        .close-contact:hover {
             transform: rotate(90deg);
         }
         
-        .name-input {
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .contact-input {
             width: 100%;
             padding: 15px;
             border: 1px solid var(--border);
             border-radius: 10px;
             font-size: 1rem;
-            margin-bottom: 20px;
             transition: border-color 0.3s;
         }
         
-        .name-input:focus {
+        .contact-input:focus {
             border-color: var(--primary);
             outline: none;
             box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
         }
         
-        .submit-name-btn {
+        .location-hint {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+            display: block;
+        }
+        
+        .submit-contact-btn {
             background: var(--primary);
             color: white;
             border: none;
@@ -1354,9 +1372,11 @@
             cursor: pointer;
             transition: background 0.2s ease;
             display: inline-block;
+            width: 100%;
+            margin-top: 10px;
         }
         
-        .submit-name-btn:hover {
+        .submit-contact-btn:hover {
             background: #0056b3;
         }
         
@@ -1657,20 +1677,35 @@
         </div>
     </div>
     
-    <!-- Name Input Modal -->
-    <div class="name-modal" id="nameModal">
-        <div class="name-content">
-            <div class="name-header">
-                <h2>Enter Your Name</h2>
-                <button class="close-name" id="closeName">
+    <!-- Contact Details Modal -->
+    <div class="contact-modal" id="contactModal">
+        <div class="contact-content">
+            <div class="contact-header">
+                <h2>Enter Your Details</h2>
+                <button class="close-contact" id="closeContact">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
-            <p>Please provide your name for the order confirmation:</p>
-            <input type="text" class="name-input" id="nameInput" placeholder="Your Full Name" required>
+            <p>Please provide your details for order confirmation:</p>
             
-            <button class="submit-name-btn" id="submitNameBtn">
+            <div class="form-group">
+                <label for="customerName">Full Name</label>
+                <input type="text" class="contact-input" id="customerName" placeholder="Your Full Name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="customerPhone">Contact Number</label>
+                <input type="tel" class="contact-input" id="customerPhone" placeholder="Your Contact Number" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="locationCoords">Location (Paste GPS Coordinates)</label>
+                <input type="text" class="contact-input" id="locationCoords" placeholder="e.g., 32.12345, 74.56789" required>
+                <span class="location-hint">Copy coordinates from Google Maps and paste here</span>
+            </div>
+            
+            <button class="submit-contact-btn" id="submitContactBtn">
                 Submit & Place Order
             </button>
         </div>
@@ -1761,10 +1796,12 @@
         const searchResultsInfo = document.getElementById('searchResultsInfo');
         const resultsCount = document.getElementById('resultsCount');
         const searchTerm = document.getElementById('searchTerm');
-        const nameModal = document.getElementById('nameModal');
-        const nameInput = document.getElementById('nameInput');
-        const closeName = document.getElementById('closeName');
-        const submitNameBtn = document.getElementById('submitNameBtn');
+        const contactModal = document.getElementById('contactModal');
+        const customerNameInput = document.getElementById('customerName');
+        const customerPhoneInput = document.getElementById('customerPhone');
+        const locationCoordsInput = document.getElementById('locationCoords');
+        const closeContact = document.getElementById('closeContact');
+        const submitContactBtn = document.getElementById('submitContactBtn');
         
         // Global variables
         let products = [];
@@ -1774,7 +1811,6 @@
         let selectedAvailability = 'all';
         let productTypes = [];
         let searchQuery = '';
-        let customerName = '';
         
         // Initialize the app
         function init() {
@@ -2244,14 +2280,30 @@
                 return;
             }
             
-            // Show name input modal
-            nameModal.classList.add('active');
+            // Show contact details modal
+            contactModal.classList.add('active');
             overlay.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
         
-        // Send WhatsApp message with customer name
+        // Send WhatsApp message with customer details
         function sendWhatsAppOrder() {
+            const customerName = customerNameInput.value.trim();
+            const customerPhone = customerPhoneInput.value.trim();
+            const locationCoords = locationCoordsInput.value.trim();
+            
+            // Validate inputs
+            if (!customerName || !customerPhone || !locationCoords) {
+                alert('Please fill all fields before placing your order.');
+                return;
+            }
+            
+            // Validate coordinates format
+            if (!/^-?\d+\.\d+,\s*-?\d+\.\d+$/.test(locationCoords)) {
+                alert('Please enter GPS coordinates in the format: 32.12345, 74.56789');
+                return;
+            }
+            
             // Calculate total
             let total = 0;
             let savings = 0;
@@ -2263,9 +2315,11 @@
                 savings += itemSavings;
             });
             
-            // Format order message with customer name
-            let message = "🚚 *NEW ORDER TO-The Cute Corner* 🚚\n\n";
-            message += `*Customer Name:* ${customerName}\n\n`;
+            // Format order message with customer details
+            let message = "🚚 *The Cute Corner* 🚚\n\n";
+            message += `*Customer Name:* ${customerName}\n`;
+            message += `*Contact Number:* ${customerPhone}\n`;
+            message += `*Location:* https://www.google.com/maps?q=${encodeURIComponent(locationCoords)}\n\n`;
             message += "📋 *Order Details:*\n\n";
             
             cart.forEach((item, index) => {
@@ -2353,9 +2407,9 @@
             document.body.style.overflow = '';
         }
         
-        // Close name modal
-        function closeNameModal() {
-            nameModal.classList.remove('active');
+        // Close contact modal
+        function closeContactModal() {
+            contactModal.classList.remove('active');
             overlay.classList.remove('active');
             document.body.style.overflow = '';
         }
@@ -2434,24 +2488,16 @@
             closePayment.addEventListener('click', closePaymentModal);
             copyUpiBtn.addEventListener('click', copyUpiId);
             
-            // Name modal interactions
-            closeName.addEventListener('click', closeNameModal);
-            submitNameBtn.addEventListener('click', () => {
-                customerName = nameInput.value.trim();
-                if (customerName) {
-                    closeNameModal();
-                    sendWhatsAppOrder();
-                } else {
-                    alert('Please enter your name before placing the order.');
-                }
-            });
+            // Contact modal interactions
+            closeContact.addEventListener('click', closeContactModal);
+            submitContactBtn.addEventListener('click', sendWhatsAppOrder);
             
             // Overlay click - only close panels if click is directly on overlay
             overlay.addEventListener('click', (e) => {
                 if (e.target === overlay) {
                     closeCartPanel();
                     closePaymentModal();
-                    closeNameModal();
+                    closeContactModal();
                     if (infoPanel.classList.contains('active')) {
                         toggleInfoPanel();
                     }
@@ -2469,8 +2515,8 @@
                 e.stopPropagation();
             });
             
-            // Prevent clicks inside name modal from closing it
-            nameModal.addEventListener('click', (e) => {
+            // Prevent clicks inside contact modal from closing it
+            contactModal.addEventListener('click', (e) => {
                 e.stopPropagation();
             });
             
