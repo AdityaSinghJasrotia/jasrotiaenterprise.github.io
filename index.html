@@ -722,7 +722,7 @@
         }
         
         .cart-header {
-            padding: 20px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -744,13 +744,14 @@
         
         .cart-items {
             flex: 1;
-            padding: 20px;
+            padding: 10px 15px;
             overflow-y: auto;
         }
         
+        /* Updated cart item styling for compact size */
         .cart-item {
             display: flex;
-            padding: 15px 0;
+            padding: 10px 0;
             border-bottom: 1px solid var(--border);
             transition: background 0.3s ease;
         }
@@ -760,17 +761,18 @@
         }
         
         .cart-item-image {
-            width: 70px;
-            height: 70px;
+            width: 60px;
+            height: 60px;
             background: var(--secondary);
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 15px;
+            margin-right: 12px;
             color: #ccc;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             overflow: hidden;
+            flex-shrink: 0;
         }
         
         .cart-item-image img {
@@ -781,18 +783,27 @@
         
         .cart-item-details {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         
         .cart-item-name {
             font-weight: 500;
-            margin-bottom: 5px;
-            font-size: 0.95rem;
+            margin-bottom: 3px;
+            font-size: 0.9rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            max-height: 2.4em;
         }
         
         .cart-item-price {
             color: var(--success);
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-size: 0.9rem;
         }
         
@@ -802,12 +813,12 @@
         }
         
         .quantity-btn {
-            width: 30px;
-            height: 30px;
+            width: 28px;
+            height: 28px;
             background: var(--secondary);
             border: 1px solid var(--border);
             border-radius: 6px;
-            font-size: 1rem;
+            font-size: 0.9rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -821,18 +832,19 @@
         }
         
         .quantity-display {
-            width: 40px;
+            width: 35px;
             text-align: center;
             font-weight: 500;
+            font-size: 0.9rem;
         }
         
         .remove-item {
-            margin-left: 15px;
+            margin-left: 12px;
             color: var(--danger);
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 1.1rem;
+            font-size: 1rem;
             transition: transform 0.3s ease;
         }
         
@@ -841,7 +853,7 @@
         }
         
         .cart-footer {
-            padding: 20px;
+            padding: 15px;
             border-top: 1px solid var(--border);
             background: white;
         }
@@ -851,7 +863,7 @@
             justify-content: space-between;
             font-size: 1.2rem;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         
         .cart-savings {
@@ -859,13 +871,13 @@
             justify-content: space-between;
             font-size: 1rem;
             color: var(--success);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
-        /* NEW: Cart buttons container */
+        /* Cart buttons container */
         .cart-buttons {
             display: flex;
-            gap: 15px;
+            gap: 12px;
         }
         
         .place-order-btn {
@@ -873,9 +885,9 @@
             background: var(--success);
             color: white;
             border: none;
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 1.1rem;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
             transition: background 0.2s ease;
@@ -908,23 +920,23 @@
         }
         
         .place-order-btn i {
-            margin-right: 10px;
-            font-size: 1.2rem;
+            margin-right: 8px;
+            font-size: 1.1rem;
         }
         
         .place-order-btn:hover:not(:disabled) {
             background: #218838;
         }
         
-        /* NEW: Pay Now button */
+        /* Pay Now button */
         .pay-now-btn {
             flex: 1;
             background: #9c27b0;
             color: white;
             border: none;
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 1.1rem;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
             transition: background 0.2s ease;
@@ -957,8 +969,8 @@
         }
         
         .pay-now-btn i {
-            margin-right: 10px;
-            font-size: 1.2rem;
+            margin-right: 8px;
+            font-size: 1.1rem;
         }
         
         .pay-now-btn:hover:not(:disabled) {
@@ -1202,12 +1214,12 @@
         .min-order-notification {
             background: #fff8e1;
             border-left: 4px solid var(--warning);
-            padding: 15px;
-            margin: 15px 0;
+            padding: 12px;
+            margin: 12px 0;
             border-radius: 0 8px 8px 0;
             display: flex;
             align-items: center;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             animation: slideInLeft 0.5s ease;
         }
         
@@ -1219,7 +1231,7 @@
         .min-order-notification i {
             color: var(--warning);
             margin-right: 10px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
         
         /* Search Results Info */
@@ -1240,18 +1252,18 @@
             transform: translateX(-50%);
             background: var(--success);
             color: white;
-            padding: 15px 25px;
+            padding: 12px 20px;
             border-radius: 30px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             z-index: 1000;
             transition: bottom 0.3s ease;
         }
         
         .cart-notification.show {
-            bottom: 20px;
+            bottom: 15px;
         }
         
         /* Confetti Effect */
@@ -1341,9 +1353,9 @@
         
         .contact-input {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             border: 1px solid var(--border);
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.3s;
         }
@@ -1354,20 +1366,13 @@
             box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
         }
         
-        .location-hint {
-            font-size: 0.85rem;
-            color: #666;
-            margin-top: 5px;
-            display: block;
-        }
-        
         .submit-contact-btn {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 1.1rem;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
             transition: background 0.2s ease;
@@ -1424,20 +1429,62 @@
                 font-size: 0.95rem;
             }
             
-            /* NEW: Stack buttons on small screens */
+            /* Stack buttons on small screens */
             .cart-buttons {
                 flex-direction: column;
             }
             
+            /* Further optimize cart items for mobile */
             .cart-item {
-                flex-direction: column;
+                padding: 8px 0;
             }
             
             .cart-item-image {
-                width: 100%;
-                height: 120px;
-                margin-right: 0;
-                margin-bottom: 10px;
+                width: 50px;
+                height: 50px;
+                margin-right: 10px;
+            }
+            
+            .cart-item-name {
+                font-size: 0.85rem;
+            }
+            
+            .cart-item-price {
+                font-size: 0.85rem;
+                margin-bottom: 5px;
+            }
+            
+            .cart-item-actions {
+                margin-top: 3px;
+            }
+            
+            .quantity-btn {
+                width: 25px;
+                height: 25px;
+                font-size: 0.8rem;
+            }
+            
+            .quantity-display {
+                width: 30px;
+                font-size: 0.85rem;
+            }
+            
+            .remove-item {
+                margin-left: 8px;
+                font-size: 0.9rem;
+            }
+            
+            .cart-footer {
+                padding: 12px;
+            }
+            
+            .cart-total {
+                font-size: 1.1rem;
+            }
+            
+            .cart-savings {
+                font-size: 0.9rem;
+                margin-bottom: 12px;
             }
         }
     </style>
@@ -1699,12 +1746,6 @@
                 <input type="tel" class="contact-input" id="customerPhone" placeholder="Your Contact Number" required>
             </div>
             
-            <div class="form-group">
-                <label for="locationCoords">Location (Paste GPS Coordinates)</label>
-                <input type="text" class="contact-input" id="locationCoords" placeholder="e.g., 32.12345, 74.56789" required>
-                <span class="location-hint">Copy coordinates from Google Maps and paste here</span>
-            </div>
-            
             <button class="submit-contact-btn" id="submitContactBtn">
                 Submit & Place Order
             </button>
@@ -1741,7 +1782,7 @@
                 <span>You Save:</span>
                 <span id="cartSavings">₹0.00</span>
             </div>
-            <!-- NEW: Cart buttons container with Pay Now button -->
+            <!-- Cart buttons container with Pay Now button -->
             <div class="cart-buttons">
                 <button class="place-order-btn" id="placeOrderBtn">
                     <i class="fab fa-whatsapp"></i>
@@ -1799,7 +1840,6 @@
         const contactModal = document.getElementById('contactModal');
         const customerNameInput = document.getElementById('customerName');
         const customerPhoneInput = document.getElementById('customerPhone');
-        const locationCoordsInput = document.getElementById('locationCoords');
         const closeContact = document.getElementById('closeContact');
         const submitContactBtn = document.getElementById('submitContactBtn');
         
@@ -2290,17 +2330,10 @@
         function sendWhatsAppOrder() {
             const customerName = customerNameInput.value.trim();
             const customerPhone = customerPhoneInput.value.trim();
-            const locationCoords = locationCoordsInput.value.trim();
             
             // Validate inputs
-            if (!customerName || !customerPhone || !locationCoords) {
+            if (!customerName || !customerPhone) {
                 alert('Please fill all fields before placing your order.');
-                return;
-            }
-            
-            // Validate coordinates format
-            if (!/^-?\d+\.\d+,\s*-?\d+\.\d+$/.test(locationCoords)) {
-                alert('Please enter GPS coordinates in the format: 32.12345, 74.56789');
                 return;
             }
             
@@ -2318,8 +2351,7 @@
             // Format order message with customer details
             let message = "🚚 *The Cute Corner* 🚚\n\n";
             message += `*Customer Name:* ${customerName}\n`;
-            message += `*Contact Number:* ${customerPhone}\n`;
-            message += `*Location:* https://www.google.com/maps?q=${encodeURIComponent(locationCoords)}\n\n`;
+            message += `*Contact Number:* ${customerPhone}\n\n`;
             message += "📋 *Order Details:*\n\n";
             
             cart.forEach((item, index) => {
