@@ -1787,9 +1787,9 @@
                 <button class="fab-button payment" title="Payment Info" id="paymentFab">
                     <i class="fas fa-qrcode"></i>
                 </button>
-                <button class="fab-button admin" title="Admin Tools" id="adminFab">
+                <a href="tools.html" class="fab-button admin" title="Admin Tools" id="adminFab" target="_blank">
                     <i class="fas fa-tools"></i>
-                </button>
+                </a>
             </div>
             <div class="fab-main" id="fabMain">
                 <i class="fas fa-plus"></i>
@@ -2643,11 +2643,6 @@
             lastUpdated.textContent = `Last updated: ${now.toLocaleTimeString()}`;
         }
         
-        // Admin tools placeholder
-        function showAdminTools() {
-            alert('Admin tools would open here. This is a placeholder function.');
-        }
-        
         // Setup event listeners
         function setupEventListeners() {
             // Brand filter buttons
@@ -2699,9 +2694,6 @@
             paymentFab.addEventListener('click', showPaymentModal);
             closePayment.addEventListener('click', closePaymentModal);
             copyUpiBtn.addEventListener('click', copyUpiId);
-            
-            // Admin tools
-            adminFab.addEventListener('click', showAdminTools);
             
             // Contact modal interactions
             closeContact.addEventListener('click', closeContactModal);
