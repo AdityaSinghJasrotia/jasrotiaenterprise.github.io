@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Cute Corner - Money Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #0066cc;
+            --secondary: #f5f5f7;
+            --success: #28a745;
+            --danger: #dc3545;
+            --light: #ffffff;
+            --card-radius: 12px;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1e5799 0%, #207cca 100%);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+        
+        @keyframes fadeInDown {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .logo-icon {
+            font-size: 2rem;
+            color: #ff6b6b;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--card-radius);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .panel-title {
+            color: var(--primary);
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .panel-title i {
+            font-size: 1.2rem;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .denomination {
+            width: 70px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1rem;
+        }
+        
+        .input-field {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            text-align: right;
+            background: #f9f9f9;
+        }
+        
+        .input-field:focus {
+            border-color: var(--primary);
+            outline: none;
+            background: #fff;
+        }
+        
+        .total-section {
+            background: var(--primary);
+            color: white;
+            border-radius: var(--card-radius);
+            padding: 15px;
+            text-align: center;
+            margin-top: 20px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .total-label {
+            font-size: 1rem;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .total-amount {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-calculate {
+            background: var(--success);
+            color: white;
+        }
+        
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+        }
+        
+        .btn-reset {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: var(--card-radius);
+            padding: 20px;
+            margin-top: 20px;
+            backdrop-filter: blur(5px);
+            font-size: 0.9rem;
+        }
+        
+        .instructions h3 {
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .instructions ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .contact-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            min-width: 160px;
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s;
+        }
+        
+        .contact-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .contact-card i {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .contact-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+        
+        .contact-phone {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 25px;
+            padding: 15px;
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+        
+        /* Mobile-specific optimizations */
+        @media (max-width: 480px) {
+            .card {
+                padding: 15px;
+            }
+            
+            .panel-title {
+                font-size: 1.3rem;
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+            }
+            
+            .input-field {
+                padding: 10px 12px;
+                font-size: 0.95rem;
+            }
+            
+            .denomination {
+                width: 60px;
+                font-size: 0.95rem;
+            }
+            
+            .total-amount {
+                font-size: 1.8rem;
+            }
+            
+            .btn {
+                padding: 12px;
+                font-size: 0.95rem;
+            }
+        }
+        
+        /* Input number styling for mobile */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        /* Focus animation */
+        .input-field:focus {
+            animation: inputFocus 0.4s ease;
+        }
+        
+        @keyframes inputFocus {
+            0% { box-shadow: 0 0 0 0 rgba(0, 102, 204, 0.2); }
+            100% { box-shadow: 0 0 0 6px rgba(0, 102, 204, 0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-calculator logo-icon"></i>
+                <h1>Money Calculator</h1>
+            </div>
+            <p class="subtitle">Calculate cash amounts and send to The Cute Corner</p>
+        </header>
+        
+        <div class="card">
+            <h2 class="panel-title"><i class="fas fa-money-bill-wave"></i> Cash Breakdown</h2>
+            
+            <div class="input-group">
+                <div class="denomination">₹500</div>
+                <input type="number" class="input-field" id="note500" placeholder="Qty" min="0">
+            </div>
+            
+            <div class="input-group">
+                <div class="denomination">₹200</div>
+                <input type="number" class="input-field" id="note200" placeholder="Qty" min="0">
+            </div>
+            
+            <div class="input-group">
+                <div class="denomination">₹100</div>
+                <input type="number" class="input-field" id="note100" placeholder="Qty" min="0">
+            </div>
+            
+            <div class="input-group">
+                <div class="denomination">₹50</div>
+                <input type="number" class="input-field" id="note50" placeholder="Qty" min="0">
+            </div>
+            
+            <div class="input-group">
+                <div class="denomination">₹20</div>
+                <input type="number" class="input-field" id="note20" placeholder="Qty" min="0">
+            </div>
+            
+            <div class="input-group">
+                <div class="denomination">₹10</div>
+                <input type="number" class="input-field" id="note10" placeholder="Qty" min="0">
+            </div>
+            
+            <div class="input-group">
+                <div class="denomination">₹5</div>
+                <input type="number" class="input-field" id="note5" placeholder="Qty" min="0">
+            </div>
+            
+            <div class="input-group">
+                <div class="denomination">₹2</div>
+                <input type="number" class="input-field" id="note2" placeholder="Qty" min="0">
+            </div>
+            
+            <div class="input-group">
+                <div class="denomination">₹1</div>
+                <input type="number" class="input-field" id="note1" placeholder="Qty" min="0">
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-calculate" id="calculateBtn">
+                    <i class="fas fa-calculator"></i> Calculate Total
+                </button>
+                <button class="btn btn-reset" id="resetBtn">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2 class="panel-title"><i class="fas fa-file-invoice-dollar"></i> Total Amount</h2>
+            
+            <div class="total-section">
+                <span class="total-label">Total Cash</span>
+                <div class="total-amount" id="totalAmount">₹0</div>
+            </div>
+            
+            <div class="input-group" style="margin-top: 20px;">
+                <div class="denomination">Contact</div>
+                <input type="text" class="input-field" id="contactNumber" placeholder="Contact number" value="+919596658921">
+            </div>
+            
+            <button class="btn btn-whatsapp" id="whatsappBtn" style="margin-top: 20px;">
+                <i class="fab fa-whatsapp"></i> Send via WhatsApp
+            </button>
+        </div>
+        
+        <div class="instructions">
+            <h3><i class="fas fa-info-circle"></i> How to Use</h3>
+            <ul>
+                <li>Enter quantity for each denomination</li>
+                <li>Tap Calculate to see total amount</li>
+                <li>Verify contact number</li>
+                <li>Send via WhatsApp with breakdown</li>
+            </ul>
+            
+            <div class="contact-info">
+                <div class="contact-card">
+                    <i class="fas fa-store"></i>
+                    <div class="contact-name">The Cute Corner</div>
+                    <div class="contact-phone">+91 9596658921</div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 The Cute Corner | Distribution Tools</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get DOM elements
+            const calculateBtn = document.getElementById('calculateBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const whatsappBtn = document.getElementById('whatsappBtn');
+            const totalAmount = document.getElementById('totalAmount');
+            const contactNumber = document.getElementById('contactNumber');
+            
+            // Denominations
+            const denominations = [500, 200, 100, 50, 20, 10, 5, 2, 1];
+            
+            // Calculate total function
+            function calculateTotal() {
+                let total = 0;
+                
+                denominations.forEach(denom => {
+                    const input = document.getElementById(`note${denom}`);
+                    const quantity = parseInt(input.value) || 0;
+                    total += quantity * denom;
+                    
+                    // Add animation effect when value changes
+                    if (quantity > 0) {
+                        input.style.backgroundColor = '#e8f5e9';
+                        setTimeout(() => {
+                            input.style.backgroundColor = '#f9f9f9';
+                        }, 500);
+                    }
+                });
+                
+                // Format with Indian Rupee symbol and commas
+                totalAmount.textContent = `₹${total.toLocaleString('en-IN')}`;
+                
+                // Add animation effect
+                totalAmount.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    totalAmount.style.transform = 'scale(1)';
+                }, 300);
+            }
+            
+            // Reset all fields
+            function resetCalculator() {
+                denominations.forEach(denom => {
+                    const input = document.getElementById(`note${denom}`);
+                    input.value = '';
+                    input.style.backgroundColor = '#f9f9f9';
+                });
+                totalAmount.textContent = '₹0';
+                contactNumber.value = '+919596658921';
+                
+                // Add animation to reset
+                totalAmount.style.color = '#dc3545';
+                setTimeout(() => {
+                    totalAmount.style.color = 'white';
+                }, 500);
+            }
+            
+            // Send via WhatsApp
+            function sendWhatsApp() {
+                let message = "💰 *CASH COLLECTION REPORT* 💰\n\n";
+                message += "**The Cute Corner - Distribution**\n\n";
+                message += "**Cash Breakdown:**\n";
+                
+                let total = 0;
+                let hasValues = false;
+                
+                // Build breakdown message
+                denominations.forEach(denom => {
+                    const quantity = parseInt(document.getElementById(`note${denom}`).value) || 0;
+                    if (quantity > 0) {
+                        const amount = quantity * denom;
+                        total += amount;
+                        message += `- ₹${denom} × ${quantity} = ₹${amount.toLocaleString('en-IN')}\n`;
+                        hasValues = true;
+                    }
+                });
+                
+                if (!hasValues) {
+                    alert('Please enter at least one denomination before sending.');
+                    return;
+                }
+                
+                message += `\n**TOTAL: ₹${total.toLocaleString('en-IN')}**\n\n`;
+                message += "_Sent via Money Calculator Tool_";
+                
+                // Get contact number
+                const phone = contactNumber.value.replace(/\D/g, ''); // Remove non-digit characters
+                
+                // Encode message for URL
+                const encodedMessage = encodeURIComponent(message);
+                
+                // Open WhatsApp
+                window.open(`https://wa.me/${phone}?text=${encodedMessage}`, '_blank');
+            }
+            
+            // Event listeners
+            calculateBtn.addEventListener('click', calculateTotal);
+            resetBtn.addEventListener('click', resetCalculator);
+            whatsappBtn.addEventListener('click', sendWhatsApp);
+            
+            // Add auto-calculation on input change
+            denominations.forEach(denom => {
+                const input = document.getElementById(`note${denom}`);
+                input.addEventListener('input', calculateTotal);
+                
+                // Add clear button functionality on mobile
+                input.addEventListener('focus', function() {
+                    this.select();
+                });
+            });
+            
+            // Add animation to buttons
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('mousedown', () => {
+                    btn.style.transform = 'scale(0.98)';
+                });
+                btn.addEventListener('mouseup', () => {
+                    btn.style.transform = '';
+                });
+                btn.addEventListener('mouseleave', () => {
+                    btn.style.transform = '';
+                });
+                
+                // Touch feedback for mobile
+                btn.addEventListener('touchstart', () => {
+                    btn.style.transform = 'scale(0.98)';
+                });
+                btn.addEventListener('touchend', () => {
+                    btn.style.transform = '';
+                });
+            });
+            
+            // Initialize with calculation
+            calculateTotal();
+        });
+    </script>
+</body>
+</html>
