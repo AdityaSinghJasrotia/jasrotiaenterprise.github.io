@@ -7,7 +7,6 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-    
       gtag('config', 'G-F0JZK618J3');
     </script>
     <meta charset="UTF-8">
@@ -322,6 +321,37 @@
             50% { opacity: 0.7; }
         }
         
+        .low-stock {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--warning);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            z-index: 2;
+            animation: pulseWarning 1.5s infinite;
+        }
+        
+        @keyframes pulseWarning {
+            0% { box-shadow: 0 0 0 0 rgba(255, 149, 0, 0.7); }
+            70% { box-shadow: 0 0 0 5px rgba(255, 149, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 149, 0, 0); }
+        }
+        
+        .in-stock {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--success);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            z-index: 2;
+        }
+        
         .product-image {
             height: 120px;
             background: var(--secondary);
@@ -402,6 +432,16 @@
         .brand-amul {
             color: #ff3a2d;
             margin-right: 5px;
+        }
+        
+        .product-stock {
+            font-size: 0.7rem;
+            margin-top: 5px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1565c0;
         }
         
         .add-to-cart {
@@ -829,6 +869,16 @@
         .quantity-btn:hover {
             background: var(--primary);
             color: white;
+        }
+        
+        .quantity-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .quantity-btn:disabled:hover {
+            background: var(--secondary);
+            color: var(--text);
         }
         
         .quantity-display {
@@ -1877,10 +1927,11 @@
                     
                     // Process the data with standardized availability
                     products = parsedData.map(row => {
-                        // Handle availability with case insensitivity
-                        const availability = row.Availability ? 
-                            row.Availability.trim().toUpperCase() === 'IN STOCK' ? 'IN STOCK' : 'OUT OF STOCK' 
-                            : 'OUT OF STOCK';
+                        // Handle ROB (Remaining on Hand) quantity
+                        const rob = parseInt(row.ROB) || 0;
+                        
+                        // Handle availability based on ROB
+                        const availability = rob > 0 ? "IN STOCK" : "OUT OF STOCK";
                         
                         // Process base64 image URLs
                         let imageUrl = row.urls || '';
@@ -1897,6 +1948,7 @@
                             brand: row.Brand,
                             type: row.Type,
                             availability: availability,
+                            rob: rob,
                             imageUrl: imageUrl,
                             drp: parseFloat(row.DRP) || 0,
                             mrp: parseFloat(row.MRP) || 0,
@@ -2013,8 +2065,8 @@
                 const brandMatch = selectedBrand === 'all' || product.brand === selectedBrand;
                 const typeMatch = selectedType === 'all' || product.type === selectedType;
                 const availabilityMatch = selectedAvailability === 'all' || 
-                    (selectedAvailability === 'In Stock' && product.availability === 'IN STOCK') ||
-                    (selectedAvailability === 'Out of Stock' && product.availability === 'OUT OF STOCK');
+                    (selectedAvailability === 'In Stock' && product.rob > 0) ||
+                    (selectedAvailability === 'Out of Stock' && product.rob <= 0);
                 
                 // Filter by search query
                 const searchMatch = searchQuery === '' || 
@@ -2049,12 +2101,18 @@
             const fragment = document.createDocumentFragment();
             
             filteredProducts.forEach(product => {
-                const isOutOfStock = product.availability === 'OUT OF STOCK';
+                const isOutOfStock = product.rob <= 0;
+                const isLowStock = product.rob > 0 && product.rob <= 10;
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 
+                // Add stock badge based on ROB
                 if (isOutOfStock) {
                     productCard.innerHTML += `<div class="out-of-stock">OUT OF STOCK</div>`;
+                } else if (isLowStock) {
+                    productCard.innerHTML += `<div class="low-stock">LOW STOCK</div>`;
+                } else {
+                    productCard.innerHTML += `<div class="in-stock">IN STOCK</div>`;
                 }
                 
                 // Handle image display - use base64 if available
@@ -2074,6 +2132,14 @@
                     }
                 }
                 
+                // Determine button text based on stock
+                let buttonText = 'Add to Cart';
+                if (isOutOfStock) {
+                    buttonText = 'Out of Stock';
+                } else if (isLowStock) {
+                    buttonText = `Add to Cart (${product.rob} left)`;
+                }
+                
                 productCard.innerHTML += `
                     <div class="product-image">
                         ${imageContent}
@@ -2091,8 +2157,11 @@
                                 : product.brand
                             } • ${product.type}
                         </div>
+                        <div class="product-stock">
+                            <i class="fas fa-box"></i> Available: ${product.rob} units
+                        </div>
                         <button class="add-to-cart" data-id="${product.id}" ${isOutOfStock ? 'disabled' : ''}>
-                            <i class="fas fa-cart-plus"></i> ${isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
+                            <i class="fas fa-cart-plus"></i> ${buttonText}
                         </button>
                     </div>
                 `;
@@ -2115,8 +2184,19 @@
             const product = products.find(p => p.id === productId);
             if (!product) return;
             
+            // Check if product has available stock
+            if (product.rob <= 0) {
+                alert('This product is out of stock!');
+                return;
+            }
+            
             const existingItem = cart.find(item => item.id === productId);
             if (existingItem) {
+                // Check if adding more exceeds available stock
+                if (existingItem.quantity >= product.rob) {
+                    alert(`Cannot add more. Only ${product.rob} units available!`);
+                    return;
+                }
                 existingItem.quantity += 1;
             } else {
                 cart.push({
@@ -2125,7 +2205,8 @@
                     price: product.drp,
                     mrp: product.mrp,
                     quantity: 1,
-                    imageUrl: product.imageUrl
+                    imageUrl: product.imageUrl,
+                    maxStock: product.rob
                 });
             }
             
@@ -2200,10 +2281,16 @@
             const fragment = document.createDocumentFragment();
             
             cart.forEach(item => {
+                const product = products.find(p => p.id === item.id);
+                if (!product) return; // Skip if product not found
+                
                 const itemTotal = item.price * item.quantity;
                 const itemSavings = (item.mrp - item.price) * item.quantity;
                 total += itemTotal;
                 savings += itemSavings;
+                
+                // Check available stock for this product
+                const remainingStock = product.rob - item.quantity;
                 
                 // Handle image display in cart
                 let imageContent = '<i class="fas fa-box"></i>';
@@ -2232,11 +2319,23 @@
                         <div class="cart-item-actions">
                             <button class="quantity-btn minus" data-id="${item.id}">-</button>
                             <div class="quantity-display">${item.quantity}</div>
-                            <button class="quantity-btn plus" data-id="${item.id}">+</button>
+                            <button class="quantity-btn plus" data-id="${item.id}" ${remainingStock <= 0 ? 'disabled' : ''}>+</button>
                             <button class="remove-item" data-id="${item.id}">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
+                        ${remainingStock <= 0 ? 
+                            `<div class="product-stock" style="margin-top: 8px; background: #ffecb3; color: #e65100;">
+                                <i class="fas fa-exclamation-triangle"></i> No more stock available
+                            </div>` : 
+                            remainingStock <= 10 ? 
+                            `<div class="product-stock" style="margin-top: 8px; background: #ffecb3; color: #e65100;">
+                                <i class="fas fa-info-circle"></i> Only ${remainingStock} left in stock
+                            </div>` : 
+                            `<div class="product-stock" style="margin-top: 8px;">
+                                <i class="fas fa-check-circle"></i> ${remainingStock} available
+                            </div>`
+                        }
                     </div>
                 `;
                 fragment.appendChild(cartItem);
@@ -2285,6 +2384,15 @@
         function updateCartItemQuantity(productId, change) {
             const item = cart.find(item => item.id === productId);
             if (!item) return;
+            
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            // Check stock before increasing quantity
+            if (change > 0 && (item.quantity + change) > product.rob) {
+                alert(`Cannot add more. Only ${product.rob - item.quantity} units available!`);
+                return;
+            }
             
             item.quantity += change;
             
