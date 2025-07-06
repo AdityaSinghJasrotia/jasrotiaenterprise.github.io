@@ -1435,6 +1435,25 @@
             background: #0056b3;
         }
         
+        /* Order confirmation */
+        .order-confirmation {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .order-confirmation i {
+            font-size: 4rem;
+            color: var(--success);
+            margin-bottom: 20px;
+            animation: pulseSuccess 1.5s infinite;
+        }
+        
+        @keyframes pulseSuccess {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
         /* Responsive adjustments */
         @media (min-width: 768px) {
             header {
@@ -1802,6 +1821,21 @@
         </div>
     </div>
     
+    <!-- Order Confirmation Modal -->
+    <div class="contact-modal" id="orderConfirmation">
+        <div class="contact-content">
+            <div class="order-confirmation">
+                <i class="fas fa-check-circle"></i>
+                <h2>Order Placed Successfully!</h2>
+                <p>Your order has been submitted to The Cute Corner</p>
+                <p>You will receive a confirmation message shortly</p>
+                <button class="submit-contact-btn" id="closeConfirmation">
+                    Continue Shopping
+                </button>
+            </div>
+        </div>
+    </div>
+    
     <!-- Cart Panel -->
     <div class="cart-panel" id="cartPanel">
         <div class="cart-header">
@@ -1853,6 +1887,9 @@
         // Google Sheets CSV URL
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS79-CSoFSxvvA5fYbrxWILnJSW7ivUFyol6IY9PMCBAFD17NfWouHtbkOX4CMl6LRkCk_v-IKpLP8x/pub?gid=78026795&single=true&output=csv';
         
+        // Google Sheets API for order submission
+        const GOOGLE_SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyO29ANPfKiPtyrw-yKpjK7_RUR5b1uU32VlWtU31ugONCDFJkmdW9BwMFwAFbJFNnY/exec';
+        
         // DOM Elements
         const productsGrid = document.getElementById('productsGrid');
         const brandFilters = document.getElementById('brandFilters');
@@ -1892,6 +1929,8 @@
         const customerPhoneInput = document.getElementById('customerPhone');
         const closeContact = document.getElementById('closeContact');
         const submitContactBtn = document.getElementById('submitContactBtn');
+        const orderConfirmation = document.getElementById('orderConfirmation');
+        const closeConfirmation = document.getElementById('closeConfirmation');
         
         // Global variables
         let products = [];
@@ -2479,13 +2518,56 @@
             // Encode message for URL
             const encodedMessage = encodeURIComponent(message);
             
+            // Submit order to Google Sheets
+            submitOrderToGoogleSheets(customerName, customerPhone);
+            
             // Open WhatsApp with the order
             window.open(`https://wa.me/919596658921?text=${encodedMessage}`, '_blank');
+            
+            // Show order confirmation
+            showOrderConfirmation();
             
             // Clear cart after order
             cart = [];
             updateCart();
-            closeCartPanel();
+        }
+        
+        // Submit order to Google Sheets
+        function submitOrderToGoogleSheets(customerName, customerPhone) {
+            // Prepare order data
+            const orderData = {
+                timestamp: new Date().toISOString(),
+                customerName: customerName,
+                customerPhone: customerPhone,
+                items: cart.map(item => ({
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity,
+                    total: (item.price * item.quantity).toFixed(2)
+                }))
+            };
+            
+            // Send data to Google Sheets
+            fetch(GOOGLE_SHEETS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderData)
+            })
+            .then(() => console.log('Order submitted to Google Sheets'))
+            .catch(error => console.error('Error submitting to Google Sheets:', error));
+        }
+        
+        // Show order confirmation
+        function showOrderConfirmation() {
+            // Close contact modal
+            contactModal.classList.remove('active');
+            
+            // Show order confirmation
+            orderConfirmation.classList.add('active');
+            overlay.classList.add('active');
         }
         
         // Pay Now functionality
@@ -2550,6 +2632,13 @@
         // Close contact modal
         function closeContactModal() {
             contactModal.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Close order confirmation
+        function closeOrderConfirmation() {
+            orderConfirmation.classList.remove('active');
             overlay.classList.remove('active');
             document.body.style.overflow = '';
         }
@@ -2632,12 +2721,16 @@
             closeContact.addEventListener('click', closeContactModal);
             submitContactBtn.addEventListener('click', sendWhatsAppOrder);
             
+            // Order confirmation interaction
+            closeConfirmation.addEventListener('click', closeOrderConfirmation);
+            
             // Overlay click - only close panels if click is directly on overlay
             overlay.addEventListener('click', (e) => {
                 if (e.target === overlay) {
                     closeCartPanel();
                     closePaymentModal();
                     closeContactModal();
+                    closeOrderConfirmation();
                     if (infoPanel.classList.contains('active')) {
                         toggleInfoPanel();
                     }
@@ -2657,6 +2750,11 @@
             
             // Prevent clicks inside contact modal from closing it
             contactModal.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+            
+            // Prevent clicks inside order confirmation from closing it
+            orderConfirmation.addEventListener('click', (e) => {
                 e.stopPropagation();
             });
             
