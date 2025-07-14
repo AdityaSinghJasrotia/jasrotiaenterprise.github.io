@@ -7,7 +7,6 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-    
       gtag('config', 'G-F0JZK618J3');
     </script>
     <meta charset="UTF-8">
@@ -16,10 +15,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #e6b400; /* Darker yellow for primary */
-            --secondary: #fff8e1; /* Light yellow for secondary */
+            --primary: #0066cc;
+            --secondary: #f5f5f7;
             --text: #1d1d1f;
-            --border: #e0d6b4; /* Adjusted border color */
+            --border: #d2d2d7;
             --success: #28a745;
             --warning: #ff9500;
             --danger: #dc3545;
@@ -37,111 +36,15 @@
         }
         
         body {
-            background-color: #fffdf5; /* Very light yellow */
+            background-color: #fafafa;
             color: var(--text);
             line-height: 1.5;
             padding-bottom: 80px;
         }
         
-        /* Password Modal Styles */
-        .password-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .password-content {
-            background: #fffdf5;
-            border-radius: var(--card-radius);
-            width: 90%;
-            max-width: 400px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            border: 2px solid var(--primary);
-        }
-        
-        .password-header {
-            margin-bottom: 25px;
-        }
-        
-        .password-header h2 {
-            color: var(--primary);
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-        }
-        
-        .password-header p {
-            color: #666;
-            font-size: 1rem;
-        }
-        
-        .password-input-container {
-            position: relative;
-            margin: 25px 0;
-        }
-        
-        .password-input {
-            width: 100%;
-            padding: 15px 20px;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-            font-size: 1.5rem;
-            letter-spacing: 10px;
-            text-align: center;
-            outline: none;
-            transition: all 0.3s ease;
-            background: #fff;
-            font-weight: bold;
-        }
-        
-        .password-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(230, 180, 0, 0.2);
-        }
-        
-        .password-error {
-            color: var(--danger);
-            margin-top: 15px;
-            font-size: 0.9rem;
-            min-height: 20px;
-        }
-        
-        .submit-password-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s ease;
-            display: inline-block;
-            width: 100%;
-            margin-top: 10px;
-        }
-        
-        .submit-password-btn:hover {
-            background: #c79900;
-        }
-        
-        .password-hint {
-            margin-top: 20px;
-            font-size: 0.85rem;
-            color: #999;
-        }
-        
         /* Header Styles with Wave Animation */
         header {
-            background: linear-gradient(90deg, #ffffff, #fff8e1, #ffffff);
+            background: linear-gradient(90deg, #ffffff, #f3f9ff, #ffffff);
             background-size: 200% 100%;
             padding: 15px 20px;
             position: sticky;
@@ -258,18 +161,17 @@
             outline: none;
             transition: all 0.3s ease;
             box-shadow: var(--shadow);
-            background: #fff;
         }
         
         .search-bar:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(230, 180, 0, 0.2);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
             animation: inputFocus 0.4s ease;
         }
         
         @keyframes inputFocus {
-            0% { box-shadow: 0 0 0 0 rgba(230, 180, 0, 0.2); }
-            100% { box-shadow: 0 0 0 8px rgba(230, 180, 0, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(0, 102, 204, 0.2); }
+            100% { box-shadow: 0 0 0 8px rgba(0, 102, 204, 0); }
         }
         
         .search-icon {
@@ -307,8 +209,6 @@
             border-radius: var(--card-radius);
             box-shadow: var(--shadow);
             animation: fadeIn 0.6s ease-out;
-            background: #fffdf5;
-            border: 1px solid var(--border);
         }
         
         @keyframes fadeIn {
@@ -380,8 +280,6 @@
             opacity: 0;
             transform: translateY(20px);
             animation: cardAppear 0.6s forwards;
-            background: #fffdf5;
-            border: 1px solid var(--border);
         }
         
         @keyframes cardAppear {
@@ -421,6 +319,37 @@
         @keyframes blink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
+        }
+        
+        .low-stock {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--warning);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            z-index: 2;
+            animation: pulseWarning 1.5s infinite;
+        }
+        
+        @keyframes pulseWarning {
+            0% { box-shadow: 0 0 0 0 rgba(255, 149, 0, 0.7); }
+            70% { box-shadow: 0 0 0 5px rgba(255, 149, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 149, 0, 0); }
+        }
+        
+        .in-stock {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--success);
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 12px;
+            z-index: 2;
         }
         
         .product-image {
@@ -505,6 +434,16 @@
             margin-right: 5px;
         }
         
+        .product-stock {
+            font-size: 0.7rem;
+            margin-top: 5px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+        
         .add-to-cart {
             width: 100%;
             background: var(--primary);
@@ -548,7 +487,7 @@
         }
         
         .add-to-cart:hover:not(:disabled) {
-            background: #c79900;
+            background: #0056b3;
         }
         
         /* Notice Panel - Improved with Tiles */
@@ -564,7 +503,6 @@
             box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
             overflow: hidden;
             transition: height 0.4s ease;
-            background: #fffdf5;
         }
         
         .info-panel.active {
@@ -615,7 +553,6 @@
             transition: transform 0.2s ease;
             border: 1px solid var(--border);
             animation: tileAppear 0.5s ease-out;
-            background: #fffdf5;
         }
         
         @keyframes tileAppear {
@@ -746,16 +683,16 @@
             opacity: 1;
         }
         
+        .fab-button.fresh {
+            background: var(--success);
+        }
+        
         .fab-button.call {
             background: var(--primary);
         }
         
         .fab-button.payment {
             background: #9c27b0;
-        }
-        
-        .fab-button.admin {
-            background: #17a2b8;
         }
         
         .fab-main {
@@ -818,7 +755,6 @@
             transition: right 0.4s ease;
             display: flex;
             flex-direction: column;
-            background: #fffdf5;
         }
         
         .cart-panel.active {
@@ -826,20 +762,18 @@
         }
         
         .cart-header {
-            padding: 20px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid var(--border);
-            background: var(--primary);
-            color: white;
         }
         
         .close-cart {
             background: none;
             border: none;
             font-size: 1.5rem;
-            color: white;
+            color: #86868b;
             cursor: pointer;
             transition: transform 0.3s ease;
         }
@@ -850,13 +784,14 @@
         
         .cart-items {
             flex: 1;
-            padding: 20px;
+            padding: 10px 15px;
             overflow-y: auto;
         }
         
+        /* Updated cart item styling for compact size */
         .cart-item {
             display: flex;
-            padding: 15px 0;
+            padding: 10px 0;
             border-bottom: 1px solid var(--border);
             transition: background 0.3s ease;
         }
@@ -866,17 +801,18 @@
         }
         
         .cart-item-image {
-            width: 70px;
-            height: 70px;
+            width: 60px;
+            height: 60px;
             background: var(--secondary);
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 15px;
+            margin-right: 12px;
             color: #ccc;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             overflow: hidden;
+            flex-shrink: 0;
         }
         
         .cart-item-image img {
@@ -887,18 +823,27 @@
         
         .cart-item-details {
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
         
         .cart-item-name {
             font-weight: 500;
-            margin-bottom: 5px;
-            font-size: 0.95rem;
+            margin-bottom: 3px;
+            font-size: 0.9rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            max-height: 2.4em;
         }
         
         .cart-item-price {
             color: var(--success);
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-size: 0.9rem;
         }
         
@@ -908,12 +853,12 @@
         }
         
         .quantity-btn {
-            width: 30px;
-            height: 30px;
+            width: 28px;
+            height: 28px;
             background: var(--secondary);
             border: 1px solid var(--border);
             border-radius: 6px;
-            font-size: 1rem;
+            font-size: 0.9rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -926,19 +871,30 @@
             color: white;
         }
         
+        .quantity-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .quantity-btn:disabled:hover {
+            background: var(--secondary);
+            color: var(--text);
+        }
+        
         .quantity-display {
-            width: 40px;
+            width: 35px;
             text-align: center;
             font-weight: 500;
+            font-size: 0.9rem;
         }
         
         .remove-item {
-            margin-left: 15px;
+            margin-left: 12px;
             color: var(--danger);
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 1.1rem;
+            font-size: 1rem;
             transition: transform 0.3s ease;
         }
         
@@ -947,10 +903,9 @@
         }
         
         .cart-footer {
-            padding: 20px;
+            padding: 15px;
             border-top: 1px solid var(--border);
             background: white;
-            background: #fffdf5;
         }
         
         .cart-total {
@@ -958,7 +913,7 @@
             justify-content: space-between;
             font-size: 1.2rem;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         
         .cart-savings {
@@ -966,13 +921,13 @@
             justify-content: space-between;
             font-size: 1rem;
             color: var(--success);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         
-        /* NEW: Cart buttons container */
+        /* Cart buttons container */
         .cart-buttons {
             display: flex;
-            gap: 15px;
+            gap: 12px;
         }
         
         .place-order-btn {
@@ -980,9 +935,9 @@
             background: var(--success);
             color: white;
             border: none;
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 1.1rem;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
             transition: background 0.2s ease;
@@ -1015,23 +970,23 @@
         }
         
         .place-order-btn i {
-            margin-right: 10px;
-            font-size: 1.2rem;
+            margin-right: 8px;
+            font-size: 1.1rem;
         }
         
         .place-order-btn:hover:not(:disabled) {
             background: #218838;
         }
         
-        /* NEW: Pay Now button */
+        /* Pay Now button */
         .pay-now-btn {
             flex: 1;
             background: #9c27b0;
             color: white;
             border: none;
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 1.1rem;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
             transition: background 0.2s ease;
@@ -1064,8 +1019,8 @@
         }
         
         .pay-now-btn i {
-            margin-right: 10px;
-            font-size: 1.2rem;
+            margin-right: 8px;
+            font-size: 1.1rem;
         }
         
         .pay-now-btn:hover:not(:disabled) {
@@ -1132,7 +1087,6 @@
             font-size: 0.85rem;
             color: #86868b;
             border-bottom: 1px solid var(--border);
-            background: #fffdf5;
         }
         
         .last-updated {
@@ -1196,7 +1150,6 @@
             transform: translateY(20px);
             transition: transform 0.3s ease;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            background: #fffdf5;
         }
         
         .payment-modal.active .payment-content {
@@ -1235,7 +1188,6 @@
             margin: 0 auto 20px;
             max-width: 250px;
             border: 1px solid var(--border);
-            background: #fff;
         }
         
         .qr-container img {
@@ -1277,7 +1229,7 @@
         }
         
         .copy-btn:hover {
-            background: #c79900;
+            background: #0056b3;
         }
         
         .copy-btn i {
@@ -1312,12 +1264,12 @@
         .min-order-notification {
             background: #fff8e1;
             border-left: 4px solid var(--warning);
-            padding: 15px;
-            margin: 15px 0;
+            padding: 12px;
+            margin: 12px 0;
             border-radius: 0 8px 8px 0;
             display: flex;
             align-items: center;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             animation: slideInLeft 0.5s ease;
         }
         
@@ -1329,7 +1281,7 @@
         .min-order-notification i {
             color: var(--warning);
             margin-right: 10px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
         
         /* Search Results Info */
@@ -1340,7 +1292,6 @@
             background: #f8f9fa;
             border-bottom: 1px solid #e9ecef;
             animation: fadeIn 0.5s ease;
-            background: #fffdf5;
         }
         
         /* Cart Notification */
@@ -1351,18 +1302,18 @@
             transform: translateX(-50%);
             background: var(--success);
             color: white;
-            padding: 15px 25px;
+            padding: 12px 20px;
             border-radius: 30px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             z-index: 1000;
             transition: bottom 0.3s ease;
         }
         
         .cart-notification.show {
-            bottom: 20px;
+            bottom: 15px;
         }
         
         /* Confetti Effect */
@@ -1407,7 +1358,6 @@
             transform: translateY(20px);
             transition: transform 0.3s ease;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            background: #fffdf5;
         }
         
         .contact-modal.active .contact-content {
@@ -1453,9 +1403,9 @@
         
         .contact-input {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             border: 1px solid var(--border);
-            border-radius: 10px;
+            border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.3s;
         }
@@ -1463,23 +1413,16 @@
         .contact-input:focus {
             border-color: var(--primary);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(230, 180, 0, 0.2);
-        }
-        
-        .location-hint {
-            font-size: 0.85rem;
-            color: #666;
-            margin-top: 5px;
-            display: block;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
         }
         
         .submit-contact-btn {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 1.1rem;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
             transition: background 0.2s ease;
@@ -1489,7 +1432,26 @@
         }
         
         .submit-contact-btn:hover {
-            background: #c79900;
+            background: #0056b3;
+        }
+        
+        /* Order confirmation */
+        .order-confirmation {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .order-confirmation i {
+            font-size: 4rem;
+            color: var(--success);
+            margin-bottom: 20px;
+            animation: pulseSuccess 1.5s infinite;
+        }
+        
+        @keyframes pulseSuccess {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
         
         /* Responsive adjustments */
@@ -1536,389 +1498,399 @@
                 font-size: 0.95rem;
             }
             
-            /* NEW: Stack buttons on small screens */
+            /* Stack buttons on small screens */
             .cart-buttons {
                 flex-direction: column;
             }
             
+            /* Further optimize cart items for mobile */
             .cart-item {
-                flex-direction: column;
+                padding: 8px 0;
             }
             
             .cart-item-image {
-                width: 100%;
-                height: 120px;
-                margin-right: 0;
-                margin-bottom: 10px;
+                width: 50px;
+                height: 50px;
+                margin-right: 10px;
+            }
+            
+            .cart-item-name {
+                font-size: 0.85rem;
+            }
+            
+            .cart-item-price {
+                font-size: 0.85rem;
+                margin-bottom: 5px;
+            }
+            
+            .cart-item-actions {
+                margin-top: 3px;
+            }
+            
+            .quantity-btn {
+                width: 25px;
+                height: 25px;
+                font-size: 0.8rem;
+            }
+            
+            .quantity-display {
+                width: 30px;
+                font-size: 0.85rem;
+            }
+            
+            .remove-item {
+                margin-left: 8px;
+                font-size: 0.9rem;
+            }
+            
+            .cart-footer {
+                padding: 12px;
+            }
+            
+            .cart-total {
+                font-size: 1.1rem;
+            }
+            
+            .cart-savings {
+                font-size: 0.9rem;
+                margin-bottom: 12px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Password Modal -->
-    <div class="password-modal" id="passwordModal">
-        <div class="password-content">
-            <div class="password-header">
-                <h2>The Cute Corner</h2>
-                <p>Wholesale Ordering System</p>
+    <!-- Header -->
+    <header>
+        <div class="header-top">
+            <div class="logo">
+                <i class="fas fa-store logo-icon"></i>
+                <span>The Cute Corner</span>
             </div>
-            <div class="password-input-container">
-                <input type="password" class="password-input" id="passwordInput" maxlength="4" placeholder="****" autocomplete="off">
+            <div class="cart-icon" id="cartIcon">
+                <i class="fas fa-shopping-cart"></i>
+                <div class="cart-count">0</div>
             </div>
-            <div class="password-error" id="passwordError"></div>
-            <button class="submit-password-btn" id="submitPasswordBtn">
-                Unlock System
+        </div>
+        
+        <!-- Search Bar -->
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" class="search-bar" id="searchBar" placeholder="Search products by name, brand or type...">
+            <button class="search-clear" id="searchClear">
+                <i class="fas fa-times"></i>
             </button>
-            <div class="password-hint">
-                <i class="fas fa-lock"></i> Password: 1234
+        </div>
+    </header>
+    
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="last-updated">
+            <i class="fas fa-sync"></i>
+            <span id="lastUpdated">Loading products...</span>
+        </div>
+        <button class="refresh-btn" id="refreshBtn">
+            <i class="fas fa-redo"></i>
+            Refresh
+        </button>
+    </div>
+    
+    <!-- Search Results Info -->
+    <div class="search-results-info" id="searchResultsInfo" style="display: none;">
+        Showing <span id="resultsCount">0</span> results for "<span id="searchTerm"></span>"
+    </div>
+    
+    <!-- Filters Section -->
+    <section class="filters">
+        <div class="filter-title">
+            <i class="fas fa-filter"></i>
+            <h2>Filter Products</h2>
+        </div>
+        
+        <h3>Brand</h3>
+        <div class="filter-group" id="brandFilters">
+            <button class="filter-btn active" data-brand="all">All Brands</button>
+            <button class="filter-btn" data-brand="AMUL">AMUL</button>
+            <button class="filter-btn" data-brand="OTHER">OTHER</button>
+        </div>
+        
+        <h3>Product Type</h3>
+        <div class="filter-group" id="typeFilters">
+            <button class="filter-btn active" data-type="all">All Types</button>
+            <!-- Product types will be added dynamically -->
+        </div>
+        
+        <h3>Availability</h3>
+        <div class="filter-group" id="availabilityFilters">
+            <button class="filter-btn active" data-availability="all">All Products</button>
+            <button class="filter-btn" data-availability="In Stock">In Stock</button>
+            <button class="filter-btn" data-availability="Out of Stock">Out of Stock</button>
+        </div>
+    </section>
+    
+    <!-- Products Grid -->
+    <section class="products-grid" id="productsGrid">
+        <div class="loading">
+            <i class="fas fa-spinner"></i>
+            <p>Loading products...</p>
+        </div>
+    </section>
+    
+    <!-- Information FAB -->
+    <div class="info-fab" id="infoFab">
+        <i class="fas fa-info"></i>
+    </div>
+    
+    <!-- Information Panel -->
+    <div class="info-panel" id="infoPanel">
+        <div class="info-header">
+            <h2>Important Information</h2>
+            <button class="close-info" id="closeInfo">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="info-content">
+            <div class="info-tile">
+                <div class="tile-header">
+                    <div class="tile-icon">
+                        <i class="fas fa-truck"></i>
+                    </div>
+                    <h3 class="tile-title">Order Processing</h3>
+                </div>
+                <div class="tile-content">
+                    <p>If you place orders through our application, you'll receive items at the specified price. However, verbal orders may incur additional charges.</p>
+                    <p>Retailers will receive the goods they ordered the next day after placing their order.</p>
+                    <div class="highlight">
+                        <i class="fas fa-clock"></i> Cut-off time: 3:00 PM daily
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-tile">
+                <div class="tile-header">
+                    <div class="tile-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3 class="tile-title">Delivery Areas</h3>
+                </div>
+                <div class="tile-content">
+                    <p>We currently deliver within a 10km radius of Talab Tillo Bohri.</p>
+                    <p>Minimum order value is <strong>₹1000</strong> for delivery.</p>
+                </div>
+            </div>
+            
+            <div class="info-tile">
+                <div class="tile-header">
+                    <div class="tile-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <h3 class="tile-title">Payment Options</h3>
+                </div>
+                <div class="tile-content">
+                    <p>We offer multiple payment methods for your convenience:</p>
+                    <ul>
+                        <li>Cash on Delivery (COD)</li>
+                        <li>UPI (PhonePe, Google Pay, Paytm)</li>
+                        <li><h3>THE CUTE CORNER</h3> jasrotiarajni96-3@okhdfcbank</li>
+                     
+                    </ul>
+                    <div class="highlight">
+                        <i class="fas fa-shield-alt"></i> All payments are secure
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-tile">
+                <div class="tile-header">
+                    <div class="tile-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <h3 class="tile-title">Returns Policy</h3>
+                </div>
+                <div class="tile-content">
+                    <p>As soon as you receive your delivery, inspect the items for any damage or incorrect ones..</p>
+                    <p>Fresh products cannot be returned unless damaged or spoiled.</p>
+                    <p>Please contact our support team for return requests.</p>
+                </div>
+            </div>
+            
+            <div class="info-tile">
+                <div class="tile-header">
+                    <div class="tile-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3 class="tile-title">Contact Support</h3>
+                </div>
+                <div class="tile-content">
+                    <p>Call <strong>+91 9596658921</strong> for order assistance</p>
+                    <p>WhatsApp us for quick response and order updates</p>
+                    <div class="highlight">
+                        <i class="fas fa-clock"></i> Support hours: 8AM - 8PM daily
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-tile">
+                <div class="tile-header">
+                    <div class="tile-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3 class="tile-title">Holiday Schedule</h3>
+                </div>
+                <div class="tile-content">
+                    <p>No deliveries on Sundays and public holidays.</p>
+                    <p>Special holiday hours during festivals will be announced in advance.</p>
+                    <p>Pre-orders are accepted for holiday periods.</p>
+                </div>
             </div>
         </div>
     </div>
     
-    <!-- Main Content (hidden until password entered) -->
-    <div id="mainContent" style="display: none;">
-        <!-- Header -->
-        <header>
-            <div class="header-top">
-                <div class="logo">
-                    <i class="fas fa-store logo-icon"></i>
-                    <span>The Cute Corner</span>
-                </div>
-                <div class="cart-icon" id="cartIcon">
-                    <i class="fas fa-shopping-cart"></i>
-                    <div class="cart-count">0</div>
-                </div>
-            </div>
-            
-            <!-- Search Bar -->
-            <div class="search-container">
-                <i class="fas fa-search search-icon"></i>
-                <input type="text" class="search-bar" id="searchBar" placeholder="Search products by name, brand or type...">
-                <button class="search-clear" id="searchClear">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        </header>
-        
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <div class="last-updated">
-                <i class="fas fa-sync"></i>
-                <span id="lastUpdated">Loading products...</span>
-            </div>
-            <button class="refresh-btn" id="refreshBtn">
-                <i class="fas fa-redo"></i>
-                Refresh
+    <!-- Floating Action Buttons -->
+    <div class="fab-container">
+        <div class="fab-buttons" id="fabButtons">
+            <a href="fresh.html" class="fab-button fresh" title="AMUL Fresh">
+                <i class="fas fa-leaf"></i>
+            </a>
+            <a href="tel:+919596658921" class="fab-button call" title="Call Jasrotia">
+                <i class="fas fa-phone"></i>
+            </a>
+            <button class="fab-button payment" title="Payment Info" id="paymentFab">
+                <i class="fas fa-qrcode"></i>
             </button>
         </div>
-        
-        <!-- Search Results Info -->
-        <div class="search-results-info" id="searchResultsInfo" style="display: none;">
-            Showing <span id="resultsCount">0</span> results for "<span id="searchTerm"></span>"
+        <div class="fab-main" id="fabMain">
+            <i class="fas fa-plus"></i>
         </div>
-        
-        <!-- Filters Section -->
-        <section class="filters">
-            <div class="filter-title">
-                <i class="fas fa-filter"></i>
-                <h2>Filter Products</h2>
-            </div>
-            
-            <h3>Brand</h3>
-            <div class="filter-group" id="brandFilters">
-                <button class="filter-btn active" data-brand="all">All Brands</button>
-                <button class="filter-btn" data-brand="AMUL">AMUL</button>
-                <button class="filter-btn" data-brand="OTHER">OTHER</button>
-            </div>
-            
-            <h3>Product Type</h3>
-            <div class="filter-group" id="typeFilters">
-                <button class="filter-btn active" data-type="all">All Types</button>
-                <!-- Product types will be added dynamically -->
-            </div>
-            
-            <h3>Availability</h3>
-            <div class="filter-group" id="availabilityFilters">
-                <button class="filter-btn active" data-availability="all">All Products</button>
-                <button class="filter-btn" data-availability="In Stock">In Stock</button>
-                <button class="filter-btn" data-availability="Out of Stock">Out of Stock</button>
-            </div>
-        </section>
-        
-        <!-- Products Grid -->
-        <section class="products-grid" id="productsGrid">
-            <div class="loading">
-                <i class="fas fa-spinner"></i>
-                <p>Loading products...</p>
-            </div>
-        </section>
-        
-        <!-- Information FAB -->
-        <div class="info-fab" id="infoFab">
-            <i class="fas fa-info"></i>
-        </div>
-        
-        <!-- Information Panel -->
-        <div class="info-panel" id="infoPanel">
-            <div class="info-header">
-                <h2>Important Information</h2>
-                <button class="close-info" id="closeInfo">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="info-content">
-                <!-- Product Statistics Tile -->
-                <div class="info-tile">
-                    <div class="tile-header">
-                        <div class="tile-icon">
-                            <i class="fas fa-chart-bar"></i>
-                        </div>
-                        <h3 class="tile-title">Product Statistics</h3>
-                    </div>
-                    <div class="tile-content">
-                        <p>Total Products: <span id="totalProducts">0</span></p>
-                        <p>In Stock: <span id="inStockProducts">0</span></p>
-                        <p>Out of Stock: <span id="outOfStockProducts">0</span></p>
-                    </div>
-                </div>
-                
-                <div class="info-tile">
-                    <div class="tile-header">
-                        <div class="tile-icon">
-                            <i class="fas fa-truck"></i>
-                        </div>
-                        <h3 class="tile-title">Order Processing</h3>
-                    </div>
-                    <div class="tile-content">
-                        <p>If you place orders through our application, you'll receive items at the specified price. However, verbal orders may incur additional charges.</p>
-                        <p>Retailers will receive the goods they ordered the next day after placing their order.</p>
-                        <div class="highlight">
-                            <i class="fas fa-clock"></i> Cut-off time: 3:00 PM daily
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="info-tile">
-                    <div class="tile-header">
-                        <div class="tile-icon">
-                            <i class="fas fa-map-marker-alt"></i>
-                        </div>
-                        <h3 class="tile-title">Delivery Areas</h3>
-                    </div>
-                    <div class="tile-content">
-                        <p>We currently deliver within a 10km radius of Talab Tillo Bohri.</p>
-                        <p>Minimum order value is <strong>₹1000</strong> for delivery.</p>
-                    </div>
-                </div>
-                
-                <div class="info-tile">
-                    <div class="tile-header">
-                        <div class="tile-icon">
-                            <i class="fas fa-credit-card"></i>
-                        </div>
-                        <h3 class="tile-title">Payment Options</h3>
-                    </div>
-                    <div class="tile-content">
-                        <p>We offer multiple payment methods for your convenience:</p>
-                        <ul>
-                            <li>Cash on Delivery (COD)</li>
-                            <li>UPI (PhonePe, Google Pay, Paytm)</li>
-                            <li><h3>THE CUTE CORNER</h3> jasrotiarajni96-3@okhdfcbank</li>
-                        </ul>
-                        <div class="highlight">
-                            <i class="fas fa-shield-alt"></i> All payments are secure
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="info-tile">
-                    <div class="tile-header">
-                        <div class="tile-icon">
-                            <i class="fas fa-exchange-alt"></i>
-                        </div>
-                        <h3 class="tile-title">Returns Policy</h3>
-                    </div>
-                    <div class="tile-content">
-                        <p>As soon as you receive your delivery, inspect the items for any damage or incorrect ones..</p>
-                        <p>Fresh products cannot be returned unless damaged or spoiled.</p>
-                        <p>Please contact our support team for return requests.</p>
-                    </div>
-                </div>
-                
-                <div class="info-tile">
-                    <div class="tile-header">
-                        <div class="tile-icon">
-                            <i class="fas fa-headset"></i>
-                        </div>
-                        <h3 class="tile-title">Contact Support</h3>
-                    </div>
-                    <div class="tile-content">
-                        <p>Call <strong>+91 9596658921</strong> for order assistance</p>
-                        <p>WhatsApp us for quick response and order updates</p>
-                        <div class="highlight">
-                            <i class="fas fa-clock"></i> Support hours: 8AM - 8PM daily
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="info-tile">
-                    <div class="tile-header">
-                        <div class="tile-icon">
-                            <i class="fas fa-calendar-alt"></i>
-                        </div>
-                        <h3 class="tile-title">Holiday Schedule</h3>
-                    </div>
-                    <div class="tile-content">
-                        <p>No deliveries on Sundays and public holidays.</p>
-                        <p>Special holiday hours during festivals will be announced in advance.</p>
-                        <p>Pre-orders are accepted for holiday periods.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Floating Action Buttons -->
-        <div class="fab-container">
-            <div class="fab-buttons" id="fabButtons">
-                <!-- Removed AMUL Fresh button -->
-                <a href="tel:+919596658921" class="fab-button call" title="Call Jasrotia">
-                    <i class="fas fa-phone"></i>
-                </a>
-                <button class="fab-button payment" title="Payment Info" id="paymentFab">
-                    <i class="fas fa-qrcode"></i>
-                </button>
-                <a href="tools.html" class="fab-button admin" title="Admin Tools" id="adminFab" target="_blank">
-                    <i class="fas fa-tools"></i>
-                </a>
-            </div>
-            <div class="fab-main" id="fabMain">
-                <i class="fas fa-plus"></i>
-            </div>
-        </div>
-        
-        <!-- Payment Modal -->
-        <div class="payment-modal" id="paymentModal">
-            <div class="payment-content">
-                <div class="payment-header">
-                    <h2>THE CUTE CORNER</h2>
-                    <button class="close-payment" id="closePayment">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <div class="qr-container">
-                    <!-- QR Code Image -->
-                    <img src="qr.png" alt="UPI QR Code" style="width: 100%; border-radius: 8px;">
-                </div>
-                
-                <div class="upi-info">
-                    <p>Send payment to The Cute Corner:</p>
-                    <div class="upi-id" id="upiId">jasrotiarajni96-3@okhdfcbank</div>
-                    <button class="copy-btn" id="copyUpiBtn">
-                        <i class="fas fa-copy"></i> Copy UPI ID
-                    </button>
-                    <div class="copied-message" id="copiedMessage">Copied!</div>
-                </div>
-                
-                <div class="payment-footer">
-                    <p>UPI Payments | Payments via QR</p>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Contact Details Modal -->
-        <div class="contact-modal" id="contactModal">
-            <div class="contact-content">
-                <div class="contact-header">
-                    <h2>Enter Your Details</h2>
-                    <button class="close-contact" id="closeContact">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                
-                <p>Please provide your details for order confirmation:</p>
-                
-                <div class="form-group">
-                    <label for="customerName">Full Name</label>
-                    <input type="text" class="contact-input" id="customerName" placeholder="Your Full Name" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="customerPhone">Contact Number</label>
-                    <input type="tel" class="contact-input" id="customerPhone" placeholder="Your Contact Number" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="locationCoords">Location (Paste GPS Coordinates)</label>
-                    <input type="text" class="contact-input" id="locationCoords" placeholder="e.g., 32.12345, 74.56789" required>
-                    <span class="location-hint">Copy coordinates from Google Maps and paste here</span>
-                </div>
-                
-                <button class="submit-contact-btn" id="submitContactBtn">
-                    Submit & Place Order
-                </button>
-            </div>
-        </div>
-        
-        <!-- Cart Panel -->
-        <div class="cart-panel" id="cartPanel">
-            <div class="cart-header">
-                <h2>Your Cart</h2>
-                <button class="close-cart" id="closeCart">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="cart-items" id="cartItems">
-                <div class="empty-state">
-                    <i class="fas fa-shopping-cart"></i>
-                    <h3>Your Cart is Empty</h3>
-                    <p>Add some products to your cart</p>
-                </div>
-            </div>
-            <div class="cart-footer">
-                <div id="minOrderNotification" style="display: none;">
-                    <div class="min-order-notification">
-                        <i class="fas fa-exclamation-circle"></i>
-                        <div>Minimum order value is ₹1000. Add more items to place your order.</div>
-                    </div>
-                </div>
-                <div class="cart-total">
-                    <span>Total:</span>
-                    <span id="cartTotal">₹0.00</span>
-                </div>
-                <div class="cart-savings">
-                    <span>You Save:</span>
-                    <span id="cartSavings">₹0.00</span>
-                </div>
-                <!-- NEW: Cart buttons container with Pay Now button -->
-                <div class="cart-buttons">
-                    <button class="place-order-btn" id="placeOrderBtn">
-                        <i class="fab fa-whatsapp"></i>
-                        Place Order
-                    </button>
-                    <button class="pay-now-btn" id="payNowBtn">
-                        <i class="fas fa-credit-card"></i>
-                        Pay Now
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Overlay -->
-        <div class="overlay" id="overlay"></div>
     </div>
+    
+    <!-- Payment Modal -->
+    <div class="payment-modal" id="paymentModal">
+        <div class="payment-content">
+            <div class="payment-header">
+                <h2>THE CUTE CORNER</h2>
+                <button class="close-payment" id="closePayment">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="qr-container">
+                <!-- QR Code Image -->
+                <img src="qr.png" alt="UPI QR Code" style="width: 100%; border-radius: 8px;">
+            </div>
+            
+            <div class="upi-info">
+                <p>Send payment to The Cute Corner:</p>
+                <div class="upi-id" id="upiId">jasrotiarajni96-3@okhdfcbank</div>
+                <button class="copy-btn" id="copyUpiBtn">
+                    <i class="fas fa-copy"></i> Copy UPI ID
+                </button>
+                <div class="copied-message" id="copiedMessage">Copied!</div>
+            </div>
+            
+            <div class="payment-footer">
+                <p>UPI Payments | Payments via QR</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Contact Details Modal -->
+    <div class="contact-modal" id="contactModal">
+        <div class="contact-content">
+            <div class="contact-header">
+                <h2>Enter Your Details</h2>
+                <button class="close-contact" id="closeContact">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <p>Please provide your details for order confirmation:</p>
+            
+            <div class="form-group">
+                <label for="customerName">Full Name</label>
+                <input type="text" class="contact-input" id="customerName" placeholder="Your Full Name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="customerPhone">Contact Number</label>
+                <input type="tel" class="contact-input" id="customerPhone" placeholder="Your Contact Number" required>
+            </div>
+            
+            <button class="submit-contact-btn" id="submitContactBtn">
+                Submit & Place Order
+            </button>
+        </div>
+    </div>
+    
+    <!-- Order Confirmation Modal -->
+    <div class="contact-modal" id="orderConfirmation">
+        <div class="contact-content">
+            <div class="order-confirmation">
+                <i class="fas fa-check-circle"></i>
+                <h2>Order Placed Successfully!</h2>
+                <p>Your order has been submitted to The Cute Corner</p>
+                <p>You will receive a confirmation message shortly</p>
+                <button class="submit-contact-btn" id="closeConfirmation">
+                    Continue Shopping
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Cart Panel -->
+    <div class="cart-panel" id="cartPanel">
+        <div class="cart-header">
+            <h2>Your Cart</h2>
+            <button class="close-cart" id="closeCart">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="empty-state">
+                <i class="fas fa-shopping-cart"></i>
+                <h3>Your Cart is Empty</h3>
+                <p>Add some products to your cart</p>
+            </div>
+        </div>
+        <div class="cart-footer">
+            <div id="minOrderNotification" style="display: none;">
+                <div class="min-order-notification">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <div>Minimum order value is ₹1000. Add more items to place your order.</div>
+                </div>
+            </div>
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotal">₹0.00</span>
+            </div>
+            <div class="cart-savings">
+                <span>You Save:</span>
+                <span id="cartSavings">₹0.00</span>
+            </div>
+            <!-- Cart buttons container with Pay Now button -->
+            <div class="cart-buttons">
+                <button class="place-order-btn" id="placeOrderBtn">
+                    <i class="fab fa-whatsapp"></i>
+                    Place Order
+                </button>
+                <button class="pay-now-btn" id="payNowBtn">
+                    <i class="fas fa-credit-card"></i>
+                    Pay Now
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
     
     <script>
         // Google Sheets CSV URL
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS79-CSoFSxvvA5fYbrxWILnJSW7ivUFyol6IY9PMCBAFD17NfWouHtbkOX4CMl6LRkCk_v-IKpLP8x/pub?gid=78026795&single=true&output=csv';
         
-        // DOM Elements
-        const passwordModal = document.getElementById('passwordModal');
-        const passwordInput = document.getElementById('passwordInput');
-        const passwordError = document.getElementById('passwordError');
-        const submitPasswordBtn = document.getElementById('submitPasswordBtn');
-        const mainContent = document.getElementById('mainContent');
+        // Google Sheets API for order submission
+        const GOOGLE_SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyO29ANPfKiPtyrw-yKpjK7_RUR5b1uU32VlWtU31ugONCDFJkmdW9BwMFwAFbJFNnY/exec';
         
+        // DOM Elements
         const productsGrid = document.getElementById('productsGrid');
         const brandFilters = document.getElementById('brandFilters');
         const typeFilters = document.getElementById('typeFilters');
@@ -1955,13 +1927,10 @@
         const contactModal = document.getElementById('contactModal');
         const customerNameInput = document.getElementById('customerName');
         const customerPhoneInput = document.getElementById('customerPhone');
-        const locationCoordsInput = document.getElementById('locationCoords');
         const closeContact = document.getElementById('closeContact');
         const submitContactBtn = document.getElementById('submitContactBtn');
-        const adminFab = document.getElementById('adminFab');
-        const totalProductsSpan = document.getElementById('totalProducts');
-        const inStockProductsSpan = document.getElementById('inStockProducts');
-        const outOfStockProductsSpan = document.getElementById('outOfStockProducts');
+        const orderConfirmation = document.getElementById('orderConfirmation');
+        const closeConfirmation = document.getElementById('closeConfirmation');
         
         // Global variables
         let products = [];
@@ -1974,43 +1943,10 @@
         
         // Initialize the app
         function init() {
-            // Focus password input when modal appears
-            passwordInput.focus();
-            
-            // Password validation
-            submitPasswordBtn.addEventListener('click', checkPassword);
-            passwordInput.addEventListener('keyup', (e) => {
-                if (e.key === 'Enter') {
-                    checkPassword();
-                }
-            });
-            
-            // Password hint
-            passwordInput.addEventListener('input', () => {
-                if (passwordInput.value.length === 4) {
-                    passwordInput.blur();
-                    checkPassword();
-                }
-            });
-        }
-        
-        // Check password
-        function checkPassword() {
-            const password = passwordInput.value;
-            if (password === '1234') {
-                // Correct password
-                passwordModal.style.display = 'none';
-                mainContent.style.display = 'block';
-                updateLastUpdated();
-                loadProducts();
-                updateCartCount();
-                setupEventListeners();
-            } else {
-                // Incorrect password
-                passwordError.textContent = 'Incorrect password. Please try again.';
-                passwordInput.value = '';
-                passwordInput.focus();
-            }
+            updateLastUpdated();
+            loadProducts();
+            updateCartCount();
+            setupEventListeners();
         }
         
         // Load products from Google Sheets
@@ -2030,10 +1966,11 @@
                     
                     // Process the data with standardized availability
                     products = parsedData.map(row => {
-                        // Handle availability with case insensitivity
-                        const availability = row.Availability ? 
-                            row.Availability.trim().toUpperCase() === 'IN STOCK' ? 'IN STOCK' : 'OUT OF STOCK' 
-                            : 'OUT OF STOCK';
+                        // Handle ROB (Remaining on Hand) quantity
+                        const rob = parseInt(row.ROB) || 0;
+                        
+                        // Handle availability based on ROB
+                        const availability = rob > 0 ? "IN STOCK" : "OUT OF STOCK";
                         
                         // Process base64 image URLs
                         let imageUrl = row.urls || '';
@@ -2050,15 +1987,13 @@
                             brand: row.Brand,
                             type: row.Type,
                             availability: availability,
+                            rob: rob,
                             imageUrl: imageUrl,
                             drp: parseFloat(row.DRP) || 0,
                             mrp: parseFloat(row.MRP) || 0,
                             margin: parseFloat(row.Margin) || 0
                         };
                     });
-                    
-                    // Update product statistics
-                    updateProductStatistics();
                     
                     // Extract unique product types
                     productTypes = [...new Set(products.map(p => p.type))].filter(Boolean);
@@ -2078,17 +2013,6 @@
                         </div>
                     `;
                 });
-        }
-        
-        // Update product statistics
-        function updateProductStatistics() {
-            const total = products.length;
-            const inStock = products.filter(p => p.availability === 'IN STOCK').length;
-            const outOfStock = total - inStock;
-            
-            totalProductsSpan.textContent = total;
-            inStockProductsSpan.textContent = inStock;
-            outOfStockProductsSpan.textContent = outOfStock;
         }
         
         // Robust CSV parser that handles base64 images with commas
@@ -2180,8 +2104,8 @@
                 const brandMatch = selectedBrand === 'all' || product.brand === selectedBrand;
                 const typeMatch = selectedType === 'all' || product.type === selectedType;
                 const availabilityMatch = selectedAvailability === 'all' || 
-                    (selectedAvailability === 'In Stock' && product.availability === 'IN STOCK') ||
-                    (selectedAvailability === 'Out of Stock' && product.availability === 'OUT OF STOCK');
+                    (selectedAvailability === 'In Stock' && product.rob > 0) ||
+                    (selectedAvailability === 'Out of Stock' && product.rob <= 0);
                 
                 // Filter by search query
                 const searchMatch = searchQuery === '' || 
@@ -2216,12 +2140,18 @@
             const fragment = document.createDocumentFragment();
             
             filteredProducts.forEach(product => {
-                const isOutOfStock = product.availability === 'OUT OF STOCK';
+                const isOutOfStock = product.rob <= 0;
+                const isLowStock = product.rob > 0 && product.rob <= 10;
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 
+                // Add stock badge based on ROB
                 if (isOutOfStock) {
                     productCard.innerHTML += `<div class="out-of-stock">OUT OF STOCK</div>`;
+                } else if (isLowStock) {
+                    productCard.innerHTML += `<div class="low-stock">LOW STOCK</div>`;
+                } else {
+                    productCard.innerHTML += `<div class="in-stock">IN STOCK</div>`;
                 }
                 
                 // Handle image display - use base64 if available
@@ -2241,6 +2171,14 @@
                     }
                 }
                 
+                // Determine button text based on stock
+                let buttonText = 'Add to Cart';
+                if (isOutOfStock) {
+                    buttonText = 'Out of Stock';
+                } else if (isLowStock) {
+                    buttonText = `Add to Cart (${product.rob} left)`;
+                }
+                
                 productCard.innerHTML += `
                     <div class="product-image">
                         ${imageContent}
@@ -2258,8 +2196,11 @@
                                 : product.brand
                             } • ${product.type}
                         </div>
+                        <div class="product-stock">
+                            <i class="fas fa-box"></i> Available: ${product.rob} units
+                        </div>
                         <button class="add-to-cart" data-id="${product.id}" ${isOutOfStock ? 'disabled' : ''}>
-                            <i class="fas fa-cart-plus"></i> ${isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
+                            <i class="fas fa-cart-plus"></i> ${buttonText}
                         </button>
                     </div>
                 `;
@@ -2282,8 +2223,19 @@
             const product = products.find(p => p.id === productId);
             if (!product) return;
             
+            // Check if product has available stock
+            if (product.rob <= 0) {
+                alert('This product is out of stock!');
+                return;
+            }
+            
             const existingItem = cart.find(item => item.id === productId);
             if (existingItem) {
+                // Check if adding more exceeds available stock
+                if (existingItem.quantity >= product.rob) {
+                    alert(`Cannot add more. Only ${product.rob} units available!`);
+                    return;
+                }
                 existingItem.quantity += 1;
             } else {
                 cart.push({
@@ -2292,7 +2244,8 @@
                     price: product.drp,
                     mrp: product.mrp,
                     quantity: 1,
-                    imageUrl: product.imageUrl
+                    imageUrl: product.imageUrl,
+                    maxStock: product.rob
                 });
             }
             
@@ -2367,10 +2320,16 @@
             const fragment = document.createDocumentFragment();
             
             cart.forEach(item => {
+                const product = products.find(p => p.id === item.id);
+                if (!product) return; // Skip if product not found
+                
                 const itemTotal = item.price * item.quantity;
                 const itemSavings = (item.mrp - item.price) * item.quantity;
                 total += itemTotal;
                 savings += itemSavings;
+                
+                // Check available stock for this product
+                const remainingStock = product.rob - item.quantity;
                 
                 // Handle image display in cart
                 let imageContent = '<i class="fas fa-box"></i>';
@@ -2399,11 +2358,23 @@
                         <div class="cart-item-actions">
                             <button class="quantity-btn minus" data-id="${item.id}">-</button>
                             <div class="quantity-display">${item.quantity}</div>
-                            <button class="quantity-btn plus" data-id="${item.id}">+</button>
+                            <button class="quantity-btn plus" data-id="${item.id}" ${remainingStock <= 0 ? 'disabled' : ''}>+</button>
                             <button class="remove-item" data-id="${item.id}">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>
+                        ${remainingStock <= 0 ? 
+                            `<div class="product-stock" style="margin-top: 8px; background: #ffecb3; color: #e65100;">
+                                <i class="fas fa-exclamation-triangle"></i> No more stock available
+                            </div>` : 
+                            remainingStock <= 10 ? 
+                            `<div class="product-stock" style="margin-top: 8px; background: #ffecb3; color: #e65100;">
+                                <i class="fas fa-info-circle"></i> Only ${remainingStock} left in stock
+                            </div>` : 
+                            `<div class="product-stock" style="margin-top: 8px;">
+                                <i class="fas fa-check-circle"></i> ${remainingStock} available
+                            </div>`
+                        }
                     </div>
                 `;
                 fragment.appendChild(cartItem);
@@ -2453,6 +2424,15 @@
             const item = cart.find(item => item.id === productId);
             if (!item) return;
             
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            // Check stock before increasing quantity
+            if (change > 0 && (item.quantity + change) > product.rob) {
+                alert(`Cannot add more. Only ${product.rob - item.quantity} units available!`);
+                return;
+            }
+            
             item.quantity += change;
             
             if (item.quantity < 1) {
@@ -2497,17 +2477,10 @@
         function sendWhatsAppOrder() {
             const customerName = customerNameInput.value.trim();
             const customerPhone = customerPhoneInput.value.trim();
-            const locationCoords = locationCoordsInput.value.trim();
             
             // Validate inputs
-            if (!customerName || !customerPhone || !locationCoords) {
+            if (!customerName || !customerPhone) {
                 alert('Please fill all fields before placing your order.');
-                return;
-            }
-            
-            // Validate coordinates format
-            if (!/^-?\d+\.\d+,\s*-?\d+\.\d+$/.test(locationCoords)) {
-                alert('Please enter GPS coordinates in the format: 32.12345, 74.56789');
                 return;
             }
             
@@ -2525,8 +2498,7 @@
             // Format order message with customer details
             let message = "🚚 *The Cute Corner* 🚚\n\n";
             message += `*Customer Name:* ${customerName}\n`;
-            message += `*Contact Number:* ${customerPhone}\n`;
-            message += `*Location:* https://www.google.com/maps?q=${encodeURIComponent(locationCoords)}\n\n`;
+            message += `*Contact Number:* ${customerPhone}\n\n`;
             message += "📋 *Order Details:*\n\n";
             
             cart.forEach((item, index) => {
@@ -2546,13 +2518,56 @@
             // Encode message for URL
             const encodedMessage = encodeURIComponent(message);
             
+            // Submit order to Google Sheets
+            submitOrderToGoogleSheets(customerName, customerPhone);
+            
             // Open WhatsApp with the order
             window.open(`https://wa.me/919596658921?text=${encodedMessage}`, '_blank');
+            
+            // Show order confirmation
+            showOrderConfirmation();
             
             // Clear cart after order
             cart = [];
             updateCart();
-            closeCartPanel();
+        }
+        
+        // Submit order to Google Sheets
+        function submitOrderToGoogleSheets(customerName, customerPhone) {
+            // Prepare order data
+            const orderData = {
+                timestamp: new Date().toISOString(),
+                customerName: customerName,
+                customerPhone: customerPhone,
+                items: cart.map(item => ({
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity,
+                    total: (item.price * item.quantity).toFixed(2)
+                }))
+            };
+            
+            // Send data to Google Sheets
+            fetch(GOOGLE_SHEETS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderData)
+            })
+            .then(() => console.log('Order submitted to Google Sheets'))
+            .catch(error => console.error('Error submitting to Google Sheets:', error));
+        }
+        
+        // Show order confirmation
+        function showOrderConfirmation() {
+            // Close contact modal
+            contactModal.classList.remove('active');
+            
+            // Show order confirmation
+            orderConfirmation.classList.add('active');
+            overlay.classList.add('active');
         }
         
         // Pay Now functionality
@@ -2617,6 +2632,13 @@
         // Close contact modal
         function closeContactModal() {
             contactModal.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Close order confirmation
+        function closeOrderConfirmation() {
+            orderConfirmation.classList.remove('active');
             overlay.classList.remove('active');
             document.body.style.overflow = '';
         }
@@ -2699,12 +2721,16 @@
             closeContact.addEventListener('click', closeContactModal);
             submitContactBtn.addEventListener('click', sendWhatsAppOrder);
             
+            // Order confirmation interaction
+            closeConfirmation.addEventListener('click', closeOrderConfirmation);
+            
             // Overlay click - only close panels if click is directly on overlay
             overlay.addEventListener('click', (e) => {
                 if (e.target === overlay) {
                     closeCartPanel();
                     closePaymentModal();
                     closeContactModal();
+                    closeOrderConfirmation();
                     if (infoPanel.classList.contains('active')) {
                         toggleInfoPanel();
                     }
@@ -2724,6 +2750,11 @@
             
             // Prevent clicks inside contact modal from closing it
             contactModal.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+            
+            // Prevent clicks inside order confirmation from closing it
+            orderConfirmation.addEventListener('click', (e) => {
                 e.stopPropagation();
             });
             
