@@ -399,26 +399,10 @@
             margin-bottom: 8px;
         }
         
-        .product-drp {
+        .product-price {
             font-weight: 700;
             color: var(--success);
             font-size: 1rem;
-        }
-        
-        .product-mrp {
-            font-size: 0.8rem;
-            color: #86868b;
-            text-decoration: line-through;
-        }
-        
-        .product-margin {
-            font-size: 0.7rem;
-            color: #28a745;
-            background: #e8f5e9;
-            padding: 2px 6px;
-            border-radius: 4px;
-            display: inline-block;
-            margin-top: 3px;
         }
         
         .product-brand {
@@ -498,7 +482,7 @@
             width: 100%;
             height: 0;
             background: white;
-            z-index: 180; /* Increased to be above overlay */
+            z-index: 180;
             border-radius: 20px 20px 0 0;
             box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
             overflow: hidden;
@@ -537,12 +521,12 @@
         
         .info-content {
             padding: 20px;
-            height: calc(80vh - 70px); /* Account for header height */
+            height: calc(80vh - 70px);
             overflow-y: auto;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
-            -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
+            -webkit-overflow-scrolling: touch;
         }
         
         .info-tile {
@@ -788,7 +772,6 @@
             overflow-y: auto;
         }
         
-        /* Updated cart item styling for compact size */
         .cart-item {
             display: flex;
             padding: 10px 0;
@@ -850,6 +833,7 @@
         .cart-item-actions {
             display: flex;
             align-items: center;
+            gap: 5px;
         }
         
         .quantity-btn {
@@ -864,6 +848,7 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s ease;
+            flex-shrink: 0;
         }
         
         .quantity-btn:hover {
@@ -881,21 +866,33 @@
             color: var(--text);
         }
         
-        .quantity-display {
-            width: 35px;
+        .quantity-input {
+            width: 50px;
+            height: 28px;
             text-align: center;
-            font-weight: 500;
+            border: 1px solid var(--border);
+            border-radius: 6px;
             font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0 5px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        .quantity-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
         }
         
         .remove-item {
-            margin-left: 12px;
+            margin-left: 5px;
             color: var(--danger);
             background: none;
             border: none;
             cursor: pointer;
             font-size: 1rem;
             transition: transform 0.3s ease;
+            flex-shrink: 0;
         }
         
         .remove-item:hover {
@@ -1034,7 +1031,7 @@
             width: 100%;
             height: 100%;
             background: rgba(0,0,0,0.5);
-            z-index: 90; /* Reduced to be below panels */
+            z-index: 90;
             display: none;
             opacity: 0;
             transition: opacity 0.4s ease;
@@ -1097,7 +1094,6 @@
         .last-updated i {
             margin-right: 5px;
             color: var(--primary);
-            animation: spin 2s linear infinite;
         }
         
         .refresh-btn {
@@ -1316,14 +1312,49 @@
             bottom: 15px;
         }
         
-        /* Confetti Effect */
-        .confetti {
+        /* Added to cart animation */
+        .added-to-cart-animation {
             position: fixed;
-            width: 10px;
-            height: 10px;
-            background-color: #f00;
-            z-index: 10000;
-            pointer-events: none;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--success);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+        }
+        
+        .added-to-cart-animation.show {
+            opacity: 1;
+            visibility: visible;
+            animation: cartAnimation 1.5s ease;
+        }
+        
+        @keyframes cartAnimation {
+            0% { 
+                transform: translate(-50%, -50%) scale(0.8);
+                opacity: 0;
+            }
+            20% { 
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 1;
+            }
+            60% { 
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            100% { 
+                transform: translate(-50%, -50%) scale(0.9);
+                opacity: 0;
+            }
         }
         
         /* Contact Details Modal */
@@ -1401,6 +1432,10 @@
             color: #555;
         }
         
+        .required {
+            color: var(--danger);
+        }
+        
         .contact-input {
             width: 100%;
             padding: 12px;
@@ -1414,6 +1449,17 @@
             border-color: var(--primary);
             outline: none;
             box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+        }
+        
+        .contact-input.error {
+            border-color: var(--danger);
+        }
+        
+        .optional-note {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+            display: block;
         }
         
         .submit-contact-btn {
@@ -1473,11 +1519,15 @@
             }
             
             .cart-panel {
-                width: 380px;
+                width: 400px;
             }
             
             .info-content {
                 grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+            
+            .quantity-input {
+                width: 60px;
             }
         }
         
@@ -1498,12 +1548,10 @@
                 font-size: 0.95rem;
             }
             
-            /* Stack buttons on small screens */
             .cart-buttons {
                 flex-direction: column;
             }
             
-            /* Further optimize cart items for mobile */
             .cart-item {
                 padding: 8px 0;
             }
@@ -1525,6 +1573,7 @@
             
             .cart-item-actions {
                 margin-top: 3px;
+                gap: 3px;
             }
             
             .quantity-btn {
@@ -1533,13 +1582,15 @@
                 font-size: 0.8rem;
             }
             
-            .quantity-display {
-                width: 30px;
-                font-size: 0.85rem;
+            .quantity-input {
+                width: 40px;
+                height: 25px;
+                font-size: 0.8rem;
+                padding: 0 3px;
             }
             
             .remove-item {
-                margin-left: 8px;
+                margin-left: 5px;
                 font-size: 0.9rem;
             }
             
@@ -1674,7 +1725,7 @@
                 </div>
                 <div class="tile-content">
                     <p>We currently deliver within a 10km radius of Talab Tillo Bohri.</p>
-                    <p>Minimum order value is <strong>₹1000</strong> for delivery.</p>
+                    <p>Minimum order value is <strong>₹1</strong> for delivery.</p>
                 </div>
             </div>
             
@@ -1691,7 +1742,6 @@
                         <li>Cash on Delivery (COD)</li>
                         <li>UPI (PhonePe, Google Pay, Paytm)</li>
                         <li><h3>THE CUTE CORNER Jammu</h3> jasrotiarajni96-3@okhdfcbank</li>
-                     
                     </ul>
                     <div class="highlight">
                         <i class="fas fa-shield-alt"></i> All payments are secure
@@ -1774,7 +1824,6 @@
             </div>
             
             <div class="qr-container">
-                <!-- QR Code Image -->
                 <img src="qr.png" alt="UPI QR Code" style="width: 100%; border-radius: 8px;">
             </div>
             
@@ -1806,13 +1855,14 @@
             <p>Please provide your details for order confirmation:</p>
             
             <div class="form-group">
-                <label for="customerName">Full Name</label>
+                <label for="customerName">Full Name <span class="required">*</span></label>
                 <input type="text" class="contact-input" id="customerName" placeholder="Your Full Name" required>
             </div>
             
             <div class="form-group">
-                <label for="customerPhone">Contact Number</label>
-                <input type="tel" class="contact-input" id="customerPhone" placeholder="Your Contact Number" required>
+                <label for="customerPhone">Contact Number <span class="optional-note">(Optional)</span></label>
+                <input type="tel" class="contact-input" id="customerPhone" placeholder="Your Contact Number">
+                <span class="optional-note">We'll only use this to contact you about your order</span>
             </div>
             
             <button class="submit-contact-btn" id="submitContactBtn">
@@ -1855,7 +1905,7 @@
             <div id="minOrderNotification" style="display: none;">
                 <div class="min-order-notification">
                     <i class="fas fa-exclamation-circle"></i>
-                    <div>Minimum order value is ₹1000. Add more items to place your order.</div>
+                    <div>Minimum order value is ₹1. Add more items to place your order.</div>
                 </div>
             </div>
             <div class="cart-total">
@@ -1866,7 +1916,6 @@
                 <span>You Save:</span>
                 <span id="cartSavings">₹0.00</span>
             </div>
-            <!-- Cart buttons container with Pay Now button -->
             <div class="cart-buttons">
                 <button class="place-order-btn" id="placeOrderBtn">
                     <i class="fab fa-whatsapp"></i>
@@ -1918,7 +1967,7 @@
         const upiId = document.getElementById('upiId');
         const copiedMessage = document.getElementById('copiedMessage');
         const minOrderNotification = document.getElementById('minOrderNotification');
-        const payNowBtn = document.getElementById('payNowBtn'); 
+        const payNowBtn = document.getElementById('payNowBtn');
         const searchBar = document.getElementById('searchBar');
         const searchClear = document.getElementById('searchClear');
         const searchResultsInfo = document.getElementById('searchResultsInfo');
@@ -1940,6 +1989,9 @@
         let selectedAvailability = 'all';
         let productTypes = [];
         let searchQuery = '';
+        let cachedProducts = null;
+        let lastFetchTime = 0;
+        const CACHE_DURATION = 30000; // 30 seconds cache
         
         // Initialize the app
         function init() {
@@ -1949,8 +2001,57 @@
             setupEventListeners();
         }
         
-        // Load products from Google Sheets
-        function loadProducts() {
+        // Fast CSV parser optimized for Google Sheets
+        function parseCSVFast(csv) {
+            const lines = csv.split('\n');
+            const headers = lines[0].split(',').map(h => h.trim());
+            const result = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) continue;
+                
+                // Simple parsing for our specific structure
+                const values = [];
+                let currentValue = '';
+                let inQuotes = false;
+                
+                for (let j = 0; j < line.length; j++) {
+                    const char = line[j];
+                    
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        values.push(currentValue);
+                        currentValue = '';
+                    } else {
+                        currentValue += char;
+                    }
+                }
+                values.push(currentValue);
+                
+                // Create object with only necessary fields
+                const obj = {};
+                for (let j = 0; j < headers.length; j++) {
+                    obj[headers[j]] = values[j] ? values[j].trim() : '';
+                }
+                result.push(obj);
+            }
+            return result;
+        }
+        
+        // Load products from Google Sheets with caching
+        async function loadProducts() {
+            const now = Date.now();
+            
+            // Use cache if available and recent
+            if (cachedProducts && (now - lastFetchTime) < CACHE_DURATION) {
+                products = cachedProducts;
+                renderProducts();
+                updateLastUpdated();
+                return;
+            }
+            
             productsGrid.innerHTML = `
                 <div class="loading">
                     <i class="fas fa-spinner"></i>
@@ -1958,123 +2059,69 @@
                 </div>
             `;
             
-            fetch(CSV_URL)
-                .then(response => response.text())
-                .then(csvData => {
-                    // Parse CSV data with robust method that handles base64 images
-                    const parsedData = parseCSV(csvData);
+            try {
+                const response = await fetch(CSV_URL + '&_=' + now);
+                const csvData = await response.text();
+                
+                const parsedData = parseCSVFast(csvData);
+                
+                // Process the data efficiently
+                products = parsedData.map(row => {
+                    const rob = parseInt(row.ROB) || 0;
+                    const availability = rob > 0 ? "IN STOCK" : "OUT OF STOCK";
                     
-                    // Process the data with standardized availability
-                    products = parsedData.map(row => {
-                        // Handle ROB (Remaining on Hand) quantity
-                        const rob = parseInt(row.ROB) || 0;
-                        
-                        // Handle availability based on ROB
-                        const availability = rob > 0 ? "IN STOCK" : "OUT OF STOCK";
-                        
-                        // Process base64 image URLs
-                        let imageUrl = row.urls || '';
-                        if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('data:image')) {
-                            // If it's a base64 string but missing the prefix
-                            if (imageUrl.startsWith('/9j/') || imageUrl.startsWith('iVBORw0KGgo')) {
-                                imageUrl = `data:image/jpeg;base64,${imageUrl}`;
-                            }
+                    // Process image URL efficiently
+                    let imageUrl = row.urls || '';
+                    if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('data:image')) {
+                        if (imageUrl.startsWith('/9j/') || imageUrl.startsWith('iVBORw0KGgo')) {
+                            imageUrl = `data:image/jpeg;base64,${imageUrl}`;
                         }
-                        
-                        return {
-                            id: row.Products,
-                            name: row.Products,
-                            brand: row.Brand,
-                            type: row.Type,
-                            availability: availability,
-                            rob: rob,
-                            imageUrl: imageUrl,
-                            drp: parseFloat(row.DRP) || 0,
-                            mrp: parseFloat(row.MRP) || 0,
-                            margin: parseFloat(row.Margin) || 0
-                        };
-                    });
+                    }
                     
-                    // Extract unique product types
-                    productTypes = [...new Set(products.map(p => p.type))].filter(Boolean);
-                    
-                    // Render UI
-                    renderTypeFilters();
-                    renderProducts();
-                    updateLastUpdated();
-                })
-                .catch(error => {
-                    console.error('Error loading products:', error);
-                    productsGrid.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <h3>Error Loading Products</h3>
-                            <p>Please try again later</p>
-                        </div>
-                    `;
+                    return {
+                        id: row.Products,
+                        name: row.Products,
+                        brand: row.Brand,
+                        type: row.Type,
+                        availability: availability,
+                        rob: rob,
+                        imageUrl: imageUrl,
+                        drp: parseFloat(row.DRP) || 0,
+                        mrp: parseFloat(row.MRP) || 0,
+                        margin: parseFloat(row.Margin) || 0
+                    };
                 });
-        }
-        
-        // Robust CSV parser that handles base64 images with commas
-        function parseCSV(csv) {
-            const lines = csv.split('\n').filter(line => line.trim() !== '');
-            if (lines.length < 2) return [];
-            
-            const headers = lines[0].split(',').map(h => h.trim());
-            const result = [];
-            
-            for (let i = 1; i < lines.length; i++) {
-                let tokens = [];
-                let currentToken = '';
-                let inQuotes = false;
                 
-                // Parse line character by character to handle commas within quotes
-                for (let j = 0; j < lines[i].length; j++) {
-                    const char = lines[i][j];
-                    
-                    if (char === '"' && (j === 0 || lines[i][j-1] !== '\\')) {
-                        inQuotes = !inQuotes;
-                    } else if (char === ',' && !inQuotes) {
-                        tokens.push(currentToken);
-                        currentToken = '';
-                    } else {
-                        currentToken += char;
-                    }
-                }
-                tokens.push(currentToken);
+                // Cache the results
+                cachedProducts = products;
+                lastFetchTime = now;
                 
-                // Handle cases where we have more tokens than headers (due to base64 commas)
-                if (tokens.length > headers.length) {
-                    const lastField = tokens.slice(headers.length - 1).join('');
-                    tokens = tokens.slice(0, headers.length - 1);
-                    tokens.push(lastField);
-                }
+                // Extract unique product types
+                productTypes = [...new Set(products.map(p => p.type))].filter(Boolean);
                 
-                // Create object for this row
-                const obj = {};
-                for (let j = 0; j < headers.length; j++) {
-                    let value = tokens[j] || '';
-                    
-                    // Remove surrounding quotes if present
-                    if (value.startsWith('"') && value.endsWith('"')) {
-                        value = value.substring(1, value.length - 1);
-                    }
-                    
-                    obj[headers[j]] = value.trim();
-                }
-                result.push(obj);
+                // Render UI
+                renderTypeFilters();
+                renderProducts();
+                updateLastUpdated();
+                
+            } catch (error) {
+                console.error('Error loading products:', error);
+                productsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Error Loading Products</h3>
+                        <p>Please try again later</p>
+                    </div>
+                `;
             }
-            return result;
         }
         
         // Render product type filters
         function renderTypeFilters() {
-            // Clear existing buttons except "All Types"
             while (typeFilters.children.length > 1) {
                 typeFilters.removeChild(typeFilters.lastChild);
             }
             
-            // Add new type buttons
             productTypes.forEach(type => {
                 const btn = document.createElement('button');
                 btn.className = 'filter-btn';
@@ -2086,29 +2133,17 @@
         
         // Render products based on filters and search
         function renderProducts() {
-            productsGrid.innerHTML = '';
+            if (!products.length) return;
             
-            if (products.length === 0) {
-                productsGrid.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-box-open"></i>
-                        <h3>No Products Found</h3>
-                        <p>Try adjusting your filters</p>
-                    </div>
-                `;
-                return;
-            }
-            
+            // Fast filtering
             const filteredProducts = products.filter(product => {
-                // Filter by brand, type, and availability
                 const brandMatch = selectedBrand === 'all' || product.brand === selectedBrand;
                 const typeMatch = selectedType === 'all' || product.type === selectedType;
                 const availabilityMatch = selectedAvailability === 'all' || 
                     (selectedAvailability === 'In Stock' && product.rob > 0) ||
                     (selectedAvailability === 'Out of Stock' && product.rob <= 0);
                 
-                // Filter by search query
-                const searchMatch = searchQuery === '' || 
+                const searchMatch = !searchQuery || 
                     product.name.toLowerCase().includes(searchQuery) || 
                     product.brand.toLowerCase().includes(searchQuery) || 
                     product.type.toLowerCase().includes(searchQuery);
@@ -2125,27 +2160,29 @@
                 searchResultsInfo.style.display = 'none';
             }
             
+            // Handle empty results
             if (filteredProducts.length === 0) {
                 productsGrid.innerHTML = `
                     <div class="empty-state">
-                        <i class="fas fa-search"></i>
+                        <i class="${searchQuery ? 'fas fa-search' : 'fas fa-box-open'}"></i>
                         <h3>No Matching Products</h3>
-                        <p>Try different search or filters</p>
+                        <p>${searchQuery ? 'Try different search' : 'Try adjusting your filters'}</p>
                     </div>
                 `;
                 return;
             }
             
-            // Create document fragment for efficient rendering
+            // Efficient rendering with document fragment
             const fragment = document.createDocumentFragment();
             
             filteredProducts.forEach(product => {
                 const isOutOfStock = product.rob <= 0;
                 const isLowStock = product.rob > 0 && product.rob <= 10;
+                
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 
-                // Add stock badge based on ROB
+                // Add stock badge
                 if (isOutOfStock) {
                     productCard.innerHTML += `<div class="out-of-stock">OUT OF STOCK</div>`;
                 } else if (isLowStock) {
@@ -2154,24 +2191,20 @@
                     productCard.innerHTML += `<div class="in-stock">IN STOCK</div>`;
                 }
                 
-                // Handle image display - use base64 if available
+                // Handle image display
                 let imageContent = '<div class="placeholder"><i class="fas fa-box"></i></div>';
-                if (product.imageUrl) {
-                    if (product.imageUrl.startsWith('data:image') || 
-                        product.imageUrl.startsWith('http')) {
-                        // Use lazy loading for images
-                        imageContent = `
-                            <img 
-                                src="${product.imageUrl}" 
-                                alt="${product.name}" 
-                                loading="lazy"
-                                onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\\'placeholder\\'><i class=\\'fas fa-box\\'></i></div>'"
-                            >
-                        `;
-                    }
+                if (product.imageUrl && (product.imageUrl.startsWith('data:image') || product.imageUrl.startsWith('http'))) {
+                    imageContent = `
+                        <img 
+                            src="${product.imageUrl}" 
+                            alt="${product.name}" 
+                            loading="lazy"
+                            onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\\'placeholder\\'><i class=\\'fas fa-box\\'></i></div>'"
+                        >
+                    `;
                 }
                 
-                // Determine button text based on stock
+                // Button text
                 let buttonText = 'Add to Cart';
                 if (isOutOfStock) {
                     buttonText = 'Out of Stock';
@@ -2186,10 +2219,8 @@
                     <div class="product-info">
                         <div class="product-name">${product.name}</div>
                         <div class="product-prices">
-                            <span class="product-drp">₹${product.drp.toFixed(2)}</span>
-                            <span class="product-mrp">₹${product.mrp.toFixed(2)}</span>
+                            <span class="product-price">₹${product.drp.toFixed(2)}</span>
                         </div>
-                        <div class="product-margin">Margin: ₹${product.margin.toFixed(2)}</div>
                         <div class="product-brand">
                             ${product.brand === 'AMUL' 
                                 ? '<span class="brand-amul">AMUL</span>' 
@@ -2204,9 +2235,11 @@
                         </button>
                     </div>
                 `;
+                
                 fragment.appendChild(productCard);
             });
             
+            productsGrid.innerHTML = '';
             productsGrid.appendChild(fragment);
             
             // Add event listeners to Add to Cart buttons
@@ -2218,12 +2251,11 @@
             });
         }
         
-        // Add product to cart
+        // Add product to cart with visual indication
         function addToCart(productId) {
             const product = products.find(p => p.id === productId);
             if (!product) return;
             
-            // Check if product has available stock
             if (product.rob <= 0) {
                 alert('This product is out of stock!');
                 return;
@@ -2231,7 +2263,6 @@
             
             const existingItem = cart.find(item => item.id === productId);
             if (existingItem) {
-                // Check if adding more exceeds available stock
                 if (existingItem.quantity >= product.rob) {
                     alert(`Cannot add more. Only ${product.rob} units available!`);
                     return;
@@ -2250,40 +2281,40 @@
             }
             
             updateCart();
-            showCartPanel();
+            showAddedToCartAnimation(product.name);
+        }
+        
+        // Show added to cart animation
+        function showAddedToCartAnimation(productName) {
+            const existingAnimation = document.querySelector('.added-to-cart-animation');
+            if (existingAnimation) {
+                existingAnimation.remove();
+            }
             
-            // Show cart notification
-            const notification = document.createElement('div');
-            notification.className = 'cart-notification';
-            notification.innerHTML = `
+            const animation = document.createElement('div');
+            animation.className = 'added-to-cart-animation';
+            animation.innerHTML = `
                 <i class="fas fa-check-circle"></i>
-                <span>Added to cart: ${product.name}</span>
+                <span>Added to cart: ${productName}</span>
             `;
-            document.body.appendChild(notification);
+            document.body.appendChild(animation);
             
-            // Trigger animation
-            setTimeout(() => {
-                notification.classList.add('show');
-            }, 10);
+            setTimeout(() => animation.classList.add('show'), 10);
             
-            // Remove after animation
             setTimeout(() => {
-                notification.classList.remove('show');
+                animation.classList.remove('show');
                 setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 300);
-            }, 2000);
+                    if (animation.parentNode) {
+                        document.body.removeChild(animation);
+                    }
+                }, 400);
+            }, 1500);
         }
         
         // Update cart UI and storage
         function updateCart() {
-            // Save to localStorage
             localStorage.setItem('cart', JSON.stringify(cart));
-            
-            // Update cart count
             updateCartCount();
-            
-            // Update cart items display
             renderCartItems();
         }
         
@@ -2293,7 +2324,7 @@
             cartCount.textContent = totalItems;
         }
         
-        // Render cart items
+        // Render cart items with direct quantity input
         function renderCartItems() {
             cartItems.innerHTML = '';
             
@@ -2315,35 +2346,28 @@
             
             let total = 0;
             let savings = 0;
-            
-            // Create document fragment for efficient rendering
             const fragment = document.createDocumentFragment();
             
             cart.forEach(item => {
                 const product = products.find(p => p.id === item.id);
-                if (!product) return; // Skip if product not found
+                if (!product) return;
                 
                 const itemTotal = item.price * item.quantity;
                 const itemSavings = (item.mrp - item.price) * item.quantity;
                 total += itemTotal;
                 savings += itemSavings;
                 
-                // Check available stock for this product
                 const remainingStock = product.rob - item.quantity;
                 
-                // Handle image display in cart
                 let imageContent = '<i class="fas fa-box"></i>';
-                if (item.imageUrl) {
-                    if (item.imageUrl.startsWith('data:image') || 
-                        item.imageUrl.startsWith('http')) {
-                        imageContent = `
-                            <img 
-                                src="${item.imageUrl}" 
-                                alt="${item.name}" 
-                                onerror="this.onerror=null; this.parentNode.innerHTML='<i class=\\'fas fa-box\\'></i>'"
-                            >
-                        `;
-                    }
+                if (item.imageUrl && (item.imageUrl.startsWith('data:image') || item.imageUrl.startsWith('http'))) {
+                    imageContent = `
+                        <img 
+                            src="${item.imageUrl}" 
+                            alt="${item.name}" 
+                            onerror="this.onerror=null; this.parentNode.innerHTML='<i class=\\'fas fa-box\\'></i>'"
+                        >
+                    `;
                 }
                 
                 const cartItem = document.createElement('div');
@@ -2357,7 +2381,7 @@
                         <div class="cart-item-price">₹${item.price.toFixed(2)}</div>
                         <div class="cart-item-actions">
                             <button class="quantity-btn minus" data-id="${item.id}">-</button>
-                            <div class="quantity-display">${item.quantity}</div>
+                            <input type="number" class="quantity-input" data-id="${item.id}" value="${item.quantity}" min="1" max="${product.rob}" step="1">
                             <button class="quantity-btn plus" data-id="${item.id}" ${remainingStock <= 0 ? 'disabled' : ''}>+</button>
                             <button class="remove-item" data-id="${item.id}">
                                 <i class="fas fa-trash"></i>
@@ -2385,8 +2409,8 @@
             cartTotal.textContent = `₹${total.toFixed(2)}`;
             cartSavings.textContent = `₹${savings.toFixed(2)}`;
             
-            // Show min order notification if total is below 1000
-            if (total < 1000) {
+            // Show min order notification
+            if (total < 1) {
                 minOrderNotification.style.display = 'block';
                 placeOrderBtn.disabled = true;
                 payNowBtn.disabled = true;
@@ -2396,7 +2420,7 @@
                 payNowBtn.disabled = false;
             }
             
-            // Add event listeners to cart item buttons
+            // Add event listeners to cart item controls
             document.querySelectorAll('.minus').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const productId = e.target.closest('.quantity-btn').dataset.id;
@@ -2411,6 +2435,26 @@
                 });
             });
             
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const productId = e.target.dataset.id;
+                    const newQuantity = parseInt(e.target.value);
+                    
+                    if (isNaN(newQuantity) || newQuantity < 1) {
+                        updateCart();
+                        return;
+                    }
+                    
+                    updateCartItemQuantityDirect(productId, newQuantity);
+                });
+                
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.target.blur();
+                    }
+                });
+            });
+            
             document.querySelectorAll('.remove-item').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const productId = e.target.closest('.remove-item').dataset.id;
@@ -2419,7 +2463,7 @@
             });
         }
         
-        // Update cart item quantity
+        // Update cart item quantity via +/- buttons
         function updateCartItemQuantity(productId, change) {
             const item = cart.find(item => item.id === productId);
             if (!item) return;
@@ -2427,7 +2471,6 @@
             const product = products.find(p => p.id === productId);
             if (!product) return;
             
-            // Check stock before increasing quantity
             if (change > 0 && (item.quantity + change) > product.rob) {
                 alert(`Cannot add more. Only ${product.rob - item.quantity} units available!`);
                 return;
@@ -2442,10 +2485,33 @@
             }
         }
         
+        // Update cart item quantity via direct input
+        function updateCartItemQuantityDirect(productId, newQuantity) {
+            const item = cart.find(item => item.id === productId);
+            if (!item) return;
+            
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            if (newQuantity > product.rob) {
+                alert(`Cannot add more. Only ${product.rob} units available!`);
+                newQuantity = product.rob;
+            }
+            
+            if (newQuantity < 1) {
+                removeCartItem(productId);
+            } else {
+                item.quantity = newQuantity;
+                updateCart();
+            }
+        }
+        
         // Remove item from cart
         function removeCartItem(productId) {
-            cart = cart.filter(item => item.id !== productId);
-            updateCart();
+            if (confirm('Remove this item from cart?')) {
+                cart = cart.filter(item => item.id !== productId);
+                updateCart();
+            }
         }
         
         // Place order via WhatsApp
@@ -2455,15 +2521,13 @@
                 return;
             }
             
-            // Calculate total
             let total = 0;
             cart.forEach(item => {
                 total += item.price * item.quantity;
             });
             
-            // Validate minimum order value (₹1000)
-            if (total < 1000) {
-                alert('Minimum order value is ₹1000. Please add more items to your cart.');
+            if (total < 1) {
+                alert('Minimum order value is ₹1. Please add more items to your cart.');
                 return;
             }
             
@@ -2478,13 +2542,17 @@
             const customerName = customerNameInput.value.trim();
             const customerPhone = customerPhoneInput.value.trim();
             
-            // Validate inputs
-            if (!customerName || !customerPhone) {
-                alert('Please fill all fields before placing your order.');
+            // Validate inputs - Name is required
+            if (!customerName) {
+                alert('Please enter your full name before placing the order.');
+                customerNameInput.classList.add('error');
+                customerNameInput.focus();
                 return;
             }
             
-            // Calculate total
+            customerNameInput.classList.remove('error');
+            
+            // Calculate totals
             let total = 0;
             let savings = 0;
             
@@ -2495,11 +2563,15 @@
                 savings += itemSavings;
             });
             
-            // Format order message with customer details
+            // Format order message
             let message = "🚚 *The Cute Corner JAMMU* 🚚\n\n";
             message += `*Customer Name:* ${customerName}\n`;
-            message += `*Contact Number:* ${customerPhone}\n\n`;
-            message += "📋 *Order Details:*\n\n";
+            
+            if (customerPhone) {
+                message += `*Contact Number:* ${customerPhone}\n`;
+            }
+            
+            message += "\n📋 *Order Details:*\n\n";
             
             cart.forEach((item, index) => {
                 const itemTotal = item.price * item.quantity;
@@ -2515,7 +2587,6 @@
             message += `*You Save: ₹${savings.toFixed(2)}*\n\n`;
             message += "Thank you! 🙏";
             
-            // Encode message for URL
             const encodedMessage = encodeURIComponent(message);
             
             // Submit order to Google Sheets
@@ -2530,24 +2601,27 @@
             // Clear cart after order
             cart = [];
             updateCart();
+            
+            // Clear form fields
+            customerNameInput.value = '';
+            customerPhoneInput.value = '';
         }
         
         // Submit order to Google Sheets
         function submitOrderToGoogleSheets(customerName, customerPhone) {
-            // Prepare order data
             const orderData = {
                 timestamp: new Date().toISOString(),
                 customerName: customerName,
-                customerPhone: customerPhone,
+                customerPhone: customerPhone || "Not provided",
                 items: cart.map(item => ({
                     name: item.name,
                     price: item.price,
                     quantity: item.quantity,
                     total: (item.price * item.quantity).toFixed(2)
-                }))
+                })),
+                total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
             };
             
-            // Send data to Google Sheets
             fetch(GOOGLE_SHEETS_SCRIPT_URL, {
                 method: 'POST',
                 mode: 'no-cors',
@@ -2562,10 +2636,7 @@
         
         // Show order confirmation
         function showOrderConfirmation() {
-            // Close contact modal
             contactModal.classList.remove('active');
-            
-            // Show order confirmation
             orderConfirmation.classList.add('active');
             overlay.classList.add('active');
         }
@@ -2577,19 +2648,16 @@
                 return;
             }
             
-            // Calculate total
             let total = 0;
             cart.forEach(item => {
                 total += item.price * item.quantity;
             });
             
-            // Validate minimum order value (₹1000)
-            if (total < 1000) {
-                alert('Minimum order value is ₹1000. Please add more items to your cart.');
+            if (total < 1) {
+                alert('Minimum order value is ₹1. Please add more items to your cart.');
                 return;
             }
             
-            // Show payment modal
             showPaymentModal();
         }
         
@@ -2652,7 +2720,6 @@
             document.execCommand('copy');
             document.body.removeChild(textarea);
             
-            // Show copied message
             copiedMessage.classList.add('show');
             setTimeout(() => {
                 copiedMessage.classList.remove('show');
@@ -2662,7 +2729,7 @@
         // Update last updated time
         function updateLastUpdated() {
             const now = new Date();
-            lastUpdated.textContent = `Last updated: ${now.toLocaleTimeString()}`;
+            lastUpdated.textContent = `Last updated: ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
         }
         
         // Setup event listeners
@@ -2724,7 +2791,7 @@
             // Order confirmation interaction
             closeConfirmation.addEventListener('click', closeOrderConfirmation);
             
-            // Overlay click - only close panels if click is directly on overlay
+            // Overlay click
             overlay.addEventListener('click', (e) => {
                 if (e.target === overlay) {
                     closeCartPanel();
@@ -2738,28 +2805,14 @@
                 }
             });
             
-            // Prevent clicks inside info panel from closing it
-            infoPanel.addEventListener('click', (e) => {
-                e.stopPropagation();
+            // Prevent clicks inside panels from closing them
+            [infoPanel, paymentModal, contactModal, orderConfirmation].forEach(panel => {
+                panel.addEventListener('click', (e) => e.stopPropagation());
             });
             
-            // Prevent clicks inside payment modal from closing it
-            paymentModal.addEventListener('click', (e) => {
-                e.stopPropagation();
-            });
-            
-            // Prevent clicks inside contact modal from closing it
-            contactModal.addEventListener('click', (e) => {
-                e.stopPropagation();
-            });
-            
-            // Prevent clicks inside order confirmation from closing it
-            orderConfirmation.addEventListener('click', (e) => {
-                e.stopPropagation();
-            });
-            
-            // Refresh button
+            // Refresh button with fast reload
             refreshBtn.addEventListener('click', () => {
+                cachedProducts = null;
                 loadProducts();
             });
             
@@ -2770,20 +2823,19 @@
                 }
             });
             
-            // Handle touch events for mobile scrolling
-            const infoContent = document.querySelector('.info-content');
-            infoContent.addEventListener('touchstart', handleTouchStart, false);        
-            infoContent.addEventListener('touchmove', handleTouchMove, false);
-            
-            // Search functionality
+            // Search functionality with debounce
+            let searchTimeout;
             searchBar.addEventListener('input', (e) => {
-                searchQuery = e.target.value.toLowerCase().trim();
-                if (searchQuery) {
-                    searchClear.style.display = 'block';
-                } else {
-                    searchClear.style.display = 'none';
-                }
-                renderProducts();
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    searchQuery = e.target.value.toLowerCase().trim();
+                    if (searchQuery) {
+                        searchClear.style.display = 'block';
+                    } else {
+                        searchClear.style.display = 'none';
+                    }
+                    renderProducts();
+                }, 300);
             });
             
             searchClear.addEventListener('click', () => {
@@ -2794,53 +2846,31 @@
             });
             
             // Clear search when filters change
-            brandFilters.addEventListener('click', () => {
-                if (searchQuery) {
-                    searchBar.value = '';
-                    searchQuery = '';
-                    searchClear.style.display = 'none';
+            [brandFilters, typeFilters, availabilityFilters].forEach(filterContainer => {
+                filterContainer.addEventListener('click', () => {
+                    if (searchQuery) {
+                        searchBar.value = '';
+                        searchQuery = '';
+                        searchClear.style.display = 'none';
+                        renderProducts();
+                    }
+                });
+            });
+            
+            // Enter key in contact modal
+            customerNameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendWhatsAppOrder();
                 }
             });
             
-            typeFilters.addEventListener('click', () => {
-                if (searchQuery) {
-                    searchBar.value = '';
-                    searchQuery = '';
-                    searchClear.style.display = 'none';
+            customerPhoneInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendWhatsAppOrder();
                 }
             });
-            
-            availabilityFilters.addEventListener('click', () => {
-                if (searchQuery) {
-                    searchBar.value = '';
-                    searchQuery = '';
-                    searchClear.style.display = 'none';
-                }
-            });
-        }
-        
-        // Touch handling variables
-        let touchStartY = 0;
-        
-        function handleTouchStart(e) {
-            touchStartY = e.touches[0].clientY;
-        }
-        
-        function handleTouchMove(e) {
-            const touchY = e.touches[0].clientY;
-            const content = e.currentTarget;
-            
-            // Check if we're at the top and trying to scroll up
-            if (content.scrollTop === 0 && touchY > touchStartY) {
-                // Prevent scrolling the content when at the top and pulling down
-                e.preventDefault();
-            }
-            
-            // Check if we're at the bottom and trying to scroll down
-            if (content.scrollHeight - content.scrollTop === content.clientHeight && touchY < touchStartY) {
-                // Prevent scrolling the content when at the bottom and pulling up
-                e.preventDefault();
-            }
         }
         
         // Initialize the app when DOM is loaded
