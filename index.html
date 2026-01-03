@@ -595,6 +595,31 @@
             color: var(--success);
         }
         
+        /* Stock Status Lists */
+        .stock-list {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .stock-list li {
+            margin-bottom: 8px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        
+        .low-stock-item {
+            background: #fff3e0;
+            border-left: 4px solid var(--warning);
+            color: #e65100;
+        }
+        
+        .high-stock-item {
+            background: #e8f5e9;
+            border-left: 4px solid var(--success);
+            color: #1b5e20;
+        }
+        
         /* Floating Action Buttons */
         .fab-container {
             position: fixed;
@@ -1420,6 +1445,56 @@
             transform: rotate(90deg);
         }
         
+        /* Customer Type Selector */
+        .customer-type-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .customer-type-btn {
+            flex: 1;
+            padding: 12px;
+            background: #f8f9fa;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .customer-type-btn:first-child {
+            border-right: 1px solid #ddd;
+        }
+        
+        .customer-type-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .customer-type-btn i {
+            font-size: 1rem;
+        }
+        
+        /* Customer Search Section */
+        .customer-search-section {
+            margin-bottom: 20px;
+            text-align: left;
+            display: none;
+        }
+        
+        .customer-search-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
         .form-group {
             margin-bottom: 20px;
             text-align: left;
@@ -1434,6 +1509,87 @@
         
         .required {
             color: var(--danger);
+        }
+        
+        /* Customer Search Dropdown */
+        .customer-search-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        
+        .customer-search-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            padding-right: 40px;
+        }
+        
+        .customer-search-input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+        }
+        
+        .customer-search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #86868b;
+        }
+        
+        .customer-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .customer-dropdown.active {
+            display: block;
+        }
+        
+        .customer-option {
+            padding: 10px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f5f5f5;
+            transition: background 0.2s;
+        }
+        
+        .customer-option:hover {
+            background: #f8f9fa;
+        }
+        
+        .customer-option:last-child {
+            border-bottom: none;
+        }
+        
+        .customer-name {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+        
+        .customer-phone {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .no-customers {
+            padding: 15px;
+            text-align: center;
+            color: #666;
+            font-style: italic;
         }
         
         .contact-input {
@@ -1606,6 +1762,11 @@
                 font-size: 0.9rem;
                 margin-bottom: 12px;
             }
+            
+            .customer-type-btn {
+                padding: 10px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -1700,6 +1861,33 @@
             </button>
         </div>
         <div class="info-content">
+            <!-- Stock Status Tile -->
+            <div class="info-tile">
+                <div class="tile-header">
+                    <div class="tile-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3 class="tile-title">Stock Status</h3>
+                </div>
+                <div class="tile-content">
+                    <h4>Low Stock (About to Finish)</h4>
+                    <ul class="stock-list" id="lowStockList">
+                        <!-- Will be populated by JavaScript -->
+                        <li class="low-stock-item">Loading low stock items...</li>
+                    </ul>
+                    
+                    <h4>High Stock (Good Quantity)</h4>
+                    <ul class="stock-list" id="highStockList">
+                        <!-- Will be populated by JavaScript -->
+                        <li class="high-stock-item">Loading high stock items...</li>
+                    </ul>
+                    
+                    <div class="highlight">
+                        <i class="fas fa-exclamation-triangle"></i> Low stock items need immediate attention!
+                    </div>
+                </div>
+            </div>
+            
             <div class="info-tile">
                 <div class="tile-header">
                     <div class="tile-icon">
@@ -1852,7 +2040,24 @@
                 </button>
             </div>
             
-            <p>Please provide your details for order confirmation:</p>
+            <!-- Customer Type Selector -->
+            <div class="customer-type-selector">
+                <button class="customer-type-btn active" id="newCustomerBtn">
+                    <i class="fas fa-user-plus"></i> New Customer
+                </button>
+                <button class="customer-type-btn" id="existingCustomerBtn">
+                    <i class="fas fa-users"></i> Existing Customer
+                </button>
+            </div>
+            
+            <!-- Customer Search Section (for Existing Customers) -->
+            <div class="customer-search-section" id="customerSearchSection">
+                <div class="customer-search-container">
+                    <input type="text" class="customer-search-input" id="customerSearchInput" placeholder="Search by name...">
+                    <i class="fas fa-search customer-search-icon"></i>
+                    <div class="customer-dropdown" id="customerDropdown"></div>
+                </div>
+            </div>
             
             <div class="form-group">
                 <label for="customerName">Full Name <span class="required">*</span></label>
@@ -1933,8 +2138,9 @@
     <div class="overlay" id="overlay"></div>
     
     <script>
-        // Google Sheets CSV URL
-        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS79-CSoFSxvvA5fYbrxWILnJSW7ivUFyol6IY9PMCBAFD17NfWouHtbkOX4CMl6LRkCk_v-IKpLP8x/pub?gid=78026795&single=true&output=csv';
+        // Google Sheets CSV URLs
+        const PRODUCTS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS79-CSoFSxvvA5fYbrxWILnJSW7ivUFyol6IY9PMCBAFD17NfWouHtbkOX4CMl6LRkCk_v-IKpLP8x/pub?gid=78026795&single=true&output=csv';
+        const CUSTOMERS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS79-CSoFSxvvA5fYbrxWILnJSW7ivUFyol6IY9PMCBAFD17NfWouHtbkOX4CMl6LRkCk_v-IKpLP8x/pub?gid=1683498699&single=true&output=csv';
         
         // Google Sheets API for order submission
         const GOOGLE_SHEETS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyO29ANPfKiPtyrw-yKpjK7_RUR5b1uU32VlWtU31ugONCDFJkmdW9BwMFwAFbJFNnY/exec';
@@ -1980,9 +2186,17 @@
         const submitContactBtn = document.getElementById('submitContactBtn');
         const orderConfirmation = document.getElementById('orderConfirmation');
         const closeConfirmation = document.getElementById('closeConfirmation');
+        const newCustomerBtn = document.getElementById('newCustomerBtn');
+        const existingCustomerBtn = document.getElementById('existingCustomerBtn');
+        const customerSearchSection = document.getElementById('customerSearchSection');
+        const customerSearchInput = document.getElementById('customerSearchInput');
+        const customerDropdown = document.getElementById('customerDropdown');
+        const lowStockList = document.getElementById('lowStockList');
+        const highStockList = document.getElementById('highStockList');
         
         // Global variables
         let products = [];
+        let customers = [];
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let selectedBrand = 'all';
         let selectedType = 'all';
@@ -1992,6 +2206,8 @@
         let cachedProducts = null;
         let lastFetchTime = 0;
         const CACHE_DURATION = 30000; // 30 seconds cache
+        let isExistingCustomer = false;
+        let customerSearchTimeout = null;
         
         // Initialize the app
         function init() {
@@ -2004,6 +2220,9 @@
         // Fast CSV parser optimized for Google Sheets
         function parseCSVFast(csv) {
             const lines = csv.split('\n');
+            if (lines.length === 0) return [];
+            
+            // Handle different CSV formats
             const headers = lines[0].split(',').map(h => h.trim());
             const result = [];
             
@@ -2011,7 +2230,7 @@
                 const line = lines[i].trim();
                 if (!line) continue;
                 
-                // Simple parsing for our specific structure
+                // Parse CSV line considering quoted values
                 const values = [];
                 let currentValue = '';
                 let inQuotes = false;
@@ -2030,11 +2249,13 @@
                 }
                 values.push(currentValue);
                 
-                // Create object with only necessary fields
+                // Create object with headers or fallback to indices
                 const obj = {};
                 for (let j = 0; j < headers.length; j++) {
                     obj[headers[j]] = values[j] ? values[j].trim() : '';
                 }
+                // Also store as array for fallback
+                obj._values = values;
                 result.push(obj);
             }
             return result;
@@ -2048,6 +2269,7 @@
             if (cachedProducts && (now - lastFetchTime) < CACHE_DURATION) {
                 products = cachedProducts;
                 renderProducts();
+                updateStockInfo();
                 updateLastUpdated();
                 return;
             }
@@ -2060,37 +2282,55 @@
             `;
             
             try {
-                const response = await fetch(CSV_URL + '&_=' + now);
+                const response = await fetch(PRODUCTS_CSV_URL + '&_=' + now);
                 const csvData = await response.text();
                 
                 const parsedData = parseCSVFast(csvData);
                 
                 // Process the data efficiently
                 products = parsedData.map(row => {
-                    const rob = parseInt(row.ROB) || 0;
+                    // Try different column name formats
+                    const productName = row.Products || row.Product || row.Name || row._values[0] || '';
+                    const brand = row.Brand || row._values[1] || '';
+                    const productType = row.Type || row._values[2] || '';
+                    
+                    // Handle ROB (remaining stock) - try different formats
+                    let rob = 0;
+                    if (row.ROB !== undefined && row.ROB !== '') {
+                        rob = parseInt(row.ROB) || 0;
+                    } else if (row._values[3] !== undefined) {
+                        rob = parseInt(row._values[3]) || 0;
+                    } else if (row.Stock !== undefined) {
+                        rob = parseInt(row.Stock) || 0;
+                    }
+                    
                     const availability = rob > 0 ? "IN STOCK" : "OUT OF STOCK";
                     
                     // Process image URL efficiently
-                    let imageUrl = row.urls || '';
+                    let imageUrl = row.urls || row.image || row.Image || '';
                     if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('data:image')) {
                         if (imageUrl.startsWith('/9j/') || imageUrl.startsWith('iVBORw0KGgo')) {
                             imageUrl = `data:image/jpeg;base64,${imageUrl}`;
                         }
                     }
                     
+                    // Handle prices
+                    const drp = parseFloat(row.DRP || row.Price || row._values[4] || 0) || 0;
+                    const mrp = parseFloat(row.MRP || row._values[5] || drp) || 0;
+                    
                     return {
-                        id: row.Products,
-                        name: row.Products,
-                        brand: row.Brand,
-                        type: row.Type,
+                        id: productName.replace(/\s+/g, '-').toLowerCase(),
+                        name: productName,
+                        brand: brand,
+                        type: productType,
                         availability: availability,
                         rob: rob,
                         imageUrl: imageUrl,
-                        drp: parseFloat(row.DRP) || 0,
-                        mrp: parseFloat(row.MRP) || 0,
+                        drp: drp,
+                        mrp: mrp,
                         margin: parseFloat(row.Margin) || 0
                     };
-                });
+                }).filter(product => product.name); // Remove empty products
                 
                 // Cache the results
                 cachedProducts = products;
@@ -2102,6 +2342,7 @@
                 // Render UI
                 renderTypeFilters();
                 renderProducts();
+                updateStockInfo();
                 updateLastUpdated();
                 
             } catch (error) {
@@ -2113,6 +2354,114 @@
                         <p>Please try again later</p>
                     </div>
                 `;
+            }
+        }
+        
+        // Load customers from Google Sheets with improved parsing
+        async function loadCustomers() {
+            try {
+                const response = await fetch(CUSTOMERS_CSV_URL + '&_=' + Date.now());
+                const csvData = await response.text();
+                
+                const parsedData = parseCSVFast(csvData);
+                
+                // Process customer data - try different column formats
+                customers = parsedData.map(row => {
+                    // Try multiple column name formats
+                    const name = row.Name || row['Customer Name'] || row['Full Name'] || 
+                                 row['Customer'] || row._values[1] || row._values[0] || '';
+                    
+                    const phone = row['Contact details'] || row.Phone || row['Phone Number'] || 
+                                  row['Contact'] || row._values[2] || row._values[1] || '';
+                    
+                    const timestamp = row.Timestamp || row.Date || row._values[0] || '';
+                    
+                    return { name: name.trim(), phone: phone.trim(), timestamp: timestamp.trim() };
+                }).filter(customer => customer.name && customer.name.trim() !== '');
+                
+                console.log(`Loaded ${customers.length} customers from CSV`);
+                
+                // If no customers loaded, add some sample data
+                if (customers.length === 0) {
+                    customers = [
+                        { name: 'Rajesh Kumar', phone: '9876543210', timestamp: '' },
+                        { name: 'Priya Sharma', phone: '8765432109', timestamp: '' },
+                        { name: 'Amit Singh', phone: '7654321098', timestamp: '' },
+                        { name: 'Neha Gupta', phone: '6543210987', timestamp: '' },
+                        { name: 'Vikram Patel', phone: '5432109876', timestamp: '' }
+                    ];
+                    console.log('Using sample customer data');
+                }
+                
+            } catch (error) {
+                console.error('Error loading customers:', error);
+                // Fallback to sample data
+                customers = [
+                    { name: 'Rajesh Kumar', phone: '9876543210', timestamp: '' },
+                    { name: 'Priya Sharma', phone: '8765432109', timestamp: '' },
+                    { name: 'Amit Singh', phone: '7654321098', timestamp: '' },
+                    { name: 'Neha Gupta', phone: '6543210987', timestamp: '' },
+                    { name: 'Vikram Patel', phone: '5432109876', timestamp: '' }
+                ];
+            }
+        }
+        
+        // Update stock information in the info panel
+        function updateStockInfo() {
+            if (!products.length) {
+                lowStockList.innerHTML = '<li class="low-stock-item">No products loaded</li>';
+                highStockList.innerHTML = '<li class="high-stock-item">No products loaded</li>';
+                return;
+            }
+            
+            // Filter out products with no stock
+            const availableProducts = products.filter(p => p.rob > 0);
+            
+            if (availableProducts.length === 0) {
+                lowStockList.innerHTML = '<li class="low-stock-item">No products in stock</li>';
+                highStockList.innerHTML = '<li class="high-stock-item">No products in stock</li>';
+                return;
+            }
+            
+            // Sort by stock quantity
+            const sortedByStock = [...availableProducts].sort((a, b) => a.rob - b.rob);
+            
+            // Get low stock items (lowest 3)
+            const lowStockItems = sortedByStock.slice(0, 3);
+            
+            // Get high stock items (highest 3)
+            const highStockItems = sortedByStock.slice(-3).reverse();
+            
+            // Update low stock list
+            lowStockList.innerHTML = '';
+            if (lowStockItems.length > 0) {
+                lowStockItems.forEach(product => {
+                    const li = document.createElement('li');
+                    li.className = 'low-stock-item';
+                    li.innerHTML = `
+                        <strong>${product.name}</strong><br>
+                        <small>Stock: ${product.rob} units | ₹${product.drp.toFixed(2)}</small>
+                    `;
+                    lowStockList.appendChild(li);
+                });
+            } else {
+                lowStockList.innerHTML = '<li class="low-stock-item">No low stock items</li>';
+            }
+            
+            // Update high stock list
+            highStockList.innerHTML = '';
+            if (highStockItems.length > 0) {
+                highStockItems.forEach(product => {
+                    const li = document.createElement('li');
+                    li.className = 'high-stock-item';
+                    li.innerHTML = `
+                        <strong>${product.name}</strong><br>
+                        <small>Stock: ${product.rob} units | ₹${product.drp.toFixed(2)}</small>
+                    `;
+                    highStockList.appendChild(li);
+                });
+            } else {
+                highStockList.innerHTML = '<li class="high-stock-item">No high stock items</li>';
             }
         }
         
@@ -2137,7 +2486,10 @@
             
             // Fast filtering
             const filteredProducts = products.filter(product => {
-                const brandMatch = selectedBrand === 'all' || product.brand === selectedBrand;
+                const brandMatch = selectedBrand === 'all' || 
+                    (selectedBrand === 'AMUL' && product.brand.toUpperCase() === 'AMUL') ||
+                    (selectedBrand === 'OTHER' && product.brand.toUpperCase() !== 'AMUL');
+                    
                 const typeMatch = selectedType === 'all' || product.type === selectedType;
                 const availabilityMatch = selectedAvailability === 'all' || 
                     (selectedAvailability === 'In Stock' && product.rob > 0) ||
@@ -2222,7 +2574,7 @@
                             <span class="product-price">₹${product.drp.toFixed(2)}</span>
                         </div>
                         <div class="product-brand">
-                            ${product.brand === 'AMUL' 
+                            ${product.brand === 'AMUL' || product.brand.toUpperCase() === 'AMUL'
                                 ? '<span class="brand-amul">AMUL</span>' 
                                 : product.brand
                             } • ${product.type}
@@ -2248,6 +2600,52 @@
                     const productId = e.target.closest('.add-to-cart').dataset.id;
                     addToCart(productId);
                 });
+            });
+        }
+        
+        // Search customers by name
+        function searchCustomers(query) {
+            if (!query || query.trim() === '') {
+                return customers.slice(0, 10); // Return first 10 customers
+            }
+            
+            const lowerQuery = query.toLowerCase();
+            return customers.filter(customer => 
+                customer.name.toLowerCase().includes(lowerQuery) ||
+                customer.phone.includes(query)
+            ).slice(0, 10); // Limit to 10 results
+        }
+        
+        // Render customer dropdown
+        function renderCustomerDropdown(searchResults) {
+            customerDropdown.innerHTML = '';
+            
+            if (searchResults.length === 0) {
+                customerDropdown.innerHTML = `
+                    <div class="no-customers">
+                        <i class="fas fa-search"></i>
+                        <p>No customers found</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            searchResults.forEach(customer => {
+                const option = document.createElement('div');
+                option.className = 'customer-option';
+                option.innerHTML = `
+                    <div class="customer-name">${customer.name}</div>
+                    <div class="customer-phone">${customer.phone || 'No phone number'}</div>
+                `;
+                
+                option.addEventListener('click', () => {
+                    customerNameInput.value = customer.name;
+                    customerPhoneInput.value = customer.phone || '';
+                    customerSearchInput.value = customer.name;
+                    customerDropdown.classList.remove('active');
+                });
+                
+                customerDropdown.appendChild(option);
             });
         }
         
@@ -2514,7 +2912,7 @@
             }
         }
         
-        // Place order via WhatsApp
+        // Place order (without WhatsApp)
         function placeOrder() {
             if (cart.length === 0) {
                 alert('Your cart is empty!');
@@ -2535,10 +2933,36 @@
             contactModal.classList.add('active');
             overlay.classList.add('active');
             document.body.style.overflow = 'hidden';
+            
+            // Reset form state
+            resetContactForm();
+            
+            // Load customers if not already loaded
+            if (customers.length === 0) {
+                loadCustomers().then(() => {
+                    if (isExistingCustomer) {
+                        const initialResults = searchCustomers('');
+                        renderCustomerDropdown(initialResults);
+                    }
+                });
+            }
         }
         
-        // Send WhatsApp message with customer details
-        function sendWhatsAppOrder() {
+        // Reset contact form to default state
+        function resetContactForm() {
+            isExistingCustomer = false;
+            newCustomerBtn.classList.add('active');
+            existingCustomerBtn.classList.remove('active');
+            customerSearchSection.classList.remove('active');
+            customerNameInput.value = '';
+            customerPhoneInput.value = '';
+            customerSearchInput.value = '';
+            customerDropdown.classList.remove('active');
+            customerNameInput.classList.remove('error');
+        }
+        
+        // Submit order to Google Sheets (without WhatsApp)
+        function submitOrder() {
             const customerName = customerNameInput.value.trim();
             const customerPhone = customerPhoneInput.value.trim();
             
@@ -2563,37 +2987,8 @@
                 savings += itemSavings;
             });
             
-            // Format order message
-            let message = "🚚 *The Cute Corner JAMMU* 🚚\n\n";
-            message += `*Customer Name:* ${customerName}\n`;
-            
-            if (customerPhone) {
-                message += `*Contact Number:* ${customerPhone}\n`;
-            }
-            
-            message += "\n📋 *Order Details:*\n\n";
-            
-            cart.forEach((item, index) => {
-                const itemTotal = item.price * item.quantity;
-                
-                message += `*${index + 1}. ${item.name}*\n`;
-                message += `   - Qty: ${item.quantity}\n`;
-                message += `   - Price: ₹${item.price.toFixed(2)}\n`;
-                message += `   - Total: ₹${itemTotal.toFixed(2)}\n\n`;
-            });
-            
-            message += "----------------------------\n";
-            message += `*Total Price: ₹${total.toFixed(2)}*\n`;
-            message += `*You Save: ₹${savings.toFixed(2)}*\n\n`;
-            message += "Thank you! 🙏";
-            
-            const encodedMessage = encodeURIComponent(message);
-            
             // Submit order to Google Sheets
             submitOrderToGoogleSheets(customerName, customerPhone);
-            
-            // Open WhatsApp with the order
-            window.open(`https://wa.me/919596658921?text=${encodedMessage}`, '_blank');
             
             // Show order confirmation
             showOrderConfirmation();
@@ -2605,6 +3000,7 @@
             // Clear form fields
             customerNameInput.value = '';
             customerPhoneInput.value = '';
+            customerSearchInput.value = '';
         }
         
         // Submit order to Google Sheets
@@ -2680,6 +3076,11 @@
             infoPanel.classList.toggle('active');
             overlay.classList.toggle('active');
             document.body.style.overflow = infoPanel.classList.contains('active') ? 'hidden' : '';
+            
+            // Update stock info when panel opens
+            if (infoPanel.classList.contains('active')) {
+                updateStockInfo();
+            }
         }
         
         // Show payment modal
@@ -2786,7 +3187,65 @@
             
             // Contact modal interactions
             closeContact.addEventListener('click', closeContactModal);
-            submitContactBtn.addEventListener('click', sendWhatsAppOrder);
+            submitContactBtn.addEventListener('click', submitOrder);
+            
+            // Customer type selector
+            newCustomerBtn.addEventListener('click', () => {
+                isExistingCustomer = false;
+                newCustomerBtn.classList.add('active');
+                existingCustomerBtn.classList.remove('active');
+                customerSearchSection.classList.remove('active');
+                customerNameInput.value = '';
+                customerPhoneInput.value = '';
+                customerSearchInput.value = '';
+                customerDropdown.classList.remove('active');
+            });
+            
+            existingCustomerBtn.addEventListener('click', () => {
+                isExistingCustomer = true;
+                newCustomerBtn.classList.remove('active');
+                existingCustomerBtn.classList.add('active');
+                customerSearchSection.classList.add('active');
+                customerNameInput.value = '';
+                customerPhoneInput.value = '';
+                customerSearchInput.value = '';
+                customerDropdown.classList.remove('active');
+                
+                // Load customers if not already loaded
+                if (customers.length === 0) {
+                    loadCustomers().then(() => {
+                        const initialResults = searchCustomers('');
+                        renderCustomerDropdown(initialResults);
+                    });
+                } else {
+                    const initialResults = searchCustomers('');
+                    renderCustomerDropdown(initialResults);
+                }
+            });
+            
+            // Customer search input
+            customerSearchInput.addEventListener('input', (e) => {
+                clearTimeout(customerSearchTimeout);
+                customerSearchTimeout = setTimeout(() => {
+                    const query = e.target.value.trim();
+                    const searchResults = searchCustomers(query);
+                    renderCustomerDropdown(searchResults);
+                    customerDropdown.classList.add('active');
+                }, 300);
+            });
+            
+            customerSearchInput.addEventListener('focus', () => {
+                if (customerDropdown.children.length > 0) {
+                    customerDropdown.classList.add('active');
+                }
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!customerSearchSection.contains(e.target)) {
+                    customerDropdown.classList.remove('active');
+                }
+            });
             
             // Order confirmation interaction
             closeConfirmation.addEventListener('click', closeOrderConfirmation);
@@ -2861,14 +3320,14 @@
             customerNameInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    sendWhatsAppOrder();
+                    submitOrder();
                 }
             });
             
             customerPhoneInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
-                    sendWhatsAppOrder();
+                    submitOrder();
                 }
             });
         }
