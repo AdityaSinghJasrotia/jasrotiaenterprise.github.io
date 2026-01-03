@@ -1,1531 +1,1313 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F0JZK618J3"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-F0JZK618J3');
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Cute Corner - Order Management</title>
+    <title>Amul Sales Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- PapaParse for CSV parsing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <!-- Chart.js for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary: #e6b400;
-            --secondary: #fff8e1;
-            --text: #1d1d1f;
-            --border: #e0d6b4;
-            --success: #28a745;
-            --warning: #ff9500;
-            --danger: #dc3545;
-            --info: #17a2b8;
-            --card-radius: 14px;
-            --shadow: 0 4px 12px rgba(0,0,0,0.05);
-            --glass-bg: rgba(255, 253, 245, 0.85);
-            --blur: blur(10px);
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        }
-        
-        body {
-            background-color: #fffdf5;
-            color: var(--text);
-            line-height: 1.5;
-            padding-bottom: 20px;
-            position: relative;
-            min-height: 100vh;
-            background-image: linear-gradient(135deg, #fffdf5 0%, #fff8e1 100%);
-            overflow-x: hidden;
-        }
-        
-        /* PIN Protection Screen */
-        .pin-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--glass-bg);
-            backdrop-filter: var(--blur);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            transition: all 0.5s ease;
-        }
-        
-        .pin-container {
-            background: white;
-            border-radius: var(--card-radius);
-            box-shadow: var(--shadow);
-            padding: 30px;
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-            border: 1px solid var(--border);
-            transform: translateY(-20px);
-            opacity: 0;
-            animation: slideIn 0.5s forwards 0.2s;
-        }
-        
-        @keyframes slideIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .pin-logo {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        
-        .pin-icon {
-            font-size: 3rem;
-            color: var(--primary);
-            background: var(--secondary);
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-        }
-        
-        .pin-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: var(--text);
-        }
-        
-        .pin-subtitle {
-            color: #666;
-            margin-bottom: 25px;
-            font-size: 1rem;
-        }
-        
-        .pin-input-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        
-        .pin-input {
-            width: 45px;
-            height: 55px;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
-        }
-        
-        .pin-input:focus {
-            border-color: var(--primary);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(230, 180, 0, 0.2);
-        }
-        
-        .pin-input.active {
-            border-color: var(--primary);
-            background-color: rgba(230, 180, 0, 0.1);
-        }
-        
-        .pin-keypad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-top: 20px;
-        }
-        
-        .pin-key {
-            height: 55px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            border: 1px solid var(--border);
-            font-size: 1.3rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            user-select: none;
-        }
-        
-        .pin-key:hover {
-            background: var(--secondary);
-        }
-        
-        .pin-key:active {
-            transform: scale(0.95);
-        }
-        
-        .pin-key.clear {
-            grid-column: span 2;
-            background: var(--secondary);
-            color: var(--danger);
-            font-size: 1.1rem;
-        }
-        
-        .pin-key.submit {
-            background: var(--primary);
-            color: white;
-            border: none;
-        }
-        
-        .pin-key.submit:hover {
-            background: #d4a000;
-        }
-        
-        .pin-key.submit:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .pin-message {
-            height: 20px;
-            margin-top: 15px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--danger);
-            transition: all 0.3s ease;
-        }
-        
-        .pin-footer {
-            margin-top: 25px;
-            color: #86868b;
-            font-size: 0.85rem;
-        }
-        
-        /* Header Styles */
-        header {
-            background: linear-gradient(90deg, #ffffff, #fff8e1, #ffffff);
-            background-size: 200% 100%;
-            padding: 15px 20px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            animation: gradientWave 3s ease infinite;
-        }
-        
-        @keyframes gradientWave {
-            0% { background-position: 100% 0%; }
-            100% { background-position: 0% 0%; }
-        }
-        
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-        }
-        
-        .logo-icon {
-            margin-right: 10px;
-            color: #ff3a2d;
-        }
-        
-        .refresh-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s ease;
-            display: flex;
-            align-items: center;
-        }
-        
-        .refresh-btn:hover {
-            background: #c79900;
-        }
-        
-        .refresh-btn i {
-            margin-right: 5px;
-        }
-        
-        /* Status Bar */
-        .status-bar {
-            padding: 10px 15px;
-            background: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-            color: #86868b;
-            border-bottom: 1px solid var(--border);
-            background: #fffdf5;
-        }
-        
-        .last-updated {
-            display: flex;
-            align-items: center;
-        }
-        
-        .last-updated i {
-            margin-right: 5px;
-            color: var(--primary);
-        }
-        
-        /* Order Tiles */
-        .orders-container {
-            padding: 15px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 20px;
-        }
-        
-        .order-tile {
-            background: white;
-            border-radius: var(--card-radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-            transition: transform 0.2s ease;
-            background: #fffdf5;
-            border: 1px solid var(--border);
-            position: relative;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: tileAppear 0.6s forwards;
-        }
-        
-        @keyframes tileAppear {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .order-header {
-            padding: 15px;
-            background: var(--secondary);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .order-id {
-            font-weight: 600;
-            color: var(--primary);
-        }
-        
-        .order-date {
-            font-size: 0.9rem;
-            color: #666;
-        }
-        
-        .order-customer {
-            padding: 15px;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .customer-name {
-            font-weight: 600;
-            margin-bottom: 5px;
-        }
-        
-        .customer-phone {
-            color: var(--info);
-            font-weight: 500;
-        }
-        
-        .order-products {
-            max-height: 200px;
-            overflow-y: auto;
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .product-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 15px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .product-item:last-child {
-            border-bottom: none;
-        }
-        
-        .product-name {
-            flex: 1;
-        }
-        
-        .product-quantity {
-            width: 50px;
-            text-align: center;
-            font-weight: 500;
-        }
-        
-        .product-price {
-            width: 80px;
-            text-align: right;
-            font-weight: 500;
-        }
-        
-        .order-summary {
-            padding: 15px;
-            background: var(--secondary);
-            border-bottom: 1px solid var(--border);
-        }
-        
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-        }
-        
-        .summary-label {
-            font-weight: 500;
-        }
-        
-        .summary-value {
-            font-weight: 600;
-        }
-        
-        .order-total {
-            font-size: 1.1rem;
-            color: var(--success);
-            margin-top: 5px;
-        }
-        
-        .payment-section {
-            padding: 15px;
-        }
-        
-        .payment-status {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .status-label {
-            margin-right: 10px;
-            font-weight: 500;
-        }
-        
-        .status-toggle {
-            position: relative;
-            display: inline-block;
-            width: 50px;
-            height: 24px;
-        }
-        
-        .status-toggle input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        
-        .status-slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 24px;
-        }
-        
-        .status-slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        
-        input:checked + .status-slider {
-            background-color: var(--success);
-        }
-        
-        input:checked + .status-slider:before {
-            transform: translateX(26px);
-        }
-        
-        .payment-mode {
-            margin-bottom: 15px;
-        }
-        
-        .mode-label {
-            font-weight: 500;
-            margin-bottom: 8px;
-        }
-        
-        .mode-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .mode-btn {
-            padding: 8px 15px;
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            background: white;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-        }
-        
-        .mode-btn.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-        
-        .amount-section {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        
-        .amount-group {
-            display: flex;
-            align-items: center;
-        }
-        
-        .amount-label {
-            width: 120px;
-            font-weight: 500;
-        }
-        
-        .amount-input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
-        }
-        
-        .balance {
-            font-weight: 600;
-            padding: 8px;
-            border-radius: 8px;
-            text-align: center;
-        }
-        
-        .positive-balance {
-            background: #e8f5e9;
-            color: var(--success);
-        }
-        
-        .negative-balance {
-            background: #ffebee;
-            color: var(--danger);
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            padding: 0 15px 15px;
-        }
-        
-        .action-btn {
-            flex: 1;
-            padding: 12px;
-            border-radius: 8px;
-            border: none;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        
-        .share-btn {
-            background: var(--success);
-            color: white;
-        }
-        
-        .share-btn:hover {
-            background: #218838;
-        }
-        
-        .delete-btn {
-            background: #f8f9fa;
-            color: #666;
-        }
-        
-        .delete-btn:hover {
-            background: #e9ecef;
-        }
-        
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #86868b;
-            grid-column: 1 / -1;
-        }
-        
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: #d2d2d7;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        * { font-family: 'Inter', sans-serif; }
         
-        /* Loading state */
-        .loading {
-            text-align: center;
-            padding: 30px;
-            color: #86868b;
-            grid-column: 1 / -1;
+        /* Glassmorphism & Dark Theme */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
-        .loading i {
-            font-size: 2rem;
-            margin-bottom: 15px;
-            animation: spin 1s linear infinite;
+        .dark-bg {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #f8fafc;
         }
         
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .dark-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(71, 85, 105, 0.5);
         }
         
-        /* Floating Action Buttons */
         .fab-container {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 95;
-        }
-        
-        .fab-buttons {
-            position: absolute;
-            bottom: 60px;
-            right: 0;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
             display: flex;
             flex-direction: column;
+            align-items: flex-end;
             gap: 15px;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-        }
-        
-        .fab-buttons.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        
-        .fab-button {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-size: 1.2rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            text-decoration: none;
-        }
-        
-        .fab-button:hover {
-            transform: translateY(-3px);
-        }
-        
-        .fab-button::after {
-            content: attr(title);
-            position: absolute;
-            right: 60px;
-            white-space: nowrap;
-            background: var(--text);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
-        
-        .fab-button:hover::after {
-            opacity: 1;
-        }
-        
-        .fab-button.call {
-            background: var(--primary);
-        }
-        
-        .fab-button.admin {
-            background: #17a2b8;
         }
         
         .fab-main {
             width: 60px;
             height: 60px;
-            background: var(--primary);
-            border-radius: 50%;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
             display: flex;
-            justify-content: center;
             align-items: center;
-            color: white;
-            font-size: 1.5rem;
+            justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            transition: all 0.3s;
-            animation: float 3s ease-in-out infinite;
+            transition: all 0.3s ease;
         }
         
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+        .fab-secondary {
+            width: 50px;
+            height: 50px;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .fab-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
         }
         
         .fab-main:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
-            animation: none;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.5);
         }
         
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            .orders-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .header-top {
-                flex-direction: column;
-                gap: 10px;
-                align-items: flex-start;
-            }
-            
-            .refresh-btn {
-                width: 100%;
-                justify-content: center;
-            }
-            
-            .pin-container {
-                padding: 20px;
-                max-width: 90%;
-            }
-            
-            .pin-input {
-                width: 40px;
-                height: 50px;
-            }
-        }
-        
-        /* Security badge */
-        .security-badge {
+        /* Side Drawer */
+        .side-drawer {
             position: fixed;
-            bottom: 10px;
-            left: 10px;
-            background: var(--secondary);
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: #666;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            z-index: 99;
-            border: 1px solid var(--border);
+            top: 0;
+            right: -450px;
+            width: 420px;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 999;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 25px;
+            overflow-y: auto;
+        }
+        
+        .side-drawer.open {
+            right: 0;
+        }
+        
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .drawer-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Modals */
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(59, 130, 246, 0.5);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(59, 130, 246, 0.8);
+        }
+        
+        /* Loading Spinner */
+        .loading-spinner {
+            border: 4px solid rgba(59, 130, 246, 0.1);
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Invoice Card Animation */
+        .invoice-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .invoice-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Status Colors */
+        .status-paid {
+            color: #10b981;
+        }
+        
+        .status-pending {
+            color: #ef4444;
+        }
+        
+        /* Payment Filter Button Styles */
+        .payment-filter-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .payment-filter-btn.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border-color: #3b82f6;
         }
     </style>
 </head>
-<body>
-    <!-- PIN Protection Screen -->
-    <div class="pin-screen" id="pinScreen">
-        <div class="pin-container">
-            <div class="pin-logo">
-                <div class="pin-icon">
-                    <i class="fas fa-lock"></i>
-                </div>
-            </div>
-            <h2 class="pin-title">Order Management System</h2>
-            <p class="pin-subtitle">Enter 6-digit PIN to access</p>
-            
-            <div class="pin-input-container">
-                <input type="text" class="pin-input" maxlength="1" data-index="0" autocomplete="off">
-                <input type="text" class="pin-input" maxlength="1" data-index="1" autocomplete="off">
-                <input type="text" class="pin-input" maxlength="1" data-index="2" autocomplete="off">
-                <input type="text" class="pin-input" maxlength="1" data-index="3" autocomplete="off">
-                <input type="text" class="pin-input" maxlength="1" data-index="4" autocomplete="off">
-                <input type="text" class="pin-input" maxlength="1" data-index="5" autocomplete="off">
-            </div>
-            
-            <div class="pin-keypad">
-                <div class="pin-key" data-value="1">1</div>
-                <div class="pin-key" data-value="2">2</div>
-                <div class="pin-key" data-value="3">3</div>
-                <div class="pin-key" data-value="4">4</div>
-                <div class="pin-key" data-value="5">5</div>
-                <div class="pin-key" data-value="6">6</div>
-                <div class="pin-key" data-value="7">7</div>
-                <div class="pin-key" data-value="8">8</div>
-                <div class="pin-key" data-value="9">9</div>
-                <div class="pin-key clear" data-action="clear">Clear</div>
-                <div class="pin-key" data-value="0">0</div>
-                <button class="pin-key submit" id="submitPin" disabled>Submit</button>
-            </div>
-            
-            <div class="pin-message" id="pinMessage"></div>
-            <div class="pin-footer">
-                <i class="fas fa-shield-alt"></i> Secure Access
-            </div>
-        </div>
-    </div>
-    
-    <!-- Security Badge -->
-    <div class="security-badge" id="securityBadge">
-        <i class="fas fa-lock"></i>
-        <span>Secure Access</span>
-    </div>
-    
-    <!-- Main Content -->
-    <div id="mainContent" style="display: none;">
+<body class="dark-bg min-h-screen p-4 md:p-6">
+    <div class="max-w-7xl mx-auto">
         <!-- Header -->
-        <header>
-            <div class="header-top">
-                <div class="logo">
-                    <i class="fas fa-store logo-icon"></i>
-                    <span>The Cute Corner</span>
+        <header class="mb-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                <div>
+                    <h1 class="text-3xl font-bold text-white">Amul Sales Dashboard</h1>
+                    <p class="text-gray-300 mt-2">Real-time sales insights and customer management</p>
                 </div>
-                <button class="refresh-btn" id="refreshBtn">
-                    <i class="fas fa-redo"></i>
-                    Refresh Orders
-                </button>
+                <div class="mt-4 md:mt-0">
+                    <button id="refreshBtn" class="glass-card hover:bg-gray-800 text-white px-5 py-3 rounded-xl flex items-center transition">
+                        <i class="fas fa-sync-alt mr-2"></i>
+                        <span>Refresh Data</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Stats Summary -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-5 mb-8">
+                <div class="dark-card rounded-xl p-5">
+                    <div class="flex items-center">
+                        <div class="bg-blue-900 bg-opacity-50 p-3 rounded-lg mr-4">
+                            <i class="fas fa-receipt text-blue-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-400 text-sm">Total Bills</p>
+                            <h3 id="totalBills" class="text-2xl font-bold text-white">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="dark-card rounded-xl p-5">
+                    <div class="flex items-center">
+                        <div class="bg-green-900 bg-opacity-50 p-3 rounded-lg mr-4">
+                            <i class="fas fa-shopping-bag text-green-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-400 text-sm">Total Items</p>
+                            <h3 id="totalItems" class="text-2xl font-bold text-white">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="dark-card rounded-xl p-5">
+                    <div class="flex items-center">
+                        <div class="bg-purple-900 bg-opacity-50 p-3 rounded-lg mr-4">
+                            <i class="fas fa-users text-purple-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-400 text-sm">Customers</p>
+                            <h3 id="totalCustomers" class="text-2xl font-bold text-white">0</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="dark-card rounded-xl p-5">
+                    <div class="flex items-center">
+                        <div class="bg-amber-900 bg-opacity-50 p-3 rounded-lg mr-4">
+                            <i class="fas fa-rupee-sign text-amber-400 text-xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-400 text-sm">Total Revenue</p>
+                            <h3 id="totalRevenue" class="text-2xl font-bold text-white">₹0</h3>
+                        </div>
+                    </div>
+                </div>
             </div>
         </header>
-        
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <div class="last-updated">
-                <i class="fas fa-sync"></i>
-                <span id="lastUpdated">Loading orders...</span>
+
+        <!-- Loading Spinner -->
+        <div id="loading" class="flex flex-col items-center justify-center py-20">
+            <div class="loading-spinner mb-4"></div>
+            <p class="text-gray-400">Fetching sales data from Google Sheets...</p>
+        </div>
+
+        <!-- Main Content -->
+        <main id="content" class="hidden">
+            <!-- Filters -->
+            <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
+                <div>
+                    <h2 class="text-xl font-semibold text-white">Sales Invoices</h2>
+                    <p class="text-gray-400">Grouped by transaction timestamp</p>
+                </div>
+                <div class="mt-4 md:mt-0 flex flex-wrap gap-3">
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        <input type="text" id="searchInput" placeholder="Search customer or product..." class="dark-card pl-10 pr-4 py-2.5 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white placeholder-gray-400">
+                    </div>
+                    
+                    <!-- Payment Status Filter Buttons -->
+                    <div class="flex items-center space-x-2 bg-gray-800 p-1 rounded-xl">
+                        <button id="filterAll" class="payment-filter-btn active px-4 py-2 rounded-lg text-white">
+                            All
+                        </button>
+                        <button id="filterPaid" class="payment-filter-btn px-4 py-2 rounded-lg text-gray-300 hover:text-white">
+                            <i class="fas fa-check-circle mr-2"></i>Paid
+                        </button>
+                        <button id="filterPending" class="payment-filter-btn px-4 py-2 rounded-lg text-gray-300 hover:text-white">
+                            <i class="fas fa-clock mr-2"></i>Pending
+                        </button>
+                    </div>
+                    
+                    <select id="sortSelect" class="dark-card border-gray-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-white">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="highest">Highest Amount</option>
+                        <option value="lowest">Lowest Amount</option>
+                    </select>
+                </div>
             </div>
-            <div id="orderCount">0 orders</div>
+
+            <!-- Bills Display -->
+            <div id="billsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
+                <!-- Bills will be dynamically inserted here -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-16">
+                <div class="glass-card inline-flex p-6 rounded-full mb-4">
+                    <i class="fas fa-file-invoice text-gray-400 text-4xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-300 mb-2">No invoices found</h3>
+                <p class="text-gray-400 max-w-md mx-auto">Try adjusting your search or filter to find what you're looking for.</p>
+            </div>
+        </main>
+
+        <!-- Side Drawer for Customer Navigation -->
+        <div class="side-drawer" id="sideDrawer">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-white">Customers</h2>
+                <button id="closeDrawer" class="text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="mb-4">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    <input type="text" id="customerSearch" placeholder="Search customers..." class="w-full dark-card pl-10 pr-4 py-2.5 rounded-xl text-white placeholder-gray-400">
+                </div>
+            </div>
+            
+            <div class="space-y-3" id="customerList">
+                <!-- Customer list will be populated here -->
+            </div>
         </div>
         
-        <!-- Orders Container -->
-        <div class="orders-container" id="ordersContainer">
-            <div class="loading">
-                <i class="fas fa-spinner"></i>
-                <p>Loading orders...</p>
+        <!-- Drawer Overlay -->
+        <div class="drawer-overlay" id="drawerOverlay"></div>
+
+        <!-- Top Products Modal -->
+        <div class="modal" id="topProductsModal">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-white">Top Selling Products</h2>
+                <button id="closeProductsModal" class="text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="mb-6">
+                <canvas id="productsChart" height="200"></canvas>
+            </div>
+            
+            <div id="topProductsList" class="space-y-4">
+                <!-- Top products will be populated here -->
             </div>
         </div>
         
-        <!-- Floating Action Buttons -->
+        <!-- Top Customers Modal -->
+        <div class="modal" id="topCustomersModal">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-white">Top Customers</h2>
+                <button id="closeCustomersModal" class="text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="mb-6">
+                <canvas id="customersChart" height="200"></canvas>
+            </div>
+            
+            <div id="topCustomersList" class="space-y-4">
+                <!-- Top customers will be populated here -->
+            </div>
+        </div>
+        
+        <!-- Modal Overlays -->
+        <div class="modal-overlay" id="productsModalOverlay"></div>
+        <div class="modal-overlay" id="customersModalOverlay"></div>
+
+        <!-- FAB Container -->
         <div class="fab-container">
-            <div class="fab-buttons" id="fabButtons">
-                <a href="tel:+919596658921" class="fab-button call" title="Call Jasrotia">
-                    <i class="fas fa-phone"></i>
-                </a>
-                <a href="tools.html" class="fab-button admin" title="Admin Tools" id="adminFab" target="_blank">
-                    <i class="fas fa-tools"></i>
-                </a>
+            <!-- Top Products FAB -->
+            <div class="fab-secondary" id="topProductsFab" title="Top Products">
+                <i class="fas fa-chart-bar text-blue-300 text-lg"></i>
             </div>
-            <div class="fab-main" id="fabMain">
-                <i class="fas fa-plus"></i>
+            
+            <!-- Top Customers FAB -->
+            <div class="fab-secondary" id="topCustomersFab" title="Top Customers">
+                <i class="fas fa-star text-amber-300 text-lg"></i>
+            </div>
+            
+            <!-- Main Navigation FAB -->
+            <div class="fab-main" id="mainFab" title="Customer Navigation">
+                <i class="fas fa-users text-white text-xl"></i>
             </div>
         </div>
     </div>
-    
+
     <script>
-        // Google Sheets CSV URL
+        // CSV URL from Google Sheets
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vS79-CSoFSxvvA5fYbrxWILnJSW7ivUFyol6IY9PMCBAFD17NfWouHtbkOX4CMl6LRkCk_v-IKpLP8x/pub?gid=1736908281&single=true&output=csv';
         
+        // Store the parsed data
+        let salesData = [];
+        let groupedBills = [];
+        let customerSummary = [];
+        let productsSummary = [];
+        
         // DOM Elements
-        const mainContent = document.getElementById('mainContent');
-        const ordersContainer = document.getElementById('ordersContainer');
-        const lastUpdated = document.getElementById('lastUpdated');
+        const loadingElement = document.getElementById('loading');
+        const contentElement = document.getElementById('content');
+        const billsContainer = document.getElementById('billsContainer');
+        const emptyState = document.getElementById('emptyState');
+        const searchInput = document.getElementById('searchInput');
+        const sortSelect = document.getElementById('sortSelect');
         const refreshBtn = document.getElementById('refreshBtn');
-        const orderCount = document.getElementById('orderCount');
-        const fabMain = document.getElementById('fabMain');
-        const fabButtons = document.getElementById('fabButtons');
-        const adminFab = document.getElementById('adminFab');
-        const pinScreen = document.getElementById('pinScreen');
-        const pinInputs = document.querySelectorAll('.pin-input');
-        const pinKeys = document.querySelectorAll('.pin-key');
-        const submitPinBtn = document.getElementById('submitPin');
-        const pinMessage = document.getElementById('pinMessage');
-        const securityBadge = document.getElementById('securityBadge');
         
-        // PIN configuration
-        const CORRECT_PIN = '251802';
-        const PIN_STORAGE_KEY = 'pinAuthenticated';
-        const PIN_EXPIRY_HOURS = 8; // PIN valid for 8 hours
+        // Payment Filter Elements
+        const filterAllBtn = document.getElementById('filterAll');
+        const filterPaidBtn = document.getElementById('filterPaid');
+        const filterPendingBtn = document.getElementById('filterPending');
+        let currentPaymentFilter = 'all';
         
-        // Global variables
-        let orders = [];
-        let orderStatus = JSON.parse(localStorage.getItem('orderStatus')) || {};
-        let currentPinInput = 0;
+        // Side Drawer Elements
+        const sideDrawer = document.getElementById('sideDrawer');
+        const drawerOverlay = document.getElementById('drawerOverlay');
+        const closeDrawerBtn = document.getElementById('closeDrawer');
+        const customerList = document.getElementById('customerList');
+        const customerSearch = document.getElementById('customerSearch');
+        const mainFab = document.getElementById('mainFab');
         
-        // Initialize the app
-        function init() {
-            // Check if already authenticated
-            const authData = JSON.parse(localStorage.getItem(PIN_STORAGE_KEY));
-            if (authData && new Date().getTime() < authData.expiry) {
-                // Valid authentication exists
-                pinScreen.style.display = 'none';
-                mainContent.style.display = 'block';
-                securityBadge.style.display = 'flex';
-                loadOrders();
-            } else {
-                // Setup PIN entry
-                setupPinEntry();
+        // Modal Elements
+        const topProductsModal = document.getElementById('topProductsModal');
+        const topCustomersModal = document.getElementById('topCustomersModal');
+        const productsModalOverlay = document.getElementById('productsModalOverlay');
+        const customersModalOverlay = document.getElementById('customersModalOverlay');
+        const closeProductsModalBtn = document.getElementById('closeProductsModal');
+        const closeCustomersModalBtn = document.getElementById('closeCustomersModal');
+        const topProductsFab = document.getElementById('topProductsFab');
+        const topCustomersFab = document.getElementById('topCustomersFab');
+        const topProductsList = document.getElementById('topProductsList');
+        const topCustomersList = document.getElementById('topCustomersList');
+        
+        // Chart instances
+        let productsChart = null;
+        let customersChart = null;
+        
+        // Stats elements
+        const totalBillsElement = document.getElementById('totalBills');
+        const totalItemsElement = document.getElementById('totalItems');
+        const totalCustomersElement = document.getElementById('totalCustomers');
+        const totalRevenueElement = document.getElementById('totalRevenue');
+        
+        // Format currency to Indian Rupees
+        const formatCurrency = (amount) => {
+            if (isNaN(amount) || amount === null) return '₹0.00';
+            return `₹${parseFloat(amount).toFixed(2)}`;
+        };
+        
+        // Format timestamp to readable date/time
+        const formatDateTime = (timestamp) => {
+            try {
+                let date;
+                if (timestamp.includes('T')) {
+                    date = new Date(timestamp);
+                } else {
+                    date = new Date(timestamp);
+                }
+                
+                if (isNaN(date.getTime())) {
+                    return timestamp;
+                }
+                
+                return date.toLocaleString('en-IN', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch (e) {
+                return timestamp;
             }
-        }
+        };
         
-        // Setup PIN entry
-        function setupPinEntry() {
-            // Focus on first input
-            pinInputs[0].focus();
-            
-            // Add event listeners to PIN inputs
-            pinInputs.forEach((input, index) => {
-                input.addEventListener('input', (e) => {
-                    if (e.target.value) {
-                        if (index < 5) {
-                            pinInputs[index + 1].focus();
-                        } else {
-                            submitPinBtn.disabled = false;
-                        }
-                    }
-                    updateSubmitButtonState();
-                });
-                
-                input.addEventListener('keydown', (e) => {
-                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
-                        pinInputs[index - 1].focus();
-                    }
-                });
-                
-                input.addEventListener('focus', () => {
-                    input.classList.add('active');
-                });
-                
-                input.addEventListener('blur', () => {
-                    input.classList.remove('active');
-                });
-            });
-            
-            // Add event listeners to keypad buttons
-            pinKeys.forEach(key => {
-                key.addEventListener('click', () => {
-                    const value = key.dataset.value;
-                    const action = key.dataset.action;
-                    
-                    if (value) {
-                        addPinDigit(value);
-                    } else if (action === 'clear') {
-                        clearPin();
-                    }
-                });
-            });
-            
-            // Submit PIN button
-            submitPinBtn.addEventListener('click', verifyPin);
-            
-            // Also allow Enter key to submit
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    verifyPin();
-                }
-            });
-        }
-        
-        // Add digit to PIN input
-        function addPinDigit(digit) {
-            // Find the next empty input
-            for (let i = 0; i < pinInputs.length; i++) {
-                if (!pinInputs[i].value) {
-                    pinInputs[i].value = digit;
-                    pinInputs[i].classList.add('active');
-                    
-                    // Move focus to next input if available
-                    if (i < pinInputs.length - 1) {
-                        pinInputs[i + 1].focus();
-                    } else {
-                        submitPinBtn.disabled = false;
-                    }
-                    
-                    break;
-                }
-            }
-            updateSubmitButtonState();
-        }
-        
-        // Clear all PIN inputs
-        function clearPin() {
-            pinInputs.forEach(input => {
-                input.value = '';
-                input.classList.remove('active');
-            });
-            pinInputs[0].focus();
-            pinMessage.textContent = '';
-            submitPinBtn.disabled = true;
-        }
-        
-        // Update submit button state
-        function updateSubmitButtonState() {
-            const pinComplete = Array.from(pinInputs).every(input => input.value);
-            submitPinBtn.disabled = !pinComplete;
-        }
-        
-        // Verify the entered PIN
-        function verifyPin() {
-            // Get entered PIN
-            const enteredPin = Array.from(pinInputs).map(input => input.value).join('');
-            
-            if (enteredPin === CORRECT_PIN) {
-                // Successful authentication
-                pinMessage.textContent = '';
-                pinMessage.style.color = 'var(--success)';
-                
-                // Save authentication with expiry
-                const now = new Date();
-                const expiry = now.getTime() + PIN_EXPIRY_HOURS * 60 * 60 * 1000;
-                localStorage.setItem(PIN_STORAGE_KEY, JSON.stringify({
-                    authenticated: true,
-                    expiry: expiry
-                }));
-                
-                // Hide PIN screen and show main content
-                pinScreen.style.opacity = '0';
-                pinScreen.style.pointerEvents = 'none';
-                
-                setTimeout(() => {
-                    pinScreen.style.display = 'none';
-                    mainContent.style.display = 'block';
-                    securityBadge.style.display = 'flex';
-                    loadOrders();
-                }, 500);
-            } else {
-                // Incorrect PIN
-                pinMessage.textContent = 'Incorrect PIN. Please try again.';
-                pinMessage.style.color = 'var(--danger)';
-                
-                // Shake animation
-                pinScreen.style.animation = 'shake 0.5s';
-                setTimeout(() => {
-                    pinScreen.style.animation = '';
-                }, 500);
-                
-                // Clear inputs after a delay
-                setTimeout(clearPin, 1000);
-            }
-        }
-        
-        // Load orders from Google Sheets
-        function loadOrders() {
-            ordersContainer.innerHTML = `
-                <div class="loading">
-                    <i class="fas fa-spinner"></i>
-                    <p>Loading orders...</p>
-                </div>
-            `;
-            
-            fetch(CSV_URL)
-                .then(response => response.text())
-                .then(csvData => {
-                    // Parse CSV data
-                    const parsedData = parseCSV(csvData);
-                    
-                    // Group orders by timestamp and phone
-                    orders = groupOrders(parsedData);
-                    
-                    // Update order count
-                    orderCount.textContent = `${orders.length} orders`;
-                    
-                    // Render orders
-                    renderOrders();
-                    updateLastUpdated();
-                })
-                .catch(error => {
-                    console.error('Error loading orders:', error);
-                    ordersContainer.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <h3>Error Loading Orders</h3>
-                            <p>Please try again later</p>
-                        </div>
-                    `;
-                });
-        }
-        
-        // Robust CSV parser
-        function parseCSV(csv) {
-            const lines = csv.split('\n').filter(line => line.trim() !== '');
-            if (lines.length < 2) return [];
-            
-            const headers = lines[0].split(',').map(h => h.trim());
-            const result = [];
-            
-            for (let i = 1; i < lines.length; i++) {
-                let tokens = [];
-                let currentToken = '';
-                let inQuotes = false;
-                
-                // Parse line character by character to handle commas within quotes
-                for (let j = 0; j < lines[i].length; j++) {
-                    const char = lines[i][j];
-                    
-                    if (char === '"' && (j === 0 || lines[i][j-1] !== '\\')) {
-                        inQuotes = !inQuotes;
-                    } else if (char === ',' && !inQuotes) {
-                        tokens.push(currentToken);
-                        currentToken = '';
-                    } else {
-                        currentToken += char;
-                    }
-                }
-                tokens.push(currentToken);
-                
-                // Handle cases where we have more tokens than headers
-                if (tokens.length > headers.length) {
-                    const lastField = tokens.slice(headers.length - 1).join('');
-                    tokens = tokens.slice(0, headers.length - 1);
-                    tokens.push(lastField);
-                }
-                
-                // Create object for this row
-                const obj = {};
-                for (let j = 0; j < headers.length; j++) {
-                    let value = tokens[j] || '';
-                    
-                    // Remove surrounding quotes if present
-                    if (value.startsWith('"') && value.endsWith('"')) {
-                        value = value.substring(1, value.length - 1);
-                    }
-                    
-                    obj[headers[j]] = value.trim();
-                }
-                result.push(obj);
-            }
-            return result;
-        }
-        
-        // Group orders by timestamp and phone
-        function groupOrders(data) {
-            const grouped = {};
+        // Group data by timestamp (each bill)
+        const groupByTimestamp = (data) => {
+            const groups = {};
             
             data.forEach(row => {
-                const key = `${row.Timestamp}-${row['Customer Phone']}`;
+                const timestamp = row['Time stamp'];
+                if (!timestamp) return;
                 
-                if (!grouped[key]) {
-                    grouped[key] = {
-                        timestamp: row.Timestamp,
-                        customerName: row['Customer Name'],
-                        customerPhone: row['Customer Phone'],
-                        products: []
+                if (!groups[timestamp]) {
+                    // MODIFIED: Check if column H has 'P' for paid, otherwise pending
+                    const paymentStatusRaw = row['Payment Status'] || '';
+                    const paymentStatus = paymentStatusRaw.trim().toUpperCase() === 'P' ? 'Paid' : 'Pending';
+                    
+                    groups[timestamp] = {
+                        timestamp: timestamp,
+                        customerName: row['Customer Name'] || 'Unknown Customer',
+                        customerPhone: row['Customer Phone'] || 'N/A',
+                        paymentStatus: paymentStatus,
+                        items: [],
+                        grandTotal: 0
                     };
                 }
                 
-                // Add product to order
-                grouped[key].products.push({
-                    name: row['Product name'],
-                    price: parseFloat(row['Product price']) || 0,
-                    quantity: parseInt(row.Quantity) || 0,
-                    total: parseFloat(row.Total) || 0
+                // Add item to the bill
+                const itemTotal = parseFloat(row['Total']) || 0;
+                groups[timestamp].items.push({
+                    productName: row['Product name'] || 'Unknown Product',
+                    productPrice: parseFloat(row['Product price']) || 0,
+                    quantity: parseInt(row['Quantity']) || 0,
+                    total: itemTotal
+                });
+                
+                // Update bill grand total
+                groups[timestamp].grandTotal += itemTotal;
+            });
+            
+            // Convert object to array
+            return Object.values(groups);
+        };
+        
+        // Calculate customer summary data
+        const calculateCustomerSummary = (bills) => {
+            const customerMap = {};
+            
+            bills.forEach(bill => {
+                const customerKey = `${bill.customerName}|${bill.customerPhone}`;
+                
+                if (!customerMap[customerKey]) {
+                    customerMap[customerKey] = {
+                        name: bill.customerName,
+                        phone: bill.customerPhone,
+                        totalAmount: 0,
+                        invoiceCount: 0,
+                        paymentStatus: bill.paymentStatus,
+                        timestamps: [],
+                        items: []
+                    };
+                }
+                
+                customerMap[customerKey].totalAmount += bill.grandTotal;
+                customerMap[customerKey].invoiceCount++;
+                customerMap[customerKey].timestamps.push(bill.timestamp);
+                
+                // Add items for WhatsApp summary
+                bill.items.forEach(item => {
+                    customerMap[customerKey].items.push({
+                        productName: item.productName,
+                        quantity: item.quantity,
+                        price: item.productPrice,
+                        total: item.total
+                    });
                 });
             });
             
-            // Convert to array and calculate order totals
-            return Object.values(grouped).map(order => {
-                // Calculate order total
-                order.total = order.products.reduce((sum, product) => sum + product.total, 0);
-                
-                // Generate unique order ID
-                const date = new Date(order.timestamp);
-                order.id = `ORD-${date.getDate()}${date.getMonth()+1}${date.getFullYear().toString().slice(-2)}-${Math.floor(1000 + Math.random() * 9000)}`;
-                
-                return order;
-            });
-        }
+            // Convert to array and sort by total amount
+            return Object.values(customerMap).sort((a, b) => b.totalAmount - a.totalAmount);
+        };
         
-        // Render orders
-        function renderOrders() {
-            ordersContainer.innerHTML = '';
+        // Calculate product summary data
+        const calculateProductSummary = (bills) => {
+            const productMap = {};
             
-            if (orders.length === 0) {
-                ordersContainer.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-box-open"></i>
-                        <h3>No Orders Found</h3>
-                        <p>Try refreshing later</p>
+            bills.forEach(bill => {
+                bill.items.forEach(item => {
+                    const productName = item.productName;
+                    
+                    if (!productMap[productName]) {
+                        productMap[productName] = {
+                            name: productName,
+                            totalQuantity: 0,
+                            totalRevenue: 0
+                        };
+                    }
+                    
+                    productMap[productName].totalQuantity += item.quantity;
+                    productMap[productName].totalRevenue += item.total;
+                });
+            });
+            
+            // Convert to array and sort by quantity sold
+            return Object.values(productMap).sort((a, b) => b.totalQuantity - a.totalQuantity);
+        };
+        
+        // Calculate statistics
+        const calculateStatistics = (bills) => {
+            let totalBills = bills.length;
+            let totalItems = 0;
+            let totalRevenue = 0;
+            const uniqueCustomers = new Set();
+            
+            bills.forEach(bill => {
+                totalItems += bill.items.length;
+                totalRevenue += bill.grandTotal;
+                uniqueCustomers.add(`${bill.customerName}-${bill.customerPhone}`);
+            });
+            
+            totalBillsElement.textContent = totalBills;
+            totalItemsElement.textContent = totalItems;
+            totalCustomersElement.textContent = uniqueCustomers.size;
+            totalRevenueElement.textContent = formatCurrency(totalRevenue);
+        };
+        
+        // Create bill card HTML
+        const createBillCard = (bill) => {
+            const formattedDateTime = formatDateTime(bill.timestamp);
+            const paymentStatusClass = bill.paymentStatus === 'Paid' ? 'status-paid' : 'status-pending';
+            // MODIFIED: Display 'P' for Paid instead of full text
+            const paymentStatusDisplay = bill.paymentStatus === 'Paid' ? 'Paid' : 'Pending';
+            
+            return `
+                <div class="invoice-card dark-card rounded-xl overflow-hidden" data-customer="${bill.customerName}" data-timestamp="${bill.timestamp}">
+                    <!-- Card Header -->
+                    <div class="bg-gradient-to-r from-blue-900 to-blue-800 p-5 border-b border-blue-700">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                            <div>
+                                <h3 class="font-bold text-lg text-white">${bill.customerName}</h3>
+                                <div class="flex items-center mt-1">
+                                    <i class="fas fa-phone-alt text-gray-300 mr-2 text-sm"></i>
+                                    <span class="text-gray-300">${bill.customerPhone}</span>
+                                </div>
+                                <div class="flex items-center mt-2">
+                                    <span class="text-sm ${paymentStatusClass}">
+                                        <i class="fas fa-circle mr-1 text-xs"></i>${paymentStatusDisplay}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="mt-3 md:mt-0">
+                                <div class="bg-blue-700 text-white text-sm font-medium px-3 py-1 rounded-full">
+                                    ${formattedDateTime}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card Body - Items Table -->
+                    <div class="p-5">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-800">
+                                    <tr class="text-left text-gray-300 text-sm">
+                                        <th class="pb-3 font-medium pl-2">Product</th>
+                                        <th class="pb-3 font-medium text-right">Price</th>
+                                        <th class="pb-3 font-medium text-right">Qty</th>
+                                        <th class="pb-3 font-medium text-right pr-2">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${bill.items.map(item => `
+                                        <tr class="border-b border-gray-700 last:border-0">
+                                            <td class="py-3 text-white pl-2">${item.productName}</td>
+                                            <td class="py-3 text-right text-gray-300">${formatCurrency(item.productPrice)}</td>
+                                            <td class="py-3 text-right text-gray-300">${item.quantity}</td>
+                                            <td class="py-3 text-right font-medium text-white pr-2">${formatCurrency(item.total)}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Card Footer - Grand Total -->
+                    <div class="bg-gray-800 p-5 border-t border-gray-700">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="text-gray-300">Items: <span class="font-medium text-white">${bill.items.length}</span></p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-gray-300 text-sm">Grand Total</p>
+                                <h4 class="text-2xl font-bold text-blue-400">${formatCurrency(bill.grandTotal)}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+        
+        // Render all bills
+        const renderBills = (bills) => {
+            if (bills.length === 0) {
+                billsContainer.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            
+            billsContainer.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            
+            billsContainer.innerHTML = bills.map(bill => createBillCard(bill)).join('');
+        };
+        
+        // Render customer list in drawer
+        const renderCustomerList = (customers, searchTerm = '') => {
+            customerList.innerHTML = '';
+            
+            const filteredCustomers = customers.filter(customer => 
+                customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                customer.phone.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            
+            if (filteredCustomers.length === 0) {
+                customerList.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-users text-gray-600 text-4xl mb-3"></i>
+                        <p class="text-gray-400">No customers found</p>
                     </div>
                 `;
                 return;
             }
             
-            // Sort orders by timestamp (newest first)
-            const sortedOrders = [...orders].sort((a, b) => {
-                return new Date(b.timestamp) - new Date(a.timestamp);
-            });
-            
-            // Create document fragment for efficient rendering
-            const fragment = document.createDocumentFragment();
-            
-            sortedOrders.forEach(order => {
-                const orderTile = document.createElement('div');
-                orderTile.className = 'order-tile';
+            filteredCustomers.forEach(customer => {
+                const customerElement = document.createElement('div');
+                customerElement.className = 'dark-card rounded-xl p-4 hover:bg-gray-800 transition cursor-pointer';
+                customerElement.setAttribute('data-customer', customer.name);
                 
-                // Format date
-                const orderDate = new Date(order.timestamp);
-                const formattedDate = orderDate.toLocaleDateString('en-IN', {
-                    day: '2-digit',
-                    month: 'short',
-                    year: 'numeric'
-                });
-                const formattedTime = orderDate.toLocaleTimeString('en-IN', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
+                const statusClass = customer.paymentStatus === 'Paid' ? 'status-paid' : 'status-pending';
+                // MODIFIED: Display 'P' for Paid instead of full text
+                const paymentStatusDisplay = customer.paymentStatus === 'Paid' ? 'P' : 'Pending';
                 
-                // Get saved payment status
-                const savedStatus = orderStatus[order.id] || {};
-                const isPaid = savedStatus.paid || false;
-                const paymentMode = savedStatus.mode || '';
-                const amountPaid = savedStatus.amount || 0;
-                const balance = amountPaid - order.total;
-                
-                orderTile.innerHTML = `
-                    <div class="order-header">
-                        <div class="order-id">${order.id}</div>
-                        <div class="order-date">${formattedDate} at ${formattedTime}</div>
-                    </div>
-                    
-                    <div class="order-customer">
-                        <div class="customer-name">${order.customerName}</div>
-                        <div class="customer-phone">${order.customerPhone}</div>
-                    </div>
-                    
-                    <div class="order-products">
-                        ${order.products.map(product => `
-                            <div class="product-item">
-                                <div class="product-name">${product.name}</div>
-                                <div class="product-quantity">${product.quantity}</div>
-                                <div class="product-price">₹${product.price.toFixed(2)}</div>
-                                <div class="product-price">₹${product.total.toFixed(2)}</div>
+                customerElement.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                <h4 class="font-semibold text-white">${customer.name}</h4>
+                                <span class="ml-2 bg-blue-900 text-blue-300 text-xs px-2 py-0.5 rounded-full">
+                                    ${customer.invoiceCount} invoice${customer.invoiceCount > 1 ? 's' : ''}
+                                </span>
                             </div>
-                        `).join('')}
-                    </div>
-                    
-                    <div class="order-summary">
-                        <div class="summary-row">
-                            <div class="summary-label">Subtotal:</div>
-                            <div class="summary-value">₹${order.total.toFixed(2)}</div>
-                        </div>
-                        <div class="summary-row">
-                            <div class="summary-label">Discount:</div>
-                            <div class="summary-value">₹0.00</div>
-                        </div>
-                        <div class="summary-row order-total">
-                            <div class="summary-label">Total:</div>
-                            <div class="summary-value">₹${order.total.toFixed(2)}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="payment-section">
-                        <div class="payment-status">
-                            <span class="status-label">Payment Received:</span>
-                            <label class="status-toggle">
-                                <input type="checkbox" ${isPaid ? 'checked' : ''} data-order="${order.id}">
-                                <span class="status-slider"></span>
-                            </label>
-                        </div>
-                        
-                        <div class="payment-mode">
-                            <div class="mode-label">Payment Mode:</div>
-                            <div class="mode-buttons">
-                                <button class="mode-btn ${paymentMode === 'Cash' ? 'active' : ''}" data-order="${order.id}" data-mode="Cash">Cash</button>
-                                <button class="mode-btn ${paymentMode === 'UPI' ? 'active' : ''}" data-order="${order.id}" data-mode="UPI">UPI</button>
-                                <button class="mode-btn ${paymentMode === 'Check' ? 'active' : ''}" data-order="${order.id}" data-mode="Check">Check</button>
-                                <button class="mode-btn ${paymentMode === 'Bank Transfer' ? 'active' : ''}" data-order="${order.id}" data-mode="Bank Transfer">Bank Transfer</button>
+                            <div class="flex items-center mt-1">
+                                <i class="fas fa-phone-alt text-gray-400 mr-2 text-xs"></i>
+                                <span class="text-gray-400 text-sm">${customer.phone}</span>
+                                <span class="ml-3 text-xs ${statusClass}">
+                                    <i class="fas fa-circle mr-1 text-xs"></i>${paymentStatusDisplay}
+                                </span>
+                            </div>
+                            <div class="mt-2">
+                                <p class="text-gray-300 text-sm">Total Spent: <span class="font-semibold text-white">${formatCurrency(customer.totalAmount)}</span></p>
                             </div>
                         </div>
-                        
-                        <div class="amount-section">
-                            <div class="amount-group">
-                                <span class="amount-label">Amount Paid:</span>
-                                <input type="number" class="amount-input" min="0" step="0.01" 
-                                    value="${amountPaid}" placeholder="0.00" data-order="${order.id}">
-                            </div>
-                            
-                            <div class="balance ${balance >= 0 ? 'positive-balance' : 'negative-balance'}">
-                                Balance: ₹${Math.abs(balance).toFixed(2)} ${balance >= 0 ? 'to return' : 'to collect'}
-                            </div>
+                        <div class="flex space-x-2 ml-4">
+                            <button class="whatsapp-btn bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg" title="Send WhatsApp Summary">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
                         </div>
-                    </div>
-                    
-                    <div class="action-buttons">
-                        <button class="action-btn share-btn" data-order="${order.id}">
-                            <i class="fab fa-whatsapp"></i>
-                            Share Order
-                        </button>
-                        <button class="action-btn delete-btn" data-order="${order.id}">
-                            <i class="fas fa-trash"></i>
-                            Delete
-                        </button>
                     </div>
                 `;
                 
-                fragment.appendChild(orderTile);
-            });
-            
-            ordersContainer.appendChild(fragment);
-            
-            // Add event listeners to payment controls
-            document.querySelectorAll('.status-toggle input').forEach(toggle => {
-                toggle.addEventListener('change', updatePaymentStatus);
-            });
-            
-            document.querySelectorAll('.mode-btn').forEach(btn => {
-                btn.addEventListener('click', setPaymentMode);
-            });
-            
-            document.querySelectorAll('.amount-input').forEach(input => {
-                input.addEventListener('input', updateAmountPaid);
-            });
-            
-            document.querySelectorAll('.share-btn').forEach(btn => {
-                btn.addEventListener('click', shareOrder);
-            });
-            
-            document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.addEventListener('click', deleteOrder);
-            });
-        }
-        
-        // Update payment status
-        function updatePaymentStatus(e) {
-            const orderId = e.target.dataset.order;
-            const isPaid = e.target.checked;
-            
-            // Get or create status object for this order
-            if (!orderStatus[orderId]) {
-                orderStatus[orderId] = {};
-            }
-            
-            // Update status
-            orderStatus[orderId].paid = isPaid;
-            
-            // Save to localStorage
-            localStorage.setItem('orderStatus', JSON.stringify(orderStatus));
-        }
-        
-        // Set payment mode
-        function setPaymentMode(e) {
-            const orderId = e.target.dataset.order;
-            const mode = e.target.dataset.mode;
-            
-            // Remove active class from all buttons in this group
-            const buttons = e.target.parentElement.querySelectorAll('.mode-btn');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            
-            // Add active class to clicked button
-            e.target.classList.add('active');
-            
-            // Get or create status object for this order
-            if (!orderStatus[orderId]) {
-                orderStatus[orderId] = {};
-            }
-            
-            // Update payment mode
-            orderStatus[orderId].mode = mode;
-            
-            // Save to localStorage
-            localStorage.setItem('orderStatus', JSON.stringify(orderStatus));
-        }
-        
-        // Update amount paid
-        function updateAmountPaid(e) {
-            const orderId = e.target.dataset.order;
-            const amount = parseFloat(e.target.value) || 0;
-            
-            // Get or create status object for this order
-            if (!orderStatus[orderId]) {
-                orderStatus[orderId] = {};
-            }
-            
-            // Update amount paid
-            orderStatus[orderId].amount = amount;
-            
-            // Calculate balance
-            const order = orders.find(o => o.id === orderId);
-            if (order) {
-                const balance = amount - order.total;
-                const balanceElement = e.target.closest('.amount-section').querySelector('.balance');
+                // Add click event to scroll to customer's bills
+                customerElement.addEventListener('click', (e) => {
+                    if (!e.target.closest('.whatsapp-btn')) {
+                        scrollToCustomerBills(customer.name);
+                    }
+                });
                 
-                // Update balance display
-                balanceElement.textContent = `Balance: ₹${Math.abs(balance).toFixed(2)} ${balance >= 0 ? 'to return' : 'to collect'}`;
-                balanceElement.className = `balance ${balance >= 0 ? 'positive-balance' : 'negative-balance'}`;
-            }
-            
-            // Save to localStorage
-            localStorage.setItem('orderStatus', JSON.stringify(orderStatus));
-        }
-        
-        // Share order via WhatsApp
-        function shareOrder(e) {
-            const orderId = e.target.closest('.share-btn').dataset.order;
-            const order = orders.find(o => o.id === orderId);
-            if (!order) return;
-            
-            // Get payment status
-            const status = orderStatus[orderId] || {};
-            
-            // Format order message
-            let message = "📋 *Order Receipt - The Cute Corner* 📋\n\n";
-            message += `*Order ID:* ${order.id}\n`;
-            message += `*Customer:* ${order.customerName}\n`;
-            message += `*Phone:* ${order.customerPhone}\n`;
-            message += `*Order Date:* ${new Date(order.timestamp).toLocaleString()}\n\n`;
-            
-            message += "🛒 *Order Details:*\n";
-            order.products.forEach((product, index) => {
-                message += `\n${index+1}. ${product.name}\n`;
-                message += `   - Qty: ${product.quantity}\n`;
-                message += `   - Price: ₹${product.price.toFixed(2)}\n`;
-                message += `   - Total: ₹${product.total.toFixed(2)}\n`;
-            });
-            
-            message += "\n💳 *Payment Information:*\n";
-            message += `\nTotal Amount: *₹${order.total.toFixed(2)}*\n`;
-            message += `Payment Status: *${status.paid ? 'Received' : 'Pending'}*\n`;
-            
-            if (status.mode) {
-                message += `Payment Mode: *${status.mode}*\n`;
-            }
-            
-            if (status.amount) {
-                message += `Amount Paid: *₹${status.amount.toFixed(2)}*\n`;
+                // Add WhatsApp button functionality
+                const whatsappBtn = customerElement.querySelector('.whatsapp-btn');
+                whatsappBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    sendWhatsAppSummary(customer);
+                });
                 
-                const balance = status.amount - order.total;
-                if (balance !== 0) {
-                    message += `Balance: *₹${Math.abs(balance).toFixed(2)} ${balance >= 0 ? 'to return' : 'to collect'}*\n`;
+                customerList.appendChild(customerElement);
+            });
+        };
+        
+        // Generate WhatsApp message for customer
+        const sendWhatsAppSummary = (customer) => {
+            let message = `*Purchase Summary for ${customer.name}*\n\n`;
+            message += `Total Invoices: ${customer.invoiceCount}\n`;
+            message += `Total Amount: ${formatCurrency(customer.totalAmount)}\n\n`;
+            message += '*Items Purchased:*\n';
+            
+            // Group items by product
+            const itemMap = {};
+            customer.items.forEach(item => {
+                if (!itemMap[item.productName]) {
+                    itemMap[item.productName] = {
+                        quantity: 0,
+                        total: 0
+                    };
                 }
-            }
+                itemMap[item.productName].quantity += item.quantity;
+                itemMap[item.productName].total += item.total;
+            });
             
-            message += "\nThank you for your order! 🙏";
+            Object.keys(itemMap).forEach(productName => {
+                const item = itemMap[productName];
+                message += `• ${productName}: ${item.quantity} x ${formatCurrency(item.total / item.quantity)} = ${formatCurrency(item.total)}\n`;
+            });
             
-            // Encode message for URL
+            message += `\nPayment Status: ${customer.paymentStatus}`;
+            
+            // Encode message for WhatsApp URL
             const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${customer.phone.replace(/\D/g, '')}?text=${encodedMessage}`;
             
-            // Open WhatsApp with the order
-            window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
-        }
+            window.open(whatsappUrl, '_blank');
+        };
         
-        // Delete order
-        function deleteOrder(e) {
-            const orderId = e.target.closest('.delete-btn').dataset.order;
+        // Scroll to customer's bills
+        const scrollToCustomerBills = (customerName) => {
+            const customerBills = document.querySelectorAll(`[data-customer="${customerName}"]`);
             
-            if (confirm(`Are you sure you want to delete order ${orderId}?`)) {
-                // Remove from UI
-                e.target.closest('.order-tile').remove();
+            if (customerBills.length > 0) {
+                closeSideDrawer();
+                customerBills[0].scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'center'
+                });
                 
-                // Remove from saved status
-                if (orderStatus[orderId]) {
-                    delete orderStatus[orderId];
-                    localStorage.setItem('orderStatus', JSON.stringify(orderStatus));
+                // Highlight the bill temporarily
+                customerBills.forEach(bill => {
+                    bill.classList.add('ring-2', 'ring-blue-500');
+                    setTimeout(() => {
+                        bill.classList.remove('ring-2', 'ring-blue-500');
+                    }, 2000);
+                });
+            }
+        };
+        
+        // Render top products in modal
+        const renderTopProducts = (products) => {
+            topProductsList.innerHTML = '';
+            
+            const topThree = products.slice(0, 3);
+            
+            topThree.forEach((product, index) => {
+                const rankColors = ['text-yellow-400', 'text-gray-300', 'text-amber-600'];
+                const rankIcons = ['fas fa-trophy', 'fas fa-medal', 'fas fa-award'];
+                
+                const productElement = document.createElement('div');
+                productElement.className = 'dark-card rounded-xl p-4';
+                productElement.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="mr-4">
+                                <i class="${rankIcons[index]} ${rankColors[index]} text-2xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-white">${product.name}</h4>
+                                <p class="text-gray-400 text-sm mt-1">
+                                    Sold: <span class="font-semibold text-white">${product.totalQuantity} units</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-gray-400 text-sm">Revenue</p>
+                            <p class="font-bold text-lg text-green-400">${formatCurrency(product.totalRevenue)}</p>
+                        </div>
+                    </div>
+                `;
+                topProductsList.appendChild(productElement);
+            });
+            
+            // Create bar chart
+            if (productsChart) {
+                productsChart.destroy();
+            }
+            
+            const ctx = document.getElementById('productsChart').getContext('2d');
+            const labels = topThree.map(p => p.name);
+            const data = topThree.map(p => p.totalQuantity);
+            
+            productsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Quantity Sold',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(59, 130, 246, 0.7)',
+                            'rgba(107, 114, 128, 0.7)',
+                            'rgba(245, 158, 11, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgb(59, 130, 246)',
+                            'rgb(107, 114, 128)',
+                            'rgb(245, 158, 11)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#f8fafc'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#cbd5e1'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#cbd5e1'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
                 }
+            });
+        };
+        
+        // Render top customers in modal
+        const renderTopCustomers = (customers) => {
+            topCustomersList.innerHTML = '';
+            
+            const topThree = customers.slice(0, 3);
+            
+            topThree.forEach((customer, index) => {
+                const rankColors = ['text-yellow-400', 'text-gray-300', 'text-amber-600'];
+                const rankIcons = ['fas fa-crown', 'fas fa-star', 'fas fa-gem'];
                 
-                // Update order count
-                orderCount.textContent = `${document.querySelectorAll('.order-tile').length} orders`;
-                
-                if (document.querySelectorAll('.order-tile').length === 0) {
-                    ordersContainer.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-box-open"></i>
-                            <h3>No Orders Found</h3>
-                            <p>Try refreshing later</p>
+                const customerElement = document.createElement('div');
+                customerElement.className = 'dark-card rounded-xl p-4';
+                customerElement.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="mr-4">
+                                <i class="${rankIcons[index]} ${rankColors[index]} text-2xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-white">${customer.name}</h4>
+                                <p class="text-gray-400 text-sm mt-1">
+                                    Orders: <span class="font-semibold text-white">${customer.invoiceCount}</span>
+                                    <span class="mx-2">•</span>
+                                    Phone: <span class="font-semibold text-white">${customer.phone}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-gray-400 text-sm">Total Spent</p>
+                            <p class="font-bold text-lg text-green-400">${formatCurrency(customer.totalAmount)}</p>
+                        </div>
+                    </div>
+                `;
+                topCustomersList.appendChild(customerElement);
+            });
+            
+            // Create bar chart
+            if (customersChart) {
+                customersChart.destroy();
+            }
+            
+            const ctx = document.getElementById('customersChart').getContext('2d');
+            const labels = topThree.map(c => c.name);
+            const data = topThree.map(c => c.totalAmount);
+            
+            customersChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Spending',
+                        data: data,
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.7)',
+                            'rgba(59, 130, 246, 0.7)',
+                            'rgba(139, 92, 246, 0.7)'
+                        ],
+                        borderColor: [
+                            'rgb(16, 185, 129)',
+                            'rgb(59, 130, 246)',
+                            'rgb(139, 92, 246)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#f8fafc'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#cbd5e1',
+                                callback: function(value) {
+                                    return '₹' + value;
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#cbd5e1'
+                            },
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        };
+        
+        // Update payment filter button states
+        const updatePaymentFilterButtons = (activeFilter) => {
+            // Remove active class from all buttons
+            [filterAllBtn, filterPaidBtn, filterPendingBtn].forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.add('dark-card');
+            });
+            
+            // Add active class to selected button
+            switch(activeFilter) {
+                case 'all':
+                    filterAllBtn.classList.add('active');
+                    filterAllBtn.classList.remove('dark-card');
+                    break;
+                case 'paid':
+                    filterPaidBtn.classList.add('active');
+                    filterPaidBtn.classList.remove('dark-card');
+                    break;
+                case 'pending':
+                    filterPendingBtn.classList.add('active');
+                    filterPendingBtn.classList.remove('dark-card');
+                    break;
+            }
+        };
+        
+        // Filter and sort bills based on user input
+        const filterAndSortBills = () => {
+            let filteredBills = [...groupedBills];
+            
+            // Apply payment status filter
+            if (currentPaymentFilter === 'paid') {
+                filteredBills = filteredBills.filter(bill => bill.paymentStatus === 'Paid');
+            } else if (currentPaymentFilter === 'pending') {
+                filteredBills = filteredBills.filter(bill => bill.paymentStatus === 'Pending');
+            }
+            
+            // Apply search filter
+            const searchTerm = searchInput.value.toLowerCase();
+            if (searchTerm) {
+                filteredBills = filteredBills.filter(bill => {
+                    return (
+                        bill.customerName.toLowerCase().includes(searchTerm) ||
+                        bill.customerPhone.toLowerCase().includes(searchTerm) ||
+                        bill.items.some(item => item.productName.toLowerCase().includes(searchTerm))
+                    );
+                });
+            }
+            
+            // Apply sorting
+            const sortValue = sortSelect.value;
+            switch (sortValue) {
+                case 'newest':
+                    filteredBills.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    break;
+                case 'oldest':
+                    filteredBills.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                    break;
+                case 'highest':
+                    filteredBills.sort((a, b) => b.grandTotal - a.grandTotal);
+                    break;
+                case 'lowest':
+                    filteredBills.sort((a, b) => a.grandTotal - b.grandTotal);
+                    break;
+            }
+            
+            // Update statistics
+            calculateStatistics(filteredBills);
+            
+            // Render filtered bills
+            renderBills(filteredBills);
+        };
+        
+        // Open side drawer
+        const openSideDrawer = () => {
+            sideDrawer.classList.add('open');
+            drawerOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+        
+        // Close side drawer
+        const closeSideDrawer = () => {
+            sideDrawer.classList.remove('open');
+            drawerOverlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        };
+        
+        // Open products modal
+        const openProductsModal = () => {
+            topProductsModal.classList.add('active');
+            productsModalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+        
+        // Close products modal
+        const closeProductsModal = () => {
+            topProductsModal.classList.remove('active');
+            productsModalOverlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        };
+        
+        // Open customers modal
+        const openCustomersModal = () => {
+            topCustomersModal.classList.add('active');
+            customersModalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+        
+        // Close customers modal
+        const closeCustomersModal = () => {
+            topCustomersModal.classList.remove('active');
+            customersModalOverlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        };
+        
+        // Load and parse CSV data
+        const loadCSVData = () => {
+            // Show loading spinner
+            loadingElement.classList.remove('hidden');
+            contentElement.classList.add('hidden');
+            
+            Papa.parse(CSV_URL, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    salesData = results.data;
+                    groupedBills = groupByTimestamp(salesData);
+                    customerSummary = calculateCustomerSummary(groupedBills);
+                    productsSummary = calculateProductSummary(groupedBills);
+                    
+                    // Calculate initial statistics
+                    calculateStatistics(groupedBills);
+                    
+                    // Hide loading spinner, show content
+                    loadingElement.classList.add('hidden');
+                    contentElement.classList.remove('hidden');
+                    
+                    // Render bills with initial sorting
+                    filterAndSortBills();
+                    
+                    // Render customer list
+                    renderCustomerList(customerSummary);
+                    
+                    // Render top products and customers
+                    renderTopProducts(productsSummary);
+                    renderTopCustomers(customerSummary);
+                },
+                error: function(error) {
+                    console.error('Error loading CSV:', error);
+                    loadingElement.innerHTML = `
+                        <div class="text-center py-10">
+                            <div class="bg-red-900 inline-flex p-4 rounded-full mb-4">
+                                <i class="fas fa-exclamation-triangle text-red-400 text-3xl"></i>
+                            </div>
+                            <h3 class="text-xl font-semibold text-white mb-2">Failed to load data</h3>
+                            <p class="text-gray-400 mb-4">There was an error fetching the CSV data from Google Sheets.</p>
+                            <button id="retryBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg">
+                                Retry
+                            </button>
                         </div>
                     `;
-                }
-            }
-        }
-        
-        // Update last updated time
-        function updateLastUpdated() {
-            const now = new Date();
-            lastUpdated.textContent = `Last updated: ${now.toLocaleTimeString()}`;
-        }
-        
-        // Setup event listeners
-        function setupEventListeners() {
-            // Refresh button
-            refreshBtn.addEventListener('click', () => {
-                loadOrders();
-            });
-            
-            // FAB interactions
-            fabMain.addEventListener('click', () => {
-                fabButtons.classList.toggle('show');
-            });
-            
-            // Close FAB when clicking elsewhere
-            document.addEventListener('click', (e) => {
-                if (!fabMain.contains(e.target) && !fabButtons.contains(e.target)) {
-                    fabButtons.classList.remove('show');
+                    
+                    document.getElementById('retryBtn').addEventListener('click', loadCSVData);
                 }
             });
-        }
+        };
         
-        // Initialize the app when DOM is loaded
-        document.addEventListener('DOMContentLoaded', init);
-        
-        // Add shake animation for PIN screen
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes shake {
-                0% { transform: translateX(0); }
-                20% { transform: translateX(-10px); }
-                40% { transform: translateX(10px); }
-                60% { transform: translateX(-10px); }
-                80% { transform: translateX(10px); }
-                100% { transform: translateX(0); }
-            }
-        `;
-        document.head.appendChild(style);
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load initial data
+            loadCSVData();
+            
+            // Add event listeners for search and sort
+            searchInput.addEventListener('input', filterAndSortBills);
+            sortSelect.addEventListener('change', filterAndSortBills);
+            
+            // Add event listeners for payment filter buttons
+            filterAllBtn.addEventListener('click', () => {
+                currentPaymentFilter = 'all';
+                updatePaymentFilterButtons('all');
+                filterAndSortBills();
+            });
+            
+            filterPaidBtn.addEventListener('click', () => {
+                currentPaymentFilter = 'paid';
+                updatePaymentFilterButtons('paid');
+                filterAndSortBills();
+            });
+            
+            filterPendingBtn.addEventListener('click', () => {
+                currentPaymentFilter = 'pending';
+                updatePaymentFilterButtons('pending');
+                filterAndSortBills();
+            });
+            
+            // Add event listener for refresh button
+            refreshBtn.addEventListener('click', loadCSVData);
+            
+            // Add event listeners for FABs
+            mainFab.addEventListener('click', openSideDrawer);
+            topProductsFab.addEventListener('click', openProductsModal);
+            topCustomersFab.addEventListener('click', openCustomersModal);
+            
+            // Add event listeners for closing side drawer
+            closeDrawerBtn.addEventListener('click', closeSideDrawer);
+            drawerOverlay.addEventListener('click', closeSideDrawer);
+            
+            // Add event listeners for closing modals
+            closeProductsModalBtn.addEventListener('click', closeProductsModal);
+            productsModalOverlay.addEventListener('click', closeProductsModal);
+            
+            closeCustomersModalBtn.addEventListener('click', closeCustomersModal);
+            customersModalOverlay.addEventListener('click', closeCustomersModal);
+            
+            // Add customer search functionality
+            customerSearch.addEventListener('input', (e) => {
+                renderCustomerList(customerSummary, e.target.value);
+            });
+            
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // Refresh with Ctrl/Cmd + R
+                if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+                    e.preventDefault();
+                    loadCSVData();
+                }
+                
+                // Escape key closes modals and drawer
+                if (e.key === 'Escape') {
+                    closeSideDrawer();
+                    closeProductsModal();
+                    closeCustomersModal();
+                }
+                
+                // Ctrl/Cmd + F opens search
+                if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                    e.preventDefault();
+                    searchInput.focus();
+                }
+            });
+            
+            // Close drawer when clicking outside on mobile
+            window.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768 && sideDrawer.classList.contains('open')) {
+                    if (!sideDrawer.contains(e.target) && !mainFab.contains(e.target)) {
+                        closeSideDrawer();
+                    }
+                }
+            });
+        });
     </script>
 </body>
 </html>
