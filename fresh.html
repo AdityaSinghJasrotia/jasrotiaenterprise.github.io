@@ -12,6 +12,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- html2pdf for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         * { font-family: 'Inter', sans-serif; }
@@ -82,6 +84,59 @@
             box-shadow: 0 12px 30px rgba(59, 130, 246, 0.5);
         }
         
+        /* Mobile-responsive FAB buttons */
+        @media (max-width: 768px) {
+            .fab-container {
+                bottom: 20px;
+                right: 20px;
+                gap: 10px;
+            }
+            
+            .fab-main {
+                width: 56px;
+                height: 56px;
+                border-radius: 28px;
+            }
+            
+            .fab-secondary {
+                width: 46px;
+                height: 46px;
+                border-radius: 23px;
+            }
+            
+            .fab-main:hover, .fab-secondary:hover {
+                transform: translateY(-2px);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .fab-container {
+                bottom: 15px;
+                right: 15px;
+                gap: 8px;
+            }
+            
+            .fab-main {
+                width: 52px;
+                height: 52px;
+                border-radius: 26px;
+            }
+            
+            .fab-secondary {
+                width: 42px;
+                height: 42px;
+                border-radius: 21px;
+            }
+            
+            .fab-secondary i {
+                font-size: 16px !important;
+            }
+            
+            .fab-main i {
+                font-size: 20px !important;
+            }
+        }
+        
         /* Side Drawer */
         .side-drawer {
             position: fixed;
@@ -101,6 +156,18 @@
         
         .side-drawer.open {
             right: 0;
+        }
+        
+        /* Responsive side drawer for mobile */
+        @media (max-width: 640px) {
+            .side-drawer {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .side-drawer.open {
+                right: 0;
+            }
         }
         
         .drawer-overlay {
@@ -228,6 +295,107 @@
             background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
             color: white;
             border-color: #3b82f6;
+        }
+        
+        /* Invoice Action Buttons */
+        .invoice-action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            margin-left: 8px;
+            cursor: pointer;
+        }
+        
+        .whatsapp-btn {
+            background-color: #25D366;
+            color: white;
+            border: none;
+        }
+        
+        .whatsapp-btn:hover {
+            background-color: #128C7E;
+        }
+        
+        .print-btn {
+            background-color: #6B7280;
+            color: white;
+            border: none;
+        }
+        
+        .print-btn:hover {
+            background-color: #4B5563;
+        }
+        
+        /* Print/PDF Modal */
+        .print-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            z-index: 1004;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .print-modal.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        .print-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1003;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .print-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #invoice-print, #invoice-print * {
+                visibility: visible;
+            }
+            #invoice-print {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white;
+                color: black;
+                padding: 20px;
+                box-shadow: none;
+            }
+            .no-print {
+                display: none !important;
+            }
         }
     </style>
 </head>
@@ -414,6 +582,32 @@
             </div>
         </div>
         
+        <!-- Print/PDF Modal -->
+        <div class="print-modal" id="printModal">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-white">Print/Export Invoice</h2>
+                <button id="closePrintModal" class="text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-3 mb-6">
+                <button id="printInvoiceBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-print mr-2"></i> Print Invoice
+                </button>
+                <button id="savePdfBtn" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-file-pdf mr-2"></i> Save as PDF
+                </button>
+                <button id="shareWhatsAppBtn" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg flex items-center justify-center">
+                    <i class="fab fa-whatsapp mr-2"></i> Send via WhatsApp
+                </button>
+            </div>
+            
+            <p class="text-gray-400 text-sm text-center">PDF will be saved to your device's downloads folder</p>
+        </div>
+        
+        <div class="print-modal-overlay" id="printModalOverlay"></div>
+        
         <!-- Modal Overlays -->
         <div class="modal-overlay" id="productsModalOverlay"></div>
         <div class="modal-overlay" id="customersModalOverlay"></div>
@@ -435,6 +629,9 @@
                 <i class="fas fa-users text-white text-xl"></i>
             </div>
         </div>
+        
+        <!-- Hidden div for print/PDF generation -->
+        <div id="invoice-print" style="display: none;"></div>
     </div>
 
     <script>
@@ -446,6 +643,9 @@
         let groupedBills = [];
         let customerSummary = [];
         let productsSummary = [];
+        
+        // Current bill for print/PDF
+        let currentPrintBill = null;
         
         // DOM Elements
         const loadingElement = document.getElementById('loading');
@@ -481,6 +681,15 @@
         const topCustomersFab = document.getElementById('topCustomersFab');
         const topProductsList = document.getElementById('topProductsList');
         const topCustomersList = document.getElementById('topCustomersList');
+        
+        // Print/PDF Modal Elements
+        const printModal = document.getElementById('printModal');
+        const printModalOverlay = document.getElementById('printModalOverlay');
+        const closePrintModalBtn = document.getElementById('closePrintModal');
+        const printInvoiceBtn = document.getElementById('printInvoiceBtn');
+        const savePdfBtn = document.getElementById('savePdfBtn');
+        const shareWhatsAppBtn = document.getElementById('shareWhatsAppBtn');
+        const invoicePrintDiv = document.getElementById('invoice-print');
         
         // Chart instances
         let productsChart = null;
@@ -524,6 +733,64 @@
             }
         };
         
+        // Format date for print
+        const formatDateForPrint = (timestamp) => {
+            try {
+                let date;
+                if (timestamp.includes('T')) {
+                    date = new Date(timestamp);
+                } else {
+                    date = new Date(timestamp);
+                }
+                
+                if (isNaN(date.getTime())) {
+                    return timestamp;
+                }
+                
+                return date.toLocaleDateString('en-IN', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            } catch (e) {
+                return timestamp;
+            }
+        };
+        
+        // Format phone number for WhatsApp
+        const formatPhoneForWhatsApp = (phone) => {
+            // Remove all non-digit characters
+            let cleanPhone = phone.replace(/\D/g, '');
+            
+            // If phone is empty or invalid, return original
+            if (!cleanPhone || cleanPhone.length < 10) {
+                return phone;
+            }
+            
+            // Check if it starts with country code
+            if (cleanPhone.startsWith('91') && cleanPhone.length === 12) {
+                return cleanPhone;
+            }
+            
+            // Add +91 for 10-digit numbers
+            if (cleanPhone.length === 10) {
+                return '91' + cleanPhone;
+            }
+            
+            // For 11-digit numbers, assume it's already with country code or has leading 0
+            if (cleanPhone.length === 11) {
+                // If starts with 0, remove it and add 91
+                if (cleanPhone.startsWith('0')) {
+                    return '91' + cleanPhone.substring(1);
+                }
+                // Otherwise use as is (might already have country code)
+                return cleanPhone;
+            }
+            
+            // For any other length, use as is
+            return cleanPhone;
+        };
+        
         // Group data by timestamp (each bill)
         const groupByTimestamp = (data) => {
             const groups = {};
@@ -533,7 +800,7 @@
                 if (!timestamp) return;
                 
                 if (!groups[timestamp]) {
-                    // MODIFIED: Check if column H has 'P' for paid, otherwise pending
+                    // Check if column H has 'P' for paid, otherwise pending
                     const paymentStatusRaw = row['Payment Status'] || '';
                     const paymentStatus = paymentStatusRaw.trim().toUpperCase() === 'P' ? 'Paid' : 'Pending';
                     
@@ -578,24 +845,13 @@
                         totalAmount: 0,
                         invoiceCount: 0,
                         paymentStatus: bill.paymentStatus,
-                        timestamps: [],
-                        items: []
+                        timestamps: []
                     };
                 }
                 
                 customerMap[customerKey].totalAmount += bill.grandTotal;
                 customerMap[customerKey].invoiceCount++;
                 customerMap[customerKey].timestamps.push(bill.timestamp);
-                
-                // Add items for WhatsApp summary
-                bill.items.forEach(item => {
-                    customerMap[customerKey].items.push({
-                        productName: item.productName,
-                        quantity: item.quantity,
-                        price: item.productPrice,
-                        total: item.total
-                    });
-                });
             });
             
             // Convert to array and sort by total amount
@@ -650,7 +906,6 @@
         const createBillCard = (bill) => {
             const formattedDateTime = formatDateTime(bill.timestamp);
             const paymentStatusClass = bill.paymentStatus === 'Paid' ? 'status-paid' : 'status-pending';
-            // MODIFIED: Display 'P' for Paid instead of full text
             const paymentStatusDisplay = bill.paymentStatus === 'Paid' ? 'Paid' : 'Pending';
             
             return `
@@ -668,6 +923,12 @@
                                     <span class="text-sm ${paymentStatusClass}">
                                         <i class="fas fa-circle mr-1 text-xs"></i>${paymentStatusDisplay}
                                     </span>
+                                    <button class="whatsapp-btn invoice-action-btn ml-3" data-bill-id="${bill.timestamp}" title="Send via WhatsApp">
+                                        <i class="fab fa-whatsapp mr-1"></i> WhatsApp
+                                    </button>
+                                    <button class="print-btn invoice-action-btn" data-bill-id="${bill.timestamp}" title="Print/Save as PDF">
+                                        <i class="fas fa-print mr-1"></i> Print/PDF
+                                    </button>
                                 </div>
                             </div>
                             <div class="mt-3 md:mt-0">
@@ -720,6 +981,165 @@
             `;
         };
         
+        // Generate print template for invoice
+        const generatePrintTemplate = (bill) => {
+            const invoiceDate = formatDateForPrint(bill.timestamp);
+            const invoiceTime = new Date(bill.timestamp).toLocaleTimeString('en-IN');
+            const paymentStatusDisplay = bill.paymentStatus === 'Paid' ? 'Paid' : 'Pending';
+            
+            return `
+                <div class="invoice-print-container" style="background: white; color: black; padding: 25px; max-width: 800px; margin: 0 auto; font-family: 'Inter', sans-serif;">
+                    <!-- Header -->
+                    <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #3b82f6; padding-bottom: 20px;">
+                        <h1 style="color: #1d4ed8; margin: 0; font-size: 32px;">Amul Dairy</h1>
+                        <p style="color: #4b5563; margin: 5px 0; font-size: 16px;">Sales Invoice</p>
+                        <p style="color: #6b7280; margin: 0; font-size: 14px;">Date: ${invoiceDate} | Time: ${invoiceTime}</p>
+                    </div>
+                    
+                    <!-- Customer Details -->
+                    <div style="margin-bottom: 25px;">
+                        <h2 style="color: #1e293b; margin-bottom: 15px; font-size: 20px; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px;">Customer Details</h2>
+                        <div style="display: flex; justify-content: space-between;">
+                            <div>
+                                <p style="margin: 5px 0;"><strong>Name:</strong> ${bill.customerName}</p>
+                                <p style="margin: 5px 0;"><strong>Phone:</strong> ${bill.customerPhone}</p>
+                            </div>
+                            <div>
+                                <p style="margin: 5px 0;"><strong>Invoice Status:</strong> ${paymentStatusDisplay}</p>
+                                <p style="margin: 5px 0;"><strong>Invoice Date:</strong> ${invoiceDate}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Items Table -->
+                    <div style="margin-bottom: 30px;">
+                        <h2 style="color: #1e293b; margin-bottom: 15px; font-size: 20px; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px;">Items Purchased</h2>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background-color: #f3f4f6;">
+                                    <th style="text-align: left; padding: 12px; border: 1px solid #d1d5db;">Product Name</th>
+                                    <th style="text-align: right; padding: 12px; border: 1px solid #d1d5db;">Price</th>
+                                    <th style="text-align: right; padding: 12px; border: 1px solid #d1d5db;">Quantity</th>
+                                    <th style="text-align: right; padding: 12px; border: 1px solid #d1d5db;">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${bill.items.map((item, index) => `
+                                    <tr style="${index % 2 === 0 ? 'background-color: #f9fafb;' : ''}">
+                                        <td style="padding: 12px; border: 1px solid #d1d5db;">${item.productName}</td>
+                                        <td style="text-align: right; padding: 12px; border: 1px solid #d1d5db;">${formatCurrency(item.productPrice)}</td>
+                                        <td style="text-align: right; padding: 12px; border: 1px solid #d1d5db;">${item.quantity}</td>
+                                        <td style="text-align: right; padding: 12px; border: 1px solid #d1d5db;">${formatCurrency(item.total)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Summary -->
+                    <div style="margin-bottom: 30px;">
+                        <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                            <div>
+                                <p style="margin: 5px 0;"><strong>Payment Status:</strong> ${paymentStatusDisplay}</p>
+                                <p style="margin: 5px 0;"><strong>Total Items:</strong> ${bill.items.length}</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <h3 style="color: #1e293b; margin: 0; font-size: 24px;">Grand Total: ${formatCurrency(bill.grandTotal)}</h3>
+                                <p style="color: #6b7280; margin: 5px 0; font-size: 14px;">Thank you for your purchase!</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #3b82f6; text-align: center; color: #6b7280;">
+                        <p style="margin: 5px 0;">Amul Dairy • Contact: 1800-103-1234</p>
+                        <p style="margin: 5px 0; font-size: 14px;">This is a computer-generated invoice, no signature required.</p>
+                        <p style="margin: 5px 0; font-size: 12px;">Invoice ID: ${bill.timestamp}</p>
+                    </div>
+                </div>
+            `;
+        };
+        
+        // Open print modal
+        const openPrintModal = (bill) => {
+            currentPrintBill = bill;
+            printModal.classList.add('active');
+            printModalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+        
+        // Close print modal
+        const closePrintModal = () => {
+            printModal.classList.remove('active');
+            printModalOverlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        };
+        
+        // Print invoice
+        const printInvoice = (bill) => {
+            const printContent = generatePrintTemplate(bill);
+            invoicePrintDiv.innerHTML = printContent;
+            
+            // Trigger print
+            setTimeout(() => {
+                window.print();
+            }, 100);
+            
+            closePrintModal();
+        };
+        
+        // Save as PDF
+        const saveAsPDF = (bill) => {
+            const printContent = generatePrintTemplate(bill);
+            invoicePrintDiv.innerHTML = printContent;
+            
+            const element = invoicePrintDiv;
+            const options = {
+                margin: [15, 15, 15, 15],
+                filename: `Amul_Invoice_${bill.customerName}_${bill.timestamp}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2,
+                    useCORS: true,
+                    letterRendering: true
+                },
+                jsPDF: { 
+                    unit: 'mm', 
+                    format: 'a4', 
+                    orientation: 'portrait' 
+                }
+            };
+            
+            html2pdf().set(options).from(element).save().then(() => {
+                closePrintModal();
+            });
+        };
+        
+        // Send invoice via WhatsApp
+        const sendInvoiceViaWhatsApp = (bill) => {
+            let message = `*Amul Sales Invoice*\n\n`;
+            message += `*Customer:* ${bill.customerName}\n`;
+            message += `*Phone:* ${bill.customerPhone}\n`;
+            message += `*Date:* ${formatDateTime(bill.timestamp)}\n`;
+            message += `*Payment Status:* ${bill.paymentStatus}\n\n`;
+            message += `*Items Purchased:*\n`;
+            
+            bill.items.forEach((item, index) => {
+                message += `${index + 1}. ${item.productName} - ${item.quantity} x ${formatCurrency(item.productPrice)} = ${formatCurrency(item.total)}\n`;
+            });
+            
+            message += `\n*Grand Total:* ${formatCurrency(bill.grandTotal)}\n`;
+            message += `\nThank you for your purchase!`;
+            
+            // Format phone number before creating WhatsApp URL
+            const formattedPhone = formatPhoneForWhatsApp(bill.customerPhone);
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodedMessage}`;
+            
+            window.open(whatsappUrl, '_blank');
+            closePrintModal();
+        };
+        
         // Render all bills
         const renderBills = (bills) => {
             if (bills.length === 0) {
@@ -732,6 +1152,29 @@
             emptyState.classList.add('hidden');
             
             billsContainer.innerHTML = bills.map(bill => createBillCard(bill)).join('');
+            
+            // Add event listeners to WhatsApp and Print buttons
+            document.querySelectorAll('.whatsapp-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const billId = btn.getAttribute('data-bill-id');
+                    const bill = bills.find(b => b.timestamp === billId);
+                    if (bill) {
+                        openPrintModal(bill);
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.print-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const billId = btn.getAttribute('data-bill-id');
+                    const bill = bills.find(b => b.timestamp === billId);
+                    if (bill) {
+                        openPrintModal(bill);
+                    }
+                });
+            });
         };
         
         // Render customer list in drawer
@@ -759,8 +1202,7 @@
                 customerElement.setAttribute('data-customer', customer.name);
                 
                 const statusClass = customer.paymentStatus === 'Paid' ? 'status-paid' : 'status-pending';
-                // MODIFIED: Display 'P' for Paid instead of full text
-                const paymentStatusDisplay = customer.paymentStatus === 'Paid' ? 'P' : 'Pending';
+                const paymentStatusDisplay = customer.paymentStatus === 'Paid' ? 'Paid' : 'Pending';
                 
                 customerElement.innerHTML = `
                     <div class="flex justify-between items-start">
@@ -782,64 +1224,16 @@
                                 <p class="text-gray-300 text-sm">Total Spent: <span class="font-semibold text-white">${formatCurrency(customer.totalAmount)}</span></p>
                             </div>
                         </div>
-                        <div class="flex space-x-2 ml-4">
-                            <button class="whatsapp-btn bg-green-600 hover:bg-green-700 text-white p-2 rounded-lg" title="Send WhatsApp Summary">
-                                <i class="fab fa-whatsapp"></i>
-                            </button>
-                        </div>
                     </div>
                 `;
                 
                 // Add click event to scroll to customer's bills
-                customerElement.addEventListener('click', (e) => {
-                    if (!e.target.closest('.whatsapp-btn')) {
-                        scrollToCustomerBills(customer.name);
-                    }
-                });
-                
-                // Add WhatsApp button functionality
-                const whatsappBtn = customerElement.querySelector('.whatsapp-btn');
-                whatsappBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    sendWhatsAppSummary(customer);
+                customerElement.addEventListener('click', () => {
+                    scrollToCustomerBills(customer.name);
                 });
                 
                 customerList.appendChild(customerElement);
             });
-        };
-        
-        // Generate WhatsApp message for customer
-        const sendWhatsAppSummary = (customer) => {
-            let message = `*Purchase Summary for ${customer.name}*\n\n`;
-            message += `Total Invoices: ${customer.invoiceCount}\n`;
-            message += `Total Amount: ${formatCurrency(customer.totalAmount)}\n\n`;
-            message += '*Items Purchased:*\n';
-            
-            // Group items by product
-            const itemMap = {};
-            customer.items.forEach(item => {
-                if (!itemMap[item.productName]) {
-                    itemMap[item.productName] = {
-                        quantity: 0,
-                        total: 0
-                    };
-                }
-                itemMap[item.productName].quantity += item.quantity;
-                itemMap[item.productName].total += item.total;
-            });
-            
-            Object.keys(itemMap).forEach(productName => {
-                const item = itemMap[productName];
-                message += `• ${productName}: ${item.quantity} x ${formatCurrency(item.total / item.quantity)} = ${formatCurrency(item.total)}\n`;
-            });
-            
-            message += `\nPayment Status: ${customer.paymentStatus}`;
-            
-            // Encode message for WhatsApp URL
-            const encodedMessage = encodeURIComponent(message);
-            const whatsappUrl = `https://wa.me/${customer.phone.replace(/\D/g, '')}?text=${encodedMessage}`;
-            
-            window.open(whatsappUrl, '_blank');
         };
         
         // Scroll to customer's bills
@@ -1272,6 +1666,29 @@
             closeCustomersModalBtn.addEventListener('click', closeCustomersModal);
             customersModalOverlay.addEventListener('click', closeCustomersModal);
             
+            // Add event listeners for print modal
+            closePrintModalBtn.addEventListener('click', closePrintModal);
+            printModalOverlay.addEventListener('click', closePrintModal);
+            
+            // Add event listeners for print modal buttons
+            printInvoiceBtn.addEventListener('click', () => {
+                if (currentPrintBill) {
+                    printInvoice(currentPrintBill);
+                }
+            });
+            
+            savePdfBtn.addEventListener('click', () => {
+                if (currentPrintBill) {
+                    saveAsPDF(currentPrintBill);
+                }
+            });
+            
+            shareWhatsAppBtn.addEventListener('click', () => {
+                if (currentPrintBill) {
+                    sendInvoiceViaWhatsApp(currentPrintBill);
+                }
+            });
+            
             // Add customer search functionality
             customerSearch.addEventListener('input', (e) => {
                 renderCustomerList(customerSummary, e.target.value);
@@ -1290,6 +1707,7 @@
                     closeSideDrawer();
                     closeProductsModal();
                     closeCustomersModal();
+                    closePrintModal();
                 }
                 
                 // Ctrl/Cmd + F opens search
