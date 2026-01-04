@@ -1042,25 +1042,31 @@
         
         // Generate message for WhatsApp
         const generateWhatsAppMessage = (bill) => {
-            const invoiceDate = formatDateTime(bill.timestamp);
-            const paymentStatusDisplay = bill.paymentStatus === 'Paid' ? 'Paid' : 'Pending';
-            
-            let message = `*Amul Sales Invoice*\n\n`;
-            message += `*Customer:* ${bill.customerName}\n`;
-            message += `*Phone:* ${bill.customerPhone}\n`;
-            message += `*Date:* ${invoiceDate}\n`;
-            message += `*Payment Status:* ${paymentStatusDisplay}\n\n`;
-            message += `*Items Purchased:*\n`;
-            
-            bill.items.forEach((item, index) => {
-                message += `${index + 1}. ${item.productName} - ${item.quantity} x ${formatCurrency(item.productPrice)} = ${formatCurrency(item.total)}\n`;
-            });
-            
-            message += `\n*Grand Total:* ${formatCurrency(bill.grandTotal)}\n`;
-            message += `\nThank you for your purchase!`;
-            
-            return message;
-        };
+    const invoiceDate = formatDateTime(bill.timestamp);
+    const paymentStatus = bill.paymentStatus === 'Paid' ? '✅ Paid' : '⏳ Pending';
+    const storeLink = "https://adityasinghjasrotia.github.io/The-AMUL-Product-Ordering-System/";
+    
+    let message = `*🍦 AMUL SALES INVOICE*\n`;
+    message += `──────────────────\n`;
+    message += `*Customer:* ${bill.customerName}\n`;
+    message += `*Date:* ${invoiceDate}\n`;
+    message += `*Status:* ${paymentStatus}\n`;
+    message += `──────────────────\n\n`;
+    
+    message += `*Items Purchased:*\n`;
+    bill.items.forEach((item, index) => {
+        message += `${index + 1}. ${item.productName}\n`;
+        message += `   ${item.quantity} × ${formatCurrency(item.productPrice)} = *${formatCurrency(item.total)}*\n`;
+    });
+    
+    message += `\n*Grand Total: ${formatCurrency(bill.grandTotal)}*\n`;
+    message += `──────────────────\n\n`;
+    message += `*Want to order more?*\n`;
+    message += `Order online here: ${storeLink}\n\n`;
+    message += `Thank you for choosing Amul! ✨`;
+    
+    return message;
+};
         
         // Open WhatsApp modal
         const openWhatsAppModal = (bill) => {
