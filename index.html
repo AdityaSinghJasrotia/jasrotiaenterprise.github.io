@@ -474,7 +474,7 @@
             background: #0056b3;
         }
         
-        /* Notice Panel - Improved with Tiles */
+        /* Notice Panel - Only Stock Status */
         .info-panel {
             position: fixed;
             bottom: 0;
@@ -523,9 +523,6 @@
             padding: 20px;
             height: calc(80vh - 70px);
             overflow-y: auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
             -webkit-overflow-scrolling: touch;
         }
         
@@ -534,7 +531,8 @@
             border-radius: var(--card-radius);
             box-shadow: var(--shadow);
             padding: 20px;
-            transition: transform 0.2s ease;
+            margin: 0 auto;
+            max-width: 800px;
             border: 1px solid var(--border);
             animation: tileAppear 0.5s ease-out;
         }
@@ -548,11 +546,6 @@
                 opacity: 1;
                 transform: translateY(0) scale(1);
             }
-        }
-        
-        .info-tile:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
         }
         
         .tile-header {
@@ -1678,10 +1671,6 @@
                 width: 400px;
             }
             
-            .info-content {
-                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            }
-            
             .quantity-input {
                 width: 60px;
             }
@@ -1694,10 +1683,6 @@
             
             .search-container {
                 width: 100%;
-            }
-            
-            .info-content {
-                grid-template-columns: 1fr;
             }
             
             .upi-id {
@@ -1833,8 +1818,9 @@
         
         <h3>Availability</h3>
         <div class="filter-group" id="availabilityFilters">
-            <button class="filter-btn active" data-availability="all">All Products</button>
-            <button class="filter-btn" data-availability="In Stock">In Stock</button>
+            <button class="filter-btn" data-availability="all">All Products</button>
+            <button class="filter-btn active" data-availability="In Stock">In Stock</button>
+            <button class="filter-btn" data-availability="Low Stock">Low Stock</button>
             <button class="filter-btn" data-availability="Out of Stock">Out of Stock</button>
         </div>
     </section>
@@ -1852,10 +1838,10 @@
         <i class="fas fa-info"></i>
     </div>
     
-    <!-- Information Panel -->
+    <!-- Information Panel - Only Stock Status -->
     <div class="info-panel" id="infoPanel">
         <div class="info-header">
-            <h2>Important Information</h2>
+            <h2>Stock Status Information</h2>
             <button class="close-info" id="closeInfo">
                 <i class="fas fa-times"></i>
             </button>
@@ -1867,117 +1853,24 @@
                     <div class="tile-icon">
                         <i class="fas fa-chart-bar"></i>
                     </div>
-                    <h3 class="tile-title">Stock Status</h3>
+                    <h3 class="tile-title">Current Stock Status</h3>
                 </div>
                 <div class="tile-content">
                     <h4>Low Stock (About to Finish)</h4>
                     <ul class="stock-list" id="lowStockList">
-                        <!-- Will be populated by JavaScript -->
                         <li class="low-stock-item">Loading low stock items...</li>
                     </ul>
                     
                     <h4>High Stock (Good Quantity)</h4>
                     <ul class="stock-list" id="highStockList">
-                        <!-- Will be populated by JavaScript -->
                         <li class="high-stock-item">Loading high stock items...</li>
                     </ul>
                     
                     <div class="highlight">
                         <i class="fas fa-exclamation-triangle"></i> Low stock items need immediate attention!
                     </div>
-                </div>
-            </div>
-            
-            <div class="info-tile">
-                <div class="tile-header">
-                    <div class="tile-icon">
-                        <i class="fas fa-truck"></i>
-                    </div>
-                    <h3 class="tile-title">Order Processing</h3>
-                </div>
-                <div class="tile-content">
-                    <p>If you place orders through our application, you'll receive items at the specified price. However, verbal orders may incur additional charges.</p>
-                    <p>Retailers will receive their goods the next day after placing the order, though delivery can take up to 3 days in some cases.</p>
-                    <div class="highlight">
-                        <i class="fas fa-clock"></i> Cut-off time: 3:00 PM daily
-                    </div>
-                </div>
-            </div>
-            
-            <div class="info-tile">
-                <div class="tile-header">
-                    <div class="tile-icon">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                    <h3 class="tile-title">Delivery Areas</h3>
-                </div>
-                <div class="tile-content">
-                    <p>We currently deliver within a 10km radius of Talab Tillo Bohri.</p>
-                    <p>Minimum order value is <strong>₹1</strong> for delivery.</p>
-                </div>
-            </div>
-            
-            <div class="info-tile">
-                <div class="tile-header">
-                    <div class="tile-icon">
-                        <i class="fas fa-credit-card"></i>
-                    </div>
-                    <h3 class="tile-title">Payment Options</h3>
-                </div>
-                <div class="tile-content">
-                    <p>We offer multiple payment methods for your convenience:</p>
-                    <ul>
-                        <li>Cash on Delivery (COD)</li>
-                        <li>UPI (PhonePe, Google Pay, Paytm)</li>
-                        <li><h3>THE CUTE CORNER Jammu</h3> jasrotiarajni96-3@okhdfcbank</li>
-                    </ul>
-                    <div class="highlight">
-                        <i class="fas fa-shield-alt"></i> All payments are secure
-                    </div>
-                </div>
-            </div>
-            
-            <div class="info-tile">
-                <div class="tile-header">
-                    <div class="tile-icon">
-                        <i class="fas fa-exchange-alt"></i>
-                    </div>
-                    <h3 class="tile-title">Returns Policy</h3>
-                </div>
-                <div class="tile-content">
-                    <p>As soon as you receive your delivery, inspect the items for any damage or incorrect ones..</p>
-                    <p>Fresh products cannot be returned unless damaged or spoiled.</p>
-                    <p>Please contact our support team for return requests.</p>
-                </div>
-            </div>
-            
-            <div class="info-tile">
-                <div class="tile-header">
-                    <div class="tile-icon">
-                        <i class="fas fa-headset"></i>
-                    </div>
-                    <h3 class="tile-title">Contact Support</h3>
-                </div>
-                <div class="tile-content">
-                    <p>Call <strong>+91 9596658921</strong> for order assistance</p>
-                    <p>WhatsApp us for quick response and order updates</p>
-                    <div class="highlight">
-                        <i class="fas fa-clock"></i> Support hours: 8AM - 8PM daily
-                    </div>
-                </div>
-            </div>
-            
-            <div class="info-tile">
-                <div class="tile-header">
-                    <div class="tile-icon">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
-                    <h3 class="tile-title">Holiday Schedule</h3>
-                </div>
-                <div class="tile-content">
-                    <p>No deliveries on Sundays and public holidays.</p>
-                    <p>Special holiday hours during festivals will be announced in advance.</p>
-                    <p>Pre-orders are accepted for holiday periods.</p>
+                    
+                    <p><strong>Note:</strong> Stock levels are updated in real-time. Please refresh to see the latest status.</p>
                 </div>
             </div>
         </div>
@@ -2123,7 +2016,7 @@
             </div>
             <div class="cart-buttons">
                 <button class="place-order-btn" id="placeOrderBtn">
-                    <i class="fab fa-whatsapp"></i>
+                    <i class="fas fa-shopping-bag"></i>
                     Place Order
                 </button>
                 <button class="pay-now-btn" id="payNowBtn">
@@ -2200,7 +2093,7 @@
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let selectedBrand = 'all';
         let selectedType = 'all';
-        let selectedAvailability = 'all';
+        let selectedAvailability = 'In Stock'; // Changed default to "In Stock"
         let productTypes = [];
         let searchQuery = '';
         let cachedProducts = null;
@@ -2209,10 +2102,23 @@
         let isExistingCustomer = false;
         let customerSearchTimeout = null;
         
+        // Predefined customers - Avinash Singh and Aditya Singh
+        const predefinedCustomers = [
+            { name: 'Khullar Auntie', phone: '9086773629’', timestamp: '' },
+            { name: 'NaV Bharat Trading Co', phone: '9419142241', timestamp: '' },
+            { name: 'Vikas General store', phone: '9469554938', timestamp: '' },
+            { name: 'Bharat Gen Store', phone: '9469484209', timestamp: '' },
+            { name: 'Bittu Gen store', phone: '9103825703', timestamp: '' },
+            { name: 'Raju sweet Shop', phone: '9596658921', timestamp: '' },
+            { name: 'Nan Villa', phone: '6005114692', timestamp: '' },
+            { name: 'Aditya Singh', phone: '9596658921', timestamp: '' }
+        ];
+        
         // Initialize the app
         function init() {
             updateLastUpdated();
             loadProducts();
+            loadCustomers(); // Load customers on init
             updateCartCount();
             setupEventListeners();
         }
@@ -2357,7 +2263,7 @@
             }
         }
         
-        // Load customers from Google Sheets with improved parsing
+        // Load customers from Google Sheets and merge with predefined customers
         async function loadCustomers() {
             try {
                 const response = await fetch(CUSTOMERS_CSV_URL + '&_=' + Date.now());
@@ -2366,7 +2272,7 @@
                 const parsedData = parseCSVFast(csvData);
                 
                 // Process customer data - try different column formats
-                customers = parsedData.map(row => {
+                const csvCustomers = parsedData.map(row => {
                     // Try multiple column name formats
                     const name = row.Name || row['Customer Name'] || row['Full Name'] || 
                                  row['Customer'] || row._values[1] || row._values[0] || '';
@@ -2379,30 +2285,27 @@
                     return { name: name.trim(), phone: phone.trim(), timestamp: timestamp.trim() };
                 }).filter(customer => customer.name && customer.name.trim() !== '');
                 
-                console.log(`Loaded ${customers.length} customers from CSV`);
+                // Merge CSV customers with predefined customers
+                // Start with predefined customers
+                customers = [...predefinedCustomers];
                 
-                // If no customers loaded, add some sample data
-                if (customers.length === 0) {
-                    customers = [
-                        { name: 'Rajesh Kumar', phone: '9876543210', timestamp: '' },
-                        { name: 'Priya Sharma', phone: '8765432109', timestamp: '' },
-                        { name: 'Amit Singh', phone: '7654321098', timestamp: '' },
-                        { name: 'Neha Gupta', phone: '6543210987', timestamp: '' },
-                        { name: 'Vikram Patel', phone: '5432109876', timestamp: '' }
-                    ];
-                    console.log('Using sample customer data');
-                }
+                // Add CSV customers if they're not duplicates (check by name)
+                csvCustomers.forEach(csvCustomer => {
+                    const isDuplicate = customers.some(
+                        customer => customer.name.toLowerCase() === csvCustomer.name.toLowerCase()
+                    );
+                    if (!isDuplicate) {
+                        customers.push(csvCustomer);
+                    }
+                });
+                
+                console.log(`Loaded ${customers.length} customers (${predefinedCustomers.length} predefined + ${csvCustomers.length} from CSV)`);
                 
             } catch (error) {
-                console.error('Error loading customers:', error);
-                // Fallback to sample data
-                customers = [
-                    { name: 'Rajesh Kumar', phone: '9876543210', timestamp: '' },
-                    { name: 'Priya Sharma', phone: '8765432109', timestamp: '' },
-                    { name: 'Amit Singh', phone: '7654321098', timestamp: '' },
-                    { name: 'Neha Gupta', phone: '6543210987', timestamp: '' },
-                    { name: 'Vikram Patel', phone: '5432109876', timestamp: '' }
-                ];
+                console.error('Error loading customers from CSV:', error);
+                // Fallback to only predefined customers
+                customers = [...predefinedCustomers];
+                console.log('Using only predefined customer data');
             }
         }
         
@@ -2491,9 +2394,19 @@
                     (selectedBrand === 'OTHER' && product.brand.toUpperCase() !== 'AMUL');
                     
                 const typeMatch = selectedType === 'all' || product.type === selectedType;
-                const availabilityMatch = selectedAvailability === 'all' || 
-                    (selectedAvailability === 'In Stock' && product.rob > 0) ||
-                    (selectedAvailability === 'Out of Stock' && product.rob <= 0);
+                
+                // Handle availability filter (including new Low Stock filter)
+                let availabilityMatch = true;
+                if (selectedAvailability === 'In Stock') {
+                    availabilityMatch = product.rob > 0;
+                } else if (selectedAvailability === 'Out of Stock') {
+                    availabilityMatch = product.rob <= 0;
+                } else if (selectedAvailability === 'Low Stock') {
+                    // Low stock defined as 10 or fewer items
+                    availabilityMatch = product.rob > 0 && product.rob <= 10;
+                } else if (selectedAvailability === 'all') {
+                    availabilityMatch = true; // Show all
+                }
                 
                 const searchMatch = !searchQuery || 
                     product.name.toLowerCase().includes(searchQuery) || 
@@ -2937,7 +2850,7 @@
             // Reset form state
             resetContactForm();
             
-            // Load customers if not already loaded
+            // Ensure customers are loaded
             if (customers.length === 0) {
                 loadCustomers().then(() => {
                     if (isExistingCustomer) {
@@ -3211,7 +3124,7 @@
                 customerSearchInput.value = '';
                 customerDropdown.classList.remove('active');
                 
-                // Load customers if not already loaded
+                // Ensure customers are loaded
                 if (customers.length === 0) {
                     loadCustomers().then(() => {
                         const initialResults = searchCustomers('');
