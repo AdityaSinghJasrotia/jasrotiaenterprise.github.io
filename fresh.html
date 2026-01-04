@@ -12,8 +12,6 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- html2pdf for PDF generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         * { font-family: 'Inter', sans-serif; }
@@ -321,18 +319,8 @@
             background-color: #128C7E;
         }
         
-        .print-btn {
-            background-color: #6B7280;
-            color: white;
-            border: none;
-        }
-        
-        .print-btn:hover {
-            background-color: #4B5563;
-        }
-        
-        /* Print/PDF Modal */
-        .print-modal {
+        /* WhatsApp Modal */
+        .whatsapp-modal {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -350,13 +338,13 @@
             transition: all 0.3s ease;
         }
         
-        .print-modal.active {
+        .whatsapp-modal.active {
             opacity: 1;
             visibility: visible;
             transform: translate(-50%, -50%) scale(1);
         }
         
-        .print-modal-overlay {
+        .whatsapp-modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -370,32 +358,9 @@
             transition: all 0.3s ease;
         }
         
-        .print-modal-overlay.active {
+        .whatsapp-modal-overlay.active {
             opacity: 1;
             visibility: visible;
-        }
-        
-        /* Print Styles */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            #invoice-print, #invoice-print * {
-                visibility: visible;
-            }
-            #invoice-print {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                background: white;
-                color: black;
-                padding: 20px;
-                box-shadow: none;
-            }
-            .no-print {
-                display: none !important;
-            }
         }
     </style>
 </head>
@@ -487,13 +452,13 @@
                     
                     <!-- Payment Status Filter Buttons -->
                     <div class="flex items-center space-x-2 bg-gray-800 p-1 rounded-xl">
-                        <button id="filterAll" class="payment-filter-btn active px-4 py-2 rounded-lg text-white">
+                        <button id="filterAll" class="payment-filter-btn dark-card px-4 py-2 rounded-lg text-gray-300 hover:text-white">
                             All
                         </button>
-                        <button id="filterPaid" class="payment-filter-btn px-4 py-2 rounded-lg text-gray-300 hover:text-white">
+                        <button id="filterPaid" class="payment-filter-btn dark-card px-4 py-2 rounded-lg text-gray-300 hover:text-white">
                             <i class="fas fa-check-circle mr-2"></i>Paid
                         </button>
-                        <button id="filterPending" class="payment-filter-btn px-4 py-2 rounded-lg text-gray-300 hover:text-white">
+                        <button id="filterPending" class="payment-filter-btn active px-4 py-2 rounded-lg text-white">
                             <i class="fas fa-clock mr-2"></i>Pending
                         </button>
                     </div>
@@ -582,38 +547,117 @@
             </div>
         </div>
         
-        <!-- Print/PDF Modal -->
-        <div class="print-modal" id="printModal">
+        <!-- Payment Summary Modal -->
+        <div class="modal" id="paymentSummaryModal">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-bold text-white">Print/Export Invoice</h2>
-                <button id="closePrintModal" class="text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800">
+                <h2 class="text-2xl font-bold text-white">Payment Summary</h2>
+                <button id="closePaymentSummaryModal" class="text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-6">
+                <div class="dark-card rounded-xl p-5">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="bg-green-900 bg-opacity-50 p-3 rounded-lg mr-4">
+                                <i class="fas fa-check-circle text-green-400 text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-400 text-sm">Total Paid Amount</p>
+                                <h3 id="totalPaidAmount" class="text-2xl font-bold text-green-400">₹0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-gray-300 text-sm">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        Sum of all paid invoices
+                    </div>
+                </div>
+                
+                <div class="dark-card rounded-xl p-5">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="bg-red-900 bg-opacity-50 p-3 rounded-lg mr-4">
+                                <i class="fas fa-clock text-red-400 text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-400 text-sm">Total Pending Amount</p>
+                                <h3 id="totalPendingAmount" class="text-2xl font-bold text-red-400">₹0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-gray-300 text-sm">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        Sum of all pending invoices
+                    </div>
+                </div>
+                
+                <div class="dark-card rounded-xl p-5">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="bg-blue-900 bg-opacity-50 p-3 rounded-lg mr-4">
+                                <i class="fas fa-rupee-sign text-blue-400 text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-400 text-sm">Total Amount</p>
+                                <h3 id="totalOverallAmount" class="text-2xl font-bold text-blue-400">₹0</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-gray-300 text-sm">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        Sum of all invoices (Paid + Pending)
+                    </div>
+                </div>
+                
+                <div class="mt-6 pt-6 border-t border-gray-700">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center">
+                            <p class="text-gray-400 text-sm">Paid Invoices</p>
+                            <p id="paidInvoicesCount" class="text-xl font-bold text-green-400">0</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-gray-400 text-sm">Pending Invoices</p>
+                            <p id="pendingInvoicesCount" class="text-xl font-bold text-red-400">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- WhatsApp Modal -->
+        <div class="whatsapp-modal" id="whatsappModal">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-white">Send Invoice via WhatsApp</h2>
+                <button id="closeWhatsappModal" class="text-gray-400 hover:text-white p-2 rounded-full hover:bg-gray-800">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
             
             <div class="space-y-3 mb-6">
-                <button id="printInvoiceBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-print mr-2"></i> Print Invoice
-                </button>
-                <button id="savePdfBtn" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-file-pdf mr-2"></i> Save as PDF
-                </button>
                 <button id="shareWhatsAppBtn" class="w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-lg flex items-center justify-center">
                     <i class="fab fa-whatsapp mr-2"></i> Send via WhatsApp
                 </button>
             </div>
             
-            <p class="text-gray-400 text-sm text-center">PDF will be saved to your device's downloads folder</p>
+            <p class="text-gray-400 text-sm text-center">The invoice will be sent as a WhatsApp message</p>
         </div>
         
-        <div class="print-modal-overlay" id="printModalOverlay"></div>
+        <div class="whatsapp-modal-overlay" id="whatsappModalOverlay"></div>
         
         <!-- Modal Overlays -->
         <div class="modal-overlay" id="productsModalOverlay"></div>
         <div class="modal-overlay" id="customersModalOverlay"></div>
+        <div class="modal-overlay" id="paymentSummaryModalOverlay"></div>
 
         <!-- FAB Container -->
         <div class="fab-container">
+            <!-- Payment Summary FAB -->
+            <div class="fab-secondary" id="paymentSummaryFab" title="Payment Summary">
+                <i class="fas fa-money-bill-wave text-green-300 text-lg"></i>
+            </div>
+            
             <!-- Top Products FAB -->
             <div class="fab-secondary" id="topProductsFab" title="Top Products">
                 <i class="fas fa-chart-bar text-blue-300 text-lg"></i>
@@ -630,8 +674,8 @@
             </div>
         </div>
         
-        <!-- Hidden div for print/PDF generation -->
-        <div id="invoice-print" style="display: none;"></div>
+        <!-- Hidden div for invoice message -->
+        <div id="invoice-message" style="display: none;"></div>
     </div>
 
     <script>
@@ -644,8 +688,8 @@
         let customerSummary = [];
         let productsSummary = [];
         
-        // Current bill for print/PDF
-        let currentPrintBill = null;
+        // Current bill for WhatsApp
+        let currentWhatsAppBill = null;
         
         // DOM Elements
         const loadingElement = document.getElementById('loading');
@@ -660,7 +704,7 @@
         const filterAllBtn = document.getElementById('filterAll');
         const filterPaidBtn = document.getElementById('filterPaid');
         const filterPendingBtn = document.getElementById('filterPending');
-        let currentPaymentFilter = 'all';
+        let currentPaymentFilter = 'pending'; // Default to pending
         
         // Side Drawer Elements
         const sideDrawer = document.getElementById('sideDrawer');
@@ -673,23 +717,31 @@
         // Modal Elements
         const topProductsModal = document.getElementById('topProductsModal');
         const topCustomersModal = document.getElementById('topCustomersModal');
+        const paymentSummaryModal = document.getElementById('paymentSummaryModal');
+        const whatsappModal = document.getElementById('whatsappModal');
         const productsModalOverlay = document.getElementById('productsModalOverlay');
         const customersModalOverlay = document.getElementById('customersModalOverlay');
+        const paymentSummaryModalOverlay = document.getElementById('paymentSummaryModalOverlay');
+        const whatsappModalOverlay = document.getElementById('whatsappModalOverlay');
         const closeProductsModalBtn = document.getElementById('closeProductsModal');
         const closeCustomersModalBtn = document.getElementById('closeCustomersModal');
+        const closePaymentSummaryModalBtn = document.getElementById('closePaymentSummaryModal');
+        const closeWhatsappModalBtn = document.getElementById('closeWhatsappModal');
         const topProductsFab = document.getElementById('topProductsFab');
         const topCustomersFab = document.getElementById('topCustomersFab');
+        const paymentSummaryFab = document.getElementById('paymentSummaryFab');
         const topProductsList = document.getElementById('topProductsList');
         const topCustomersList = document.getElementById('topCustomersList');
         
-        // Print/PDF Modal Elements
-        const printModal = document.getElementById('printModal');
-        const printModalOverlay = document.getElementById('printModalOverlay');
-        const closePrintModalBtn = document.getElementById('closePrintModal');
-        const printInvoiceBtn = document.getElementById('printInvoiceBtn');
-        const savePdfBtn = document.getElementById('savePdfBtn');
+        // Payment Summary Elements
+        const totalPaidAmountElement = document.getElementById('totalPaidAmount');
+        const totalPendingAmountElement = document.getElementById('totalPendingAmount');
+        const totalOverallAmountElement = document.getElementById('totalOverallAmount');
+        const paidInvoicesCountElement = document.getElementById('paidInvoicesCount');
+        const pendingInvoicesCountElement = document.getElementById('pendingInvoicesCount');
+        
+        // WhatsApp Elements
         const shareWhatsAppBtn = document.getElementById('shareWhatsAppBtn');
-        const invoicePrintDiv = document.getElementById('invoice-print');
         
         // Chart instances
         let productsChart = null;
@@ -727,30 +779,6 @@
                     day: 'numeric',
                     hour: '2-digit',
                     minute: '2-digit'
-                });
-            } catch (e) {
-                return timestamp;
-            }
-        };
-        
-        // Format date for print
-        const formatDateForPrint = (timestamp) => {
-            try {
-                let date;
-                if (timestamp.includes('T')) {
-                    date = new Date(timestamp);
-                } else {
-                    date = new Date(timestamp);
-                }
-                
-                if (isNaN(date.getTime())) {
-                    return timestamp;
-                }
-                
-                return date.toLocaleDateString('en-IN', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
                 });
             } catch (e) {
                 return timestamp;
@@ -831,11 +859,19 @@
             return Object.values(groups);
         };
         
-        // Calculate customer summary data
-        const calculateCustomerSummary = (bills) => {
+        // Calculate customer summary data based on current filter
+        const calculateCustomerSummary = (bills, filter = 'all') => {
             const customerMap = {};
             
-            bills.forEach(bill => {
+            // Filter bills based on payment status
+            let filteredBills = bills;
+            if (filter === 'paid') {
+                filteredBills = bills.filter(bill => bill.paymentStatus === 'Paid');
+            } else if (filter === 'pending') {
+                filteredBills = bills.filter(bill => bill.paymentStatus === 'Pending');
+            }
+            
+            filteredBills.forEach(bill => {
                 const customerKey = `${bill.customerName}|${bill.customerPhone}`;
                 
                 if (!customerMap[customerKey]) {
@@ -883,6 +919,32 @@
             return Object.values(productMap).sort((a, b) => b.totalQuantity - a.totalQuantity);
         };
         
+        // Calculate payment summary
+        const calculatePaymentSummary = (bills) => {
+            let totalPaid = 0;
+            let totalPending = 0;
+            let paidCount = 0;
+            let pendingCount = 0;
+            
+            bills.forEach(bill => {
+                if (bill.paymentStatus === 'Paid') {
+                    totalPaid += bill.grandTotal;
+                    paidCount++;
+                } else {
+                    totalPending += bill.grandTotal;
+                    pendingCount++;
+                }
+            });
+            
+            return {
+                totalPaid,
+                totalPending,
+                totalOverall: totalPaid + totalPending,
+                paidCount,
+                pendingCount
+            };
+        };
+        
         // Calculate statistics
         const calculateStatistics = (bills) => {
             let totalBills = bills.length;
@@ -925,9 +987,6 @@
                                     </span>
                                     <button class="whatsapp-btn invoice-action-btn ml-3" data-bill-id="${bill.timestamp}" title="Send via WhatsApp">
                                         <i class="fab fa-whatsapp mr-1"></i> WhatsApp
-                                    </button>
-                                    <button class="print-btn invoice-action-btn" data-bill-id="${bill.timestamp}" title="Print/Save as PDF">
-                                        <i class="fas fa-print mr-1"></i> Print/PDF
                                     </button>
                                 </div>
                             </div>
@@ -981,147 +1040,16 @@
             `;
         };
         
-        // Generate print template for invoice
-        const generatePrintTemplate = (bill) => {
-            const invoiceDate = formatDateForPrint(bill.timestamp);
-            const invoiceTime = new Date(bill.timestamp).toLocaleTimeString('en-IN');
+        // Generate message for WhatsApp
+        const generateWhatsAppMessage = (bill) => {
+            const invoiceDate = formatDateTime(bill.timestamp);
             const paymentStatusDisplay = bill.paymentStatus === 'Paid' ? 'Paid' : 'Pending';
             
-            return `
-                <div class="invoice-print-container" style="background: white; color: black; padding: 25px; max-width: 800px; margin: 0 auto; font-family: 'Inter', sans-serif;">
-                    <!-- Header -->
-                    <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #3b82f6; padding-bottom: 20px;">
-                        <h1 style="color: #1d4ed8; margin: 0; font-size: 32px;">Amul Dairy</h1>
-                        <p style="color: #4b5563; margin: 5px 0; font-size: 16px;">Sales Invoice</p>
-                        <p style="color: #6b7280; margin: 0; font-size: 14px;">Date: ${invoiceDate} | Time: ${invoiceTime}</p>
-                    </div>
-                    
-                    <!-- Customer Details -->
-                    <div style="margin-bottom: 25px;">
-                        <h2 style="color: #1e293b; margin-bottom: 15px; font-size: 20px; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px;">Customer Details</h2>
-                        <div style="display: flex; justify-content: space-between;">
-                            <div>
-                                <p style="margin: 5px 0;"><strong>Name:</strong> ${bill.customerName}</p>
-                                <p style="margin: 5px 0;"><strong>Phone:</strong> ${bill.customerPhone}</p>
-                            </div>
-                            <div>
-                                <p style="margin: 5px 0;"><strong>Invoice Status:</strong> ${paymentStatusDisplay}</p>
-                                <p style="margin: 5px 0;"><strong>Invoice Date:</strong> ${invoiceDate}</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Items Table -->
-                    <div style="margin-bottom: 30px;">
-                        <h2 style="color: #1e293b; margin-bottom: 15px; font-size: 20px; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px;">Items Purchased</h2>
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background-color: #f3f4f6;">
-                                    <th style="text-align: left; padding: 12px; border: 1px solid #d1d5db;">Product Name</th>
-                                    <th style="text-align: right; padding: 12px; border: 1px solid #d1d5db;">Price</th>
-                                    <th style="text-align: right; padding: 12px; border: 1px solid #d1d5db;">Quantity</th>
-                                    <th style="text-align: right; padding: 12px; border: 1px solid #d1d5db;">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${bill.items.map((item, index) => `
-                                    <tr style="${index % 2 === 0 ? 'background-color: #f9fafb;' : ''}">
-                                        <td style="padding: 12px; border: 1px solid #d1d5db;">${item.productName}</td>
-                                        <td style="text-align: right; padding: 12px; border: 1px solid #d1d5db;">${formatCurrency(item.productPrice)}</td>
-                                        <td style="text-align: right; padding: 12px; border: 1px solid #d1d5db;">${item.quantity}</td>
-                                        <td style="text-align: right; padding: 12px; border: 1px solid #d1d5db;">${formatCurrency(item.total)}</td>
-                                    </tr>
-                                `).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <!-- Summary -->
-                    <div style="margin-bottom: 30px;">
-                        <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-                            <div>
-                                <p style="margin: 5px 0;"><strong>Payment Status:</strong> ${paymentStatusDisplay}</p>
-                                <p style="margin: 5px 0;"><strong>Total Items:</strong> ${bill.items.length}</p>
-                            </div>
-                            <div style="text-align: right;">
-                                <h3 style="color: #1e293b; margin: 0; font-size: 24px;">Grand Total: ${formatCurrency(bill.grandTotal)}</h3>
-                                <p style="color: #6b7280; margin: 5px 0; font-size: 14px;">Thank you for your purchase!</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Footer -->
-                    <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #3b82f6; text-align: center; color: #6b7280;">
-                        <p style="margin: 5px 0;">Amul Dairy • Contact: 1800-103-1234</p>
-                        <p style="margin: 5px 0; font-size: 14px;">This is a computer-generated invoice, no signature required.</p>
-                        <p style="margin: 5px 0; font-size: 12px;">Invoice ID: ${bill.timestamp}</p>
-                    </div>
-                </div>
-            `;
-        };
-        
-        // Open print modal
-        const openPrintModal = (bill) => {
-            currentPrintBill = bill;
-            printModal.classList.add('active');
-            printModalOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        };
-        
-        // Close print modal
-        const closePrintModal = () => {
-            printModal.classList.remove('active');
-            printModalOverlay.classList.remove('active');
-            document.body.style.overflow = 'auto';
-        };
-        
-        // Print invoice
-        const printInvoice = (bill) => {
-            const printContent = generatePrintTemplate(bill);
-            invoicePrintDiv.innerHTML = printContent;
-            
-            // Trigger print
-            setTimeout(() => {
-                window.print();
-            }, 100);
-            
-            closePrintModal();
-        };
-        
-        // Save as PDF
-        const saveAsPDF = (bill) => {
-            const printContent = generatePrintTemplate(bill);
-            invoicePrintDiv.innerHTML = printContent;
-            
-            const element = invoicePrintDiv;
-            const options = {
-                margin: [15, 15, 15, 15],
-                filename: `Amul_Invoice_${bill.customerName}_${bill.timestamp}.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { 
-                    scale: 2,
-                    useCORS: true,
-                    letterRendering: true
-                },
-                jsPDF: { 
-                    unit: 'mm', 
-                    format: 'a4', 
-                    orientation: 'portrait' 
-                }
-            };
-            
-            html2pdf().set(options).from(element).save().then(() => {
-                closePrintModal();
-            });
-        };
-        
-        // Send invoice via WhatsApp
-        const sendInvoiceViaWhatsApp = (bill) => {
             let message = `*Amul Sales Invoice*\n\n`;
             message += `*Customer:* ${bill.customerName}\n`;
             message += `*Phone:* ${bill.customerPhone}\n`;
-            message += `*Date:* ${formatDateTime(bill.timestamp)}\n`;
-            message += `*Payment Status:* ${bill.paymentStatus}\n\n`;
+            message += `*Date:* ${invoiceDate}\n`;
+            message += `*Payment Status:* ${paymentStatusDisplay}\n\n`;
             message += `*Items Purchased:*\n`;
             
             bill.items.forEach((item, index) => {
@@ -1131,13 +1059,33 @@
             message += `\n*Grand Total:* ${formatCurrency(bill.grandTotal)}\n`;
             message += `\nThank you for your purchase!`;
             
-            // Format phone number before creating WhatsApp URL
+            return message;
+        };
+        
+        // Open WhatsApp modal
+        const openWhatsAppModal = (bill) => {
+            currentWhatsAppBill = bill;
+            whatsappModal.classList.add('active');
+            whatsappModalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+        
+        // Close WhatsApp modal
+        const closeWhatsAppModal = () => {
+            whatsappModal.classList.remove('active');
+            whatsappModalOverlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        };
+        
+        // Send invoice via WhatsApp
+        const sendInvoiceViaWhatsApp = (bill) => {
+            const message = generateWhatsAppMessage(bill);
             const formattedPhone = formatPhoneForWhatsApp(bill.customerPhone);
             const encodedMessage = encodeURIComponent(message);
             const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodedMessage}`;
             
             window.open(whatsappUrl, '_blank');
-            closePrintModal();
+            closeWhatsAppModal();
         };
         
         // Render all bills
@@ -1153,35 +1101,27 @@
             
             billsContainer.innerHTML = bills.map(bill => createBillCard(bill)).join('');
             
-            // Add event listeners to WhatsApp and Print buttons
+            // Add event listeners to WhatsApp buttons
             document.querySelectorAll('.whatsapp-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const billId = btn.getAttribute('data-bill-id');
                     const bill = bills.find(b => b.timestamp === billId);
                     if (bill) {
-                        openPrintModal(bill);
-                    }
-                });
-            });
-            
-            document.querySelectorAll('.print-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const billId = btn.getAttribute('data-bill-id');
-                    const bill = bills.find(b => b.timestamp === billId);
-                    if (bill) {
-                        openPrintModal(bill);
+                        openWhatsAppModal(bill);
                     }
                 });
             });
         };
         
-        // Render customer list in drawer
-        const renderCustomerList = (customers, searchTerm = '') => {
+        // Render customer list in drawer based on current filter
+        const renderCustomerList = (searchTerm = '') => {
             customerList.innerHTML = '';
             
-            const filteredCustomers = customers.filter(customer => 
+            // Calculate customer summary based on current payment filter
+            const filteredCustomerSummary = calculateCustomerSummary(groupedBills, currentPaymentFilter);
+            
+            const filteredCustomers = filteredCustomerSummary.filter(customer => 
                 customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 customer.phone.toLowerCase().includes(searchTerm.toLowerCase())
             );
@@ -1452,6 +1392,17 @@
             });
         };
         
+        // Render payment summary in modal
+        const renderPaymentSummary = () => {
+            const paymentSummary = calculatePaymentSummary(groupedBills);
+            
+            totalPaidAmountElement.textContent = formatCurrency(paymentSummary.totalPaid);
+            totalPendingAmountElement.textContent = formatCurrency(paymentSummary.totalPending);
+            totalOverallAmountElement.textContent = formatCurrency(paymentSummary.totalOverall);
+            paidInvoicesCountElement.textContent = paymentSummary.paidCount;
+            pendingInvoicesCountElement.textContent = paymentSummary.pendingCount;
+        };
+        
         // Update payment filter button states
         const updatePaymentFilterButtons = (activeFilter) => {
             // Remove active class from all buttons
@@ -1522,6 +1473,9 @@
             
             // Render filtered bills
             renderBills(filteredBills);
+            
+            // Update customer list based on current filter
+            renderCustomerList(customerSearch.value);
         };
         
         // Open side drawer
@@ -1566,6 +1520,20 @@
             document.body.style.overflow = 'auto';
         };
         
+        // Open payment summary modal
+        const openPaymentSummaryModal = () => {
+            paymentSummaryModal.classList.add('active');
+            paymentSummaryModalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+        
+        // Close payment summary modal
+        const closePaymentSummaryModal = () => {
+            paymentSummaryModal.classList.remove('active');
+            paymentSummaryModalOverlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        };
+        
         // Load and parse CSV data
         const loadCSVData = () => {
             // Show loading spinner
@@ -1589,15 +1557,22 @@
                     loadingElement.classList.add('hidden');
                     contentElement.classList.remove('hidden');
                     
+                    // Set default filter to pending
+                    currentPaymentFilter = 'pending';
+                    updatePaymentFilterButtons('pending');
+                    
                     // Render bills with initial sorting
                     filterAndSortBills();
                     
-                    // Render customer list
-                    renderCustomerList(customerSummary);
+                    // Render customer list based on default filter
+                    renderCustomerList();
                     
                     // Render top products and customers
                     renderTopProducts(productsSummary);
                     renderTopCustomers(customerSummary);
+                    
+                    // Render payment summary
+                    renderPaymentSummary();
                 },
                 error: function(error) {
                     console.error('Error loading CSV:', error);
@@ -1654,6 +1629,7 @@
             mainFab.addEventListener('click', openSideDrawer);
             topProductsFab.addEventListener('click', openProductsModal);
             topCustomersFab.addEventListener('click', openCustomersModal);
+            paymentSummaryFab.addEventListener('click', openPaymentSummaryModal);
             
             // Add event listeners for closing side drawer
             closeDrawerBtn.addEventListener('click', closeSideDrawer);
@@ -1666,32 +1642,23 @@
             closeCustomersModalBtn.addEventListener('click', closeCustomersModal);
             customersModalOverlay.addEventListener('click', closeCustomersModal);
             
-            // Add event listeners for print modal
-            closePrintModalBtn.addEventListener('click', closePrintModal);
-            printModalOverlay.addEventListener('click', closePrintModal);
+            closePaymentSummaryModalBtn.addEventListener('click', closePaymentSummaryModal);
+            paymentSummaryModalOverlay.addEventListener('click', closePaymentSummaryModal);
             
-            // Add event listeners for print modal buttons
-            printInvoiceBtn.addEventListener('click', () => {
-                if (currentPrintBill) {
-                    printInvoice(currentPrintBill);
-                }
-            });
+            // Add event listeners for WhatsApp modal
+            closeWhatsappModalBtn.addEventListener('click', closeWhatsAppModal);
+            whatsappModalOverlay.addEventListener('click', closeWhatsAppModal);
             
-            savePdfBtn.addEventListener('click', () => {
-                if (currentPrintBill) {
-                    saveAsPDF(currentPrintBill);
-                }
-            });
-            
+            // Add event listener for WhatsApp button
             shareWhatsAppBtn.addEventListener('click', () => {
-                if (currentPrintBill) {
-                    sendInvoiceViaWhatsApp(currentPrintBill);
+                if (currentWhatsAppBill) {
+                    sendInvoiceViaWhatsApp(currentWhatsAppBill);
                 }
             });
             
             // Add customer search functionality
             customerSearch.addEventListener('input', (e) => {
-                renderCustomerList(customerSummary, e.target.value);
+                renderCustomerList(e.target.value);
             });
             
             // Add keyboard shortcuts
@@ -1707,7 +1674,8 @@
                     closeSideDrawer();
                     closeProductsModal();
                     closeCustomersModal();
-                    closePrintModal();
+                    closePaymentSummaryModal();
+                    closeWhatsAppModal();
                 }
                 
                 // Ctrl/Cmd + F opens search
