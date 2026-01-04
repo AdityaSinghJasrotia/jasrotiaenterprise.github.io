@@ -23,6 +23,7 @@
             --warning: #ff9500;
             --danger: #dc3545;
             --info: #17a2b8;
+            --whatsapp: #25D366;
             --card-radius: 14px;
             --shadow: 0 4px 12px rgba(0,0,0,0.05);
             --search-height: 50px;
@@ -697,6 +698,10 @@
             background: #9c27b0;
         }
         
+        .fab-button.reminder {
+            background: var(--whatsapp);
+        }
+        
         .fab-main {
             width: 60px;
             height: 60px;
@@ -725,6 +730,7 @@
             animation: none;
         }
         
+        /* Info FAB */
         .info-fab {
             position: fixed;
             bottom: 20px;
@@ -743,6 +749,272 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             transition: all 0.3s;
             animation: pulse 2s infinite;
+        }
+        
+        /* Reminder FAB */
+        .reminder-fab {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: var(--whatsapp);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 95;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            animation: pulseWhatsapp 2s infinite;
+        }
+        
+        @keyframes pulseWhatsapp {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+        
+        /* Reminder Modal */
+        .reminder-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .reminder-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .reminder-content {
+            background: white;
+            border-radius: var(--card-radius);
+            width: 90%;
+            max-width: 500px;
+            padding: 25px;
+            text-align: left;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .reminder-modal.active .reminder-content {
+            transform: translateY(0);
+        }
+        
+        .reminder-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .reminder-header h2 {
+            color: var(--whatsapp);
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .close-reminder {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #86868b;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .close-reminder:hover {
+            transform: rotate(90deg);
+        }
+        
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        
+        .required {
+            color: var(--danger);
+        }
+        
+        /* Customer Search Dropdown */
+        .customer-search-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        
+        .customer-search-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            padding-right: 40px;
+        }
+        
+        .customer-search-input:focus {
+            border-color: var(--whatsapp);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.2);
+        }
+        
+        .customer-search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #86868b;
+        }
+        
+        .customer-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 10;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: none;
+        }
+        
+        .customer-dropdown.active {
+            display: block;
+        }
+        
+        .customer-option {
+            padding: 10px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f5f5f5;
+            transition: background 0.2s;
+        }
+        
+        .customer-option:hover {
+            background: #f8f9fa;
+        }
+        
+        .customer-option:last-child {
+            border-bottom: none;
+        }
+        
+        .customer-name {
+            font-weight: 500;
+            margin-bottom: 3px;
+        }
+        
+        .customer-phone {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .no-customers {
+            padding: 15px;
+            text-align: center;
+            color: #666;
+            font-style: italic;
+        }
+        
+        /* Message Type Dropdown */
+        .message-type-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 12px;
+        }
+        
+        .message-type-select:focus {
+            border-color: var(--whatsapp);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.2);
+        }
+        
+        /* Message Preview */
+        .message-preview {
+            background: #f8f9fa;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        
+        .message-preview-title {
+            font-weight: 500;
+            color: var(--whatsapp);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        /* Send Button */
+        .send-reminder-btn {
+            background: var(--whatsapp);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .send-reminder-btn:hover {
+            background: #1da851;
+        }
+        
+        .send-reminder-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
         }
         
         /* Cart Panel */
@@ -1838,6 +2110,11 @@
         <i class="fas fa-info"></i>
     </div>
     
+    <!-- Reminder FAB -->
+    <div class="reminder-fab" id="reminderFab">
+        <i class="fab fa-whatsapp"></i>
+    </div>
+    
     <!-- Information Panel - Only Stock Status -->
     <div class="info-panel" id="infoPanel">
         <div class="info-header">
@@ -1876,6 +2153,54 @@
         </div>
     </div>
     
+    <!-- Reminder Modal -->
+    <div class="reminder-modal" id="reminderModal">
+        <div class="reminder-content">
+            <div class="reminder-header">
+                <h2><i class="fab fa-whatsapp"></i> Send Customer Reminder</h2>
+                <button class="close-reminder" id="closeReminder">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="form-group">
+                <label for="reminderCustomerSearch">Select Customer <span class="required">*</span></label>
+                <div class="customer-search-container">
+                    <input type="text" class="customer-search-input" id="reminderCustomerSearch" placeholder="Search customer by name or phone...">
+                    <i class="fas fa-search customer-search-icon"></i>
+                    <div class="customer-dropdown" id="reminderCustomerDropdown"></div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="messageType">Message Type <span class="required">*</span></label>
+                <select class="message-type-select" id="messageType">
+                    <option value="">Select a message template</option>
+                    <option value="1">Template 1: New Arrivals Greeting</option>
+                    <option value="2">Template 2: Special Offer</option>
+                    <option value="3">Template 3: Weekend Special</option>
+                    <option value="4">Template 4: Festival Greeting</option>
+                    <option value="5">Template 5: Monthly Special</option>
+                    <option value="6">In-Stock Items Only</option>
+                    <option value="7">Full Inventory List</option>
+                </select>
+            </div>
+            
+            <div class="message-preview-container" id="messagePreviewContainer" style="display: none;">
+                <div class="message-preview-title">
+                    <i class="fas fa-eye"></i> Message Preview
+                </div>
+                <div class="message-preview" id="messagePreview">
+                    Select a customer and message type to see preview
+                </div>
+            </div>
+            
+            <button class="send-reminder-btn" id="sendReminderBtn" disabled>
+                <i class="fab fa-whatsapp"></i> Send WhatsApp Message
+            </button>
+        </div>
+    </div>
+    
     <!-- Floating Action Buttons -->
     <div class="fab-container">
         <div class="fab-buttons" id="fabButtons">
@@ -1887,6 +2212,9 @@
             </a>
             <button class="fab-button payment" title="Payment Info" id="paymentFab">
                 <i class="fas fa-qrcode"></i>
+            </button>
+            <button class="fab-button reminder" title="Send Reminder" id="reminderFabMini">
+                <i class="fab fa-whatsapp"></i>
             </button>
         </div>
         <div class="fab-main" id="fabMain">
@@ -1910,7 +2238,7 @@
             
             <div class="upi-info">
                 <p>Send payment to The Cute Corner Jammu:</p>
-                <div class="upi-id" id="upiId">jasrotiarajni96-3@okhdfcbank</div>
+                <div class="upi-id" id="upiId">ajasrotia15-1@okicici</div>
                 <button class="copy-btn" id="copyUpiBtn">
                     <i class="fas fa-copy"></i> Copy UPI ID
                 </button>
@@ -2086,6 +2414,16 @@
         const customerDropdown = document.getElementById('customerDropdown');
         const lowStockList = document.getElementById('lowStockList');
         const highStockList = document.getElementById('highStockList');
+        const reminderFab = document.getElementById('reminderFab');
+        const reminderFabMini = document.getElementById('reminderFabMini');
+        const reminderModal = document.getElementById('reminderModal');
+        const closeReminder = document.getElementById('closeReminder');
+        const reminderCustomerSearch = document.getElementById('reminderCustomerSearch');
+        const reminderCustomerDropdown = document.getElementById('reminderCustomerDropdown');
+        const messageType = document.getElementById('messageType');
+        const messagePreview = document.getElementById('messagePreview');
+        const messagePreviewContainer = document.getElementById('messagePreviewContainer');
+        const sendReminderBtn = document.getElementById('sendReminderBtn');
         
         // Global variables
         let products = [];
@@ -2093,16 +2431,30 @@
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
         let selectedBrand = 'all';
         let selectedType = 'all';
-        let selectedAvailability = 'In Stock'; // Changed default to "In Stock"
+        let selectedAvailability = 'In Stock';
         let productTypes = [];
         let searchQuery = '';
         let cachedProducts = null;
         let lastFetchTime = 0;
-        const CACHE_DURATION = 30000; // 30 seconds cache
+        const CACHE_DURATION = 30000;
         let isExistingCustomer = false;
         let customerSearchTimeout = null;
+        let selectedCustomer = null;
         
-        // Predefined customers - Avinash Singh and Aditya Singh
+        // Message Templates
+        const messageTemplates = {
+            1: "Namaste ji, kaise ho aap [Customer Name]?\n\nExciting news! We've got fresh new AMUL products just arrived at The Cute Corner Jammu. Perfect quality, amazing taste, and great prices.\n\nCome visit us today or order online for quick delivery!\n\nOrder now: https://adityasinghjasrotia.github.io/The-AMUL-Product-Ordering-System/",
+            
+            2: "Namaste ji, kaise ho aap [Customer Name]?\n\nSpecial offer just for you! This week at The Cute Corner Jammu, enjoy exclusive discounts on your favorite AMUL products.\n\nLimited time offer - don't miss out on these amazing deals!\n\nShop now: https://adityasinghjasrotia.github.io/The-AMUL-Product-Ordering-System/",
+            
+            3: "Namaste ji, kaise ho aap [Customer Name]?\n\nWeekend special at The Cute Corner Jammu! Stock up on all your dairy essentials with our weekend bonus offers.\n\nPerfect for family time - fresh AMUL products at best prices!\n\nOrder now: https://adityasinghjasrotia.github.io/The-AMUL-Product-Ordering-System/",
+            
+            4: "Namaste ji, kaise ho aap [Customer Name]?\n\nFestival greetings from The Cute Corner Jammu! Celebrate with the finest AMUL products - pure, fresh, and delicious.\n\nSpecial festival prices available now. Make your celebrations sweeter!\n\nShop now: https://adityasinghjasrotia.github.io/The-AMUL-Product-Ordering-System/",
+            
+            5: "Namaste ji, kaise ho aap [Customer Name]?\n\nMonthly special alert! The Cute Corner Jammu brings you exclusive monthly offers on premium AMUL products.\n\nGreat quality, trusted brand, unbeatable prices. Your satisfaction guaranteed!\n\nOrder now: https://adityasinghjasrotia.github.io/The-AMUL-Product-Ordering-System/"
+        };
+        
+        // Predefined customers
         const predefinedCustomers = [
             { name: 'Khullar Gen Store', phone: '9086773629', timestamp: '' },
             { name: 'NaV Bharat Trading Co', phone: '9419142241', timestamp: '' },
@@ -2118,7 +2470,7 @@
         function init() {
             updateLastUpdated();
             loadProducts();
-            loadCustomers(); // Load customers on init
+            loadCustomers();
             updateCartCount();
             setupEventListeners();
         }
@@ -2128,7 +2480,6 @@
             const lines = csv.split('\n');
             if (lines.length === 0) return [];
             
-            // Handle different CSV formats
             const headers = lines[0].split(',').map(h => h.trim());
             const result = [];
             
@@ -2136,7 +2487,6 @@
                 const line = lines[i].trim();
                 if (!line) continue;
                 
-                // Parse CSV line considering quoted values
                 const values = [];
                 let currentValue = '';
                 let inQuotes = false;
@@ -2155,12 +2505,10 @@
                 }
                 values.push(currentValue);
                 
-                // Create object with headers or fallback to indices
                 const obj = {};
                 for (let j = 0; j < headers.length; j++) {
                     obj[headers[j]] = values[j] ? values[j].trim() : '';
                 }
-                // Also store as array for fallback
                 obj._values = values;
                 result.push(obj);
             }
@@ -2171,7 +2519,6 @@
         async function loadProducts() {
             const now = Date.now();
             
-            // Use cache if available and recent
             if (cachedProducts && (now - lastFetchTime) < CACHE_DURATION) {
                 products = cachedProducts;
                 renderProducts();
@@ -2193,14 +2540,11 @@
                 
                 const parsedData = parseCSVFast(csvData);
                 
-                // Process the data efficiently
                 products = parsedData.map(row => {
-                    // Try different column name formats
                     const productName = row.Products || row.Product || row.Name || row._values[0] || '';
                     const brand = row.Brand || row._values[1] || '';
                     const productType = row.Type || row._values[2] || '';
                     
-                    // Handle ROB (remaining stock) - try different formats
                     let rob = 0;
                     if (row.ROB !== undefined && row.ROB !== '') {
                         rob = parseInt(row.ROB) || 0;
@@ -2212,7 +2556,6 @@
                     
                     const availability = rob > 0 ? "IN STOCK" : "OUT OF STOCK";
                     
-                    // Process image URL efficiently
                     let imageUrl = row.urls || row.image || row.Image || '';
                     if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('data:image')) {
                         if (imageUrl.startsWith('/9j/') || imageUrl.startsWith('iVBORw0KGgo')) {
@@ -2220,7 +2563,6 @@
                         }
                     }
                     
-                    // Handle prices
                     const drp = parseFloat(row.DRP || row.Price || row._values[4] || 0) || 0;
                     const mrp = parseFloat(row.MRP || row._values[5] || drp) || 0;
                     
@@ -2236,16 +2578,13 @@
                         mrp: mrp,
                         margin: parseFloat(row.Margin) || 0
                     };
-                }).filter(product => product.name); // Remove empty products
+                }).filter(product => product.name);
                 
-                // Cache the results
                 cachedProducts = products;
                 lastFetchTime = now;
                 
-                // Extract unique product types
                 productTypes = [...new Set(products.map(p => p.type))].filter(Boolean);
                 
-                // Render UI
                 renderTypeFilters();
                 renderProducts();
                 updateStockInfo();
@@ -2263,7 +2602,7 @@
             }
         }
         
-        // Load customers from Google Sheets and merge with predefined customers
+        // Load customers from Google Sheets
         async function loadCustomers() {
             try {
                 const response = await fetch(CUSTOMERS_CSV_URL + '&_=' + Date.now());
@@ -2271,9 +2610,7 @@
                 
                 const parsedData = parseCSVFast(csvData);
                 
-                // Process customer data - try different column formats
                 const csvCustomers = parsedData.map(row => {
-                    // Try multiple column name formats
                     const name = row.Name || row['Customer Name'] || row['Full Name'] || 
                                  row['Customer'] || row._values[1] || row._values[0] || '';
                     
@@ -2285,11 +2622,8 @@
                     return { name: name.trim(), phone: phone.trim(), timestamp: timestamp.trim() };
                 }).filter(customer => customer.name && customer.name.trim() !== '');
                 
-                // Merge CSV customers with predefined customers
-                // Start with predefined customers
                 customers = [...predefinedCustomers];
                 
-                // Add CSV customers if they're not duplicates (check by name)
                 csvCustomers.forEach(csvCustomer => {
                     const isDuplicate = customers.some(
                         customer => customer.name.toLowerCase() === csvCustomer.name.toLowerCase()
@@ -2299,17 +2633,16 @@
                     }
                 });
                 
-                console.log(`Loaded ${customers.length} customers (${predefinedCustomers.length} predefined + ${csvCustomers.length} from CSV)`);
+                console.log(`Loaded ${customers.length} customers`);
                 
             } catch (error) {
                 console.error('Error loading customers from CSV:', error);
-                // Fallback to only predefined customers
                 customers = [...predefinedCustomers];
                 console.log('Using only predefined customer data');
             }
         }
         
-        // Update stock information in the info panel
+        // Update stock information
         function updateStockInfo() {
             if (!products.length) {
                 lowStockList.innerHTML = '<li class="low-stock-item">No products loaded</li>';
@@ -2317,7 +2650,6 @@
                 return;
             }
             
-            // Filter out products with no stock
             const availableProducts = products.filter(p => p.rob > 0);
             
             if (availableProducts.length === 0) {
@@ -2326,16 +2658,10 @@
                 return;
             }
             
-            // Sort by stock quantity
             const sortedByStock = [...availableProducts].sort((a, b) => a.rob - b.rob);
-            
-            // Get low stock items (lowest 3)
             const lowStockItems = sortedByStock.slice(0, 3);
-            
-            // Get high stock items (highest 3)
             const highStockItems = sortedByStock.slice(-3).reverse();
             
-            // Update low stock list
             lowStockList.innerHTML = '';
             if (lowStockItems.length > 0) {
                 lowStockItems.forEach(product => {
@@ -2351,7 +2677,6 @@
                 lowStockList.innerHTML = '<li class="low-stock-item">No low stock items</li>';
             }
             
-            // Update high stock list
             highStockList.innerHTML = '';
             if (highStockItems.length > 0) {
                 highStockItems.forEach(product => {
@@ -2387,7 +2712,6 @@
         function renderProducts() {
             if (!products.length) return;
             
-            // Fast filtering
             const filteredProducts = products.filter(product => {
                 const brandMatch = selectedBrand === 'all' || 
                     (selectedBrand === 'AMUL' && product.brand.toUpperCase() === 'AMUL') ||
@@ -2395,17 +2719,15 @@
                     
                 const typeMatch = selectedType === 'all' || product.type === selectedType;
                 
-                // Handle availability filter (including new Low Stock filter)
                 let availabilityMatch = true;
                 if (selectedAvailability === 'In Stock') {
                     availabilityMatch = product.rob > 0;
                 } else if (selectedAvailability === 'Out of Stock') {
                     availabilityMatch = product.rob <= 0;
                 } else if (selectedAvailability === 'Low Stock') {
-                    // Low stock defined as 10 or fewer items
                     availabilityMatch = product.rob > 0 && product.rob <= 10;
                 } else if (selectedAvailability === 'all') {
-                    availabilityMatch = true; // Show all
+                    availabilityMatch = true;
                 }
                 
                 const searchMatch = !searchQuery || 
@@ -2416,7 +2738,6 @@
                 return brandMatch && typeMatch && availabilityMatch && searchMatch;
             });
             
-            // Update search results info
             if (searchQuery) {
                 searchResultsInfo.style.display = 'block';
                 resultsCount.textContent = filteredProducts.length;
@@ -2425,7 +2746,6 @@
                 searchResultsInfo.style.display = 'none';
             }
             
-            // Handle empty results
             if (filteredProducts.length === 0) {
                 productsGrid.innerHTML = `
                     <div class="empty-state">
@@ -2437,7 +2757,6 @@
                 return;
             }
             
-            // Efficient rendering with document fragment
             const fragment = document.createDocumentFragment();
             
             filteredProducts.forEach(product => {
@@ -2447,7 +2766,6 @@
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 
-                // Add stock badge
                 if (isOutOfStock) {
                     productCard.innerHTML += `<div class="out-of-stock">OUT OF STOCK</div>`;
                 } else if (isLowStock) {
@@ -2456,7 +2774,6 @@
                     productCard.innerHTML += `<div class="in-stock">IN STOCK</div>`;
                 }
                 
-                // Handle image display
                 let imageContent = '<div class="placeholder"><i class="fas fa-box"></i></div>';
                 if (product.imageUrl && (product.imageUrl.startsWith('data:image') || product.imageUrl.startsWith('http'))) {
                     imageContent = `
@@ -2469,7 +2786,6 @@
                     `;
                 }
                 
-                // Button text
                 let buttonText = 'Add to Cart';
                 if (isOutOfStock) {
                     buttonText = 'Out of Stock';
@@ -2507,7 +2823,6 @@
             productsGrid.innerHTML = '';
             productsGrid.appendChild(fragment);
             
-            // Add event listeners to Add to Cart buttons
             document.querySelectorAll('.add-to-cart:not([disabled])').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const productId = e.target.closest('.add-to-cart').dataset.id;
@@ -2517,24 +2832,24 @@
         }
         
         // Search customers by name
-        function searchCustomers(query) {
+        function searchCustomers(query, dropdownId) {
             if (!query || query.trim() === '') {
-                return customers.slice(0, 10); // Return first 10 customers
+                return customers.slice(0, 10);
             }
             
             const lowerQuery = query.toLowerCase();
             return customers.filter(customer => 
                 customer.name.toLowerCase().includes(lowerQuery) ||
                 customer.phone.includes(query)
-            ).slice(0, 10); // Limit to 10 results
+            ).slice(0, 10);
         }
         
         // Render customer dropdown
-        function renderCustomerDropdown(searchResults) {
-            customerDropdown.innerHTML = '';
+        function renderCustomerDropdown(searchResults, dropdownElement) {
+            dropdownElement.innerHTML = '';
             
             if (searchResults.length === 0) {
-                customerDropdown.innerHTML = `
+                dropdownElement.innerHTML = `
                     <div class="no-customers">
                         <i class="fas fa-search"></i>
                         <p>No customers found</p>
@@ -2552,17 +2867,187 @@
                 `;
                 
                 option.addEventListener('click', () => {
-                    customerNameInput.value = customer.name;
-                    customerPhoneInput.value = customer.phone || '';
-                    customerSearchInput.value = customer.name;
-                    customerDropdown.classList.remove('active');
+                    if (dropdownElement.id === 'reminderCustomerDropdown') {
+                        selectedCustomer = customer;
+                        reminderCustomerSearch.value = customer.name;
+                        updateReminderMessagePreview();
+                    } else {
+                        customerNameInput.value = customer.name;
+                        customerPhoneInput.value = customer.phone || '';
+                        customerSearchInput.value = customer.name;
+                    }
+                    dropdownElement.classList.remove('active');
                 });
                 
-                customerDropdown.appendChild(option);
+                dropdownElement.appendChild(option);
             });
         }
         
-        // Add product to cart with visual indication
+        // Generate random high stock items
+        function getRandomHighStockItems(threshold = 10, count = 4) {
+            if (!products.length) return [];
+            
+            const highStockItems = products.filter(p => p.rob > threshold);
+            
+            if (highStockItems.length === 0) return [];
+            
+            // Shuffle array and get first 'count' items
+            const shuffled = [...highStockItems].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, Math.min(count, shuffled.length));
+        }
+        
+        // Generate full inventory list
+        function getFullInventoryList() {
+            if (!products.length) return [];
+            
+            const inStockItems = products.filter(p => p.rob > 0);
+            
+            // Sort by stock quantity (highest first)
+            return inStockItems.sort((a, b) => b.rob - a.rob);
+        }
+        
+        // Update reminder message preview
+        function updateReminderMessagePreview() {
+            if (!selectedCustomer || !messageType.value) {
+                messagePreviewContainer.style.display = 'none';
+                sendReminderBtn.disabled = true;
+                return;
+            }
+            
+            const templateType = messageType.value;
+            let message = `Hii! ${selectedCustomer.name}?\n\n`;
+            
+            if (templateType >= 1 && templateType <= 5) {
+                message += messageTemplates[templateType].replace('[Customer Name]', selectedCustomer.name);
+            } else if (templateType === '6') {
+                // In-Stock Items Only (high stock)
+                const highStockItems = getRandomHighStockItems(10, 4);
+                
+                if (highStockItems.length > 0) {
+                    message += "Here are our current high-stock items:\n\n";
+                    highStockItems.forEach(item => {
+                        message += `• ${item.name} - ₹${item.drp.toFixed(2)}\n`;
+                    });
+                    message += "\nThese items are available in good quantity for immediate delivery!\n\n";
+                } else {
+                    message += "Our best-selling items are currently in stock and ready for delivery!\n\n";
+                }
+                
+                message += "Order at: https://adityasinghjasrotia.github.io/The-AMUL-Product-Ordering-System/";
+            } else if (templateType === '7') {
+                // Full Inventory List
+                const inventoryItems = getFullInventoryList();
+                
+                if (inventoryItems.length > 0) {
+                    message += "Here is our complete inventory list:\n\n";
+                    inventoryItems.slice(0, 10).forEach(item => { // Limit to 10 items for readability
+                        message += `• ${item.name} - ₹${item.drp.toFixed(2)} (Stock: ${item.rob})\n`;
+                    });
+                    
+                    if (inventoryItems.length > 10) {
+                        message += `\n...and ${inventoryItems.length - 10} more items in stock!\n\n`;
+                    } else {
+                        message += "\n";
+                    }
+                }
+                
+                message += "Browse our full catalog and order at: https://adityasinghjasrotia.github.io/The-AMUL-Product-Ordering-System/";
+            }
+            
+            messagePreview.textContent = message;
+            messagePreviewContainer.style.display = 'block';
+            sendReminderBtn.disabled = false;
+        }
+        
+        // Send WhatsApp message
+        function sendWhatsAppMessage() {
+            if (!selectedCustomer || !selectedCustomer.phone || !messageType.value) {
+                alert('Please select a customer and message type first.');
+                return;
+            }
+            
+            const phoneNumber = selectedCustomer.phone.replace(/\D/g, '');
+            
+            if (phoneNumber.length < 10) {
+                alert('Invalid phone number. Please select a customer with a valid phone number.');
+                return;
+            }
+            
+            let message = `Namaste ji, kaise ho aap ${selectedCustomer.name}?\n\n`;
+            const templateType = messageType.value;
+            
+            if (templateType >= 1 && templateType <= 5) {
+                message += messageTemplates[templateType].replace('[Customer Name]', selectedCustomer.name);
+            } else if (templateType === '6') {
+                const highStockItems = getRandomHighStockItems(10, 4);
+                
+                if (highStockItems.length > 0) {
+                    message += "Here are our current high-stock items:\n\n";
+                    highStockItems.forEach(item => {
+                        message += `• ${item.name} - ₹${item.drp.toFixed(2)}\n`;
+                    });
+                    message += "\nThese items are available in good quantity for immediate delivery!\n\n";
+                } else {
+                    message += "Our best-selling items are currently in stock and ready for delivery!\n\n";
+                }
+                
+                message += "Order at: https://adityasinghjasrotia.github.io/The-AMUL-Product-Ordering-System/";
+            } else if (templateType === '7') {
+                const inventoryItems = getFullInventoryList();
+                
+                if (inventoryItems.length > 0) {
+                    message += "Here is our complete inventory list:\n\n";
+                    inventoryItems.slice(0, 10).forEach(item => {
+                        message += `• ${item.name} - ₹${item.drp.toFixed(2)} (Stock: ${item.rob})\n`;
+                    });
+                    
+                    if (inventoryItems.length > 10) {
+                        message += `\n...and ${inventoryItems.length - 10} more items in stock!\n\n`;
+                    } else {
+                        message += "\n";
+                    }
+                }
+                
+                message += "Browse our full catalog and order at: https://adityasinghjasrotia.github.io/The-AMUL-Product-Ordering-System/";
+            }
+            
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            
+            window.open(whatsappUrl, '_blank');
+            
+            // Close modal after sending
+            closeReminderModal();
+        }
+        
+        // Open reminder modal
+        function openReminderModal() {
+            reminderModal.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Reset form
+            selectedCustomer = null;
+            reminderCustomerSearch.value = '';
+            messageType.value = '';
+            messagePreviewContainer.style.display = 'none';
+            sendReminderBtn.disabled = true;
+            
+            // Load customers if not already loaded
+            if (customers.length === 0) {
+                loadCustomers();
+            }
+        }
+        
+        // Close reminder modal
+        function closeReminderModal() {
+            reminderModal.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+            reminderCustomerDropdown.classList.remove('active');
+        }
+        
+        // Add product to cart
         function addToCart(productId) {
             const product = products.find(p => p.id === productId);
             if (!product) return;
@@ -2635,7 +3120,7 @@
             cartCount.textContent = totalItems;
         }
         
-        // Render cart items with direct quantity input
+        // Render cart items
         function renderCartItems() {
             cartItems.innerHTML = '';
             
@@ -2720,7 +3205,6 @@
             cartTotal.textContent = `₹${total.toFixed(2)}`;
             cartSavings.textContent = `₹${savings.toFixed(2)}`;
             
-            // Show min order notification
             if (total < 1) {
                 minOrderNotification.style.display = 'block';
                 placeOrderBtn.disabled = true;
@@ -2825,7 +3309,7 @@
             }
         }
         
-        // Place order (without WhatsApp)
+        // Place order
         function placeOrder() {
             if (cart.length === 0) {
                 alert('Your cart is empty!');
@@ -2842,26 +3326,22 @@
                 return;
             }
             
-            // Show contact details modal
             contactModal.classList.add('active');
             overlay.classList.add('active');
             document.body.style.overflow = 'hidden';
-            
-            // Reset form state
             resetContactForm();
             
-            // Ensure customers are loaded
             if (customers.length === 0) {
                 loadCustomers().then(() => {
                     if (isExistingCustomer) {
                         const initialResults = searchCustomers('');
-                        renderCustomerDropdown(initialResults);
+                        renderCustomerDropdown(initialResults, customerDropdown);
                     }
                 });
             }
         }
         
-        // Reset contact form to default state
+        // Reset contact form
         function resetContactForm() {
             isExistingCustomer = false;
             newCustomerBtn.classList.add('active');
@@ -2874,12 +3354,11 @@
             customerNameInput.classList.remove('error');
         }
         
-        // Submit order to Google Sheets (without WhatsApp)
+        // Submit order to Google Sheets
         function submitOrder() {
             const customerName = customerNameInput.value.trim();
             const customerPhone = customerPhoneInput.value.trim();
             
-            // Validate inputs - Name is required
             if (!customerName) {
                 alert('Please enter your full name before placing the order.');
                 customerNameInput.classList.add('error');
@@ -2889,7 +3368,6 @@
             
             customerNameInput.classList.remove('error');
             
-            // Calculate totals
             let total = 0;
             let savings = 0;
             
@@ -2900,17 +3378,12 @@
                 savings += itemSavings;
             });
             
-            // Submit order to Google Sheets
             submitOrderToGoogleSheets(customerName, customerPhone);
-            
-            // Show order confirmation
             showOrderConfirmation();
             
-            // Clear cart after order
             cart = [];
             updateCart();
             
-            // Clear form fields
             customerNameInput.value = '';
             customerPhoneInput.value = '';
             customerSearchInput.value = '';
@@ -2990,7 +3463,6 @@
             overlay.classList.toggle('active');
             document.body.style.overflow = infoPanel.classList.contains('active') ? 'hidden' : '';
             
-            // Update stock info when panel opens
             if (infoPanel.classList.contains('active')) {
                 updateStockInfo();
             }
@@ -3093,6 +3565,34 @@
                 fabButtons.classList.toggle('show');
             });
             
+            // Reminder FAB interactions
+            reminderFab.addEventListener('click', openReminderModal);
+            reminderFabMini.addEventListener('click', openReminderModal);
+            closeReminder.addEventListener('click', closeReminderModal);
+            
+            // Reminder customer search
+            reminderCustomerSearch.addEventListener('input', (e) => {
+                clearTimeout(customerSearchTimeout);
+                customerSearchTimeout = setTimeout(() => {
+                    const query = e.target.value.trim();
+                    const searchResults = searchCustomers(query, 'reminder');
+                    renderCustomerDropdown(searchResults, reminderCustomerDropdown);
+                    reminderCustomerDropdown.classList.add('active');
+                }, 300);
+            });
+            
+            reminderCustomerSearch.addEventListener('focus', () => {
+                if (reminderCustomerDropdown.children.length > 0) {
+                    reminderCustomerDropdown.classList.add('active');
+                }
+            });
+            
+            // Message type change
+            messageType.addEventListener('change', updateReminderMessagePreview);
+            
+            // Send reminder button
+            sendReminderBtn.addEventListener('click', sendWhatsAppMessage);
+            
             // Payment interactions
             paymentFab.addEventListener('click', showPaymentModal);
             closePayment.addEventListener('click', closePaymentModal);
@@ -3124,15 +3624,14 @@
                 customerSearchInput.value = '';
                 customerDropdown.classList.remove('active');
                 
-                // Ensure customers are loaded
                 if (customers.length === 0) {
                     loadCustomers().then(() => {
                         const initialResults = searchCustomers('');
-                        renderCustomerDropdown(initialResults);
+                        renderCustomerDropdown(initialResults, customerDropdown);
                     });
                 } else {
                     const initialResults = searchCustomers('');
-                    renderCustomerDropdown(initialResults);
+                    renderCustomerDropdown(initialResults, customerDropdown);
                 }
             });
             
@@ -3141,8 +3640,8 @@
                 clearTimeout(customerSearchTimeout);
                 customerSearchTimeout = setTimeout(() => {
                     const query = e.target.value.trim();
-                    const searchResults = searchCustomers(query);
-                    renderCustomerDropdown(searchResults);
+                    const searchResults = searchCustomers(query, 'contact');
+                    renderCustomerDropdown(searchResults, customerDropdown);
                     customerDropdown.classList.add('active');
                 }, 300);
             });
@@ -3155,8 +3654,9 @@
             
             // Close dropdown when clicking outside
             document.addEventListener('click', (e) => {
-                if (!customerSearchSection.contains(e.target)) {
+                if (!customerSearchSection.contains(e.target) && !reminderModal.contains(e.target)) {
                     customerDropdown.classList.remove('active');
+                    reminderCustomerDropdown.classList.remove('active');
                 }
             });
             
@@ -3170,6 +3670,7 @@
                     closePaymentModal();
                     closeContactModal();
                     closeOrderConfirmation();
+                    closeReminderModal();
                     if (infoPanel.classList.contains('active')) {
                         toggleInfoPanel();
                     }
@@ -3178,7 +3679,7 @@
             });
             
             // Prevent clicks inside panels from closing them
-            [infoPanel, paymentModal, contactModal, orderConfirmation].forEach(panel => {
+            [infoPanel, paymentModal, contactModal, orderConfirmation, reminderModal].forEach(panel => {
                 panel.addEventListener('click', (e) => e.stopPropagation());
             });
             
